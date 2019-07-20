@@ -1,10 +1,11 @@
 <template>
   <nav>
     <v-toolbar flat app style="background: #085982;">
-      <v-toolbar-side-icon @click="drawer = !drawer" class="white--text"></v-toolbar-side-icon>
       <v-toolbar-title class="white--text">
         <span>Sculpture Bermagui - Registration Form</span>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-side-icon @click="drawer = !drawer" class="white--text"></v-toolbar-side-icon>
     </v-toolbar>
 
     <v-navigation-drawer app v-model="drawer" style="background: #085982;">
@@ -43,4 +44,7 @@ export default {
 </script>
 
 <style>
+.v-toolbar__content {
+  padding-left: 10vw;
+}
 </style>
