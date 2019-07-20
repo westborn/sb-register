@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid">
+  <v-form v-model="valid" ref="registerForm">
     <v-container>
       <v-layout row>
         <v-flex xs6 offset-xs1>
@@ -74,6 +74,13 @@ export default {
       v => !!v || "E-mail is required",
       v => /.+@.+/.test(v) || "E-mail must be valid"
     ]
-  })
+  }),
+  methods: {
+    submit() {
+      if (this.$refs.registerForm.validate()) {
+        console.log(this.firstname, this.lastname, this.email, this.postcode);
+      }
+    }
+  }
 };
 </script>
