@@ -14,13 +14,7 @@
       </v-layout>
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-text-field
-            v-model="price"
-            :rules="nameRules"
-            :counter="40"
-            label="Sale Price"
-            required
-          ></v-text-field>
+          <v-text-field prefix="$" v-model="price" label="Sale Price" required></v-text-field>
         </v-flex>
       </v-layout>
 
@@ -76,7 +70,7 @@
           <label
             for="file-upload"
             class="v-btn v-btn--flat info"
-          >Click to Select Image File to Upload?</label>
+          >Click to Select Image File to Upload</label>
           <input
             id="file-upload"
             type="file"
@@ -97,7 +91,10 @@
 
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-btn @click="submit" class="primary">Add this piece?</v-btn>
+          <v-btn @click="submit" class="primary" :disabled="!valid || loading">Add this piece?</v-btn>
+          <div v-if="loading">
+            <v-progress-linear :indeterminate="true"></v-progress-linear>
+          </div>
         </v-flex>
       </v-layout>
     </v-container>
@@ -106,36 +103,96 @@
 
 <script>
 import { fileURLToPath } from "url";
+
+async function postData(url, opts) {
+  try {
+    const res = await fetch(url, opts);
+    return await res.json();
+  } catch (e) {
+    console.log("in postData");
+    console.log(e.stack);
+  }
+}
+
 export default {
   data: () => ({
+    addInfoURL:
+      "https://script.google.com/macros/s/AKfycbzVZQtxm3XbHoBzLIVVD-7Ds_WIkGrjO8se4q-GzEGxyT1rg9fH/exec",
+    email: "george@westborn.com.au",
+    loading: false,
     valid: false,
-    title: "",
-    price: "",
+    title: null,
+    price: null,
     inOrOut: "Indoor",
-    material: "",
-    size: "",
-    description: "",
-    specialReqs: "",
-    placement: "",
-    fileToUpload: "",
-    originalFileName: "",
+    material: null,
+    size: null,
+    description: null,
+    specialReqs: null,
+    placement: null,
+    fileToUpload: null,
+    originalFileName: null,
     nameRules: [
-      v => !!v || "Name is required",
-      v => v.length >= 2 || "You need to enter at least 2 characters"
-    ],
-    email: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v => /.+@.+/.test(v) || "E-mail must be valid"
+      v => !!v || "You need to enter something here",
+      v => (v && v.length >= 2) || "You need to enter at least 2 characters"
     ]
   }),
   methods: {
     submit() {
       if (this.$refs.entryForm.validate()) {
-        console.log(this.title, this.price, this.inOrOut, this.material);
-        console.log(this.fileToUpload);
+        const formFields = {
+          email: this.email,
+          title: this.title,
+          price: this.price,
+          inOrOut: this.inOrOut,
+          material: this.material,
+          size: this.size,
+          description: this.description,
+          specialReqs: this.specialReqs,
+          placement: this.placement,
+          originalFileName: this.originalFileName,
+          fileContents: null
+        };
+
+        this.loading = true;
+        const self = this;
+        if (this.fileToUpload) {
+          const fr = new FileReader();
+          fr.onload = function(e) {
+            formFields.fileContents = e.target.result.replace(/^.*,/, "");
+            postData(
+              "https://script.google.com/macros/s/AKfycbzVZQtxm3XbHoBzLIVVD-7Ds_WIkGrjO8se4q-GzEGxyT1rg9fH/exec",
+              {
+                method: "post",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(formFields)
+              }
+            ).then(res => {
+              // console.log(self);
+              self.loading = false;
+              self.$refs.entryForm.reset();
+            });
+          };
+          fr.readAsDataURL(this.fileToUpload);
+        } else {
+          formFields.fileContents = "";
+          formFields.originalFileName = "";
+          postData(
+            "https://script.google.com/macros/s/AKfycbzVZQtxm3XbHoBzLIVVD-7Ds_WIkGrjO8se4q-GzEGxyT1rg9fH/exec",
+            {
+              method: "post",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(formFields)
+            }
+          ).then(res => {
+            self.loading = false;
+            self.$refs.entryForm.reset();
+            self.inOrOut = "Outdoor";
+            console.log(self);
+          });
+        }
       }
     },
+
     fileChanged(e) {
       if (e) {
         if (e.target.files.length > 0) {

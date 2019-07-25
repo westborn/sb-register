@@ -1,7 +1,7 @@
 <template>
   <nav>
     <v-toolbar flat app style="background: #085982;">
-      <v-toolbar-title class="white--text justify-center">
+      <v-toolbar-title class="white--text">
         <span>Sculpture Bermagui - Registration Form</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -44,7 +44,7 @@ export default {
 </script>
 
 <style>
-/* .v-toolbar__content {
+.v-toolbar__content {
   padding-left: 10vw;
-} */
+}
 </style>
