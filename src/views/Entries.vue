@@ -186,7 +186,6 @@ export default {
           ).then(res => {
             self.loading = false;
             self.$refs.entryForm.reset();
-            self.inOrOut = "Outdoor";
             console.log(self);
           });
         }
