@@ -1,10 +1,10 @@
 <template>
-  <v-form v-model="valid" ref="entryForm">
+  <v-form v-model="isValid" ref="entryForm">
     <v-container>
       <v-layout row>
         <v-flex xs6 offset-xs1>
           <v-text-field
-            v-model="title"
+            v-model="form.title"
             :rules="nameRules"
             :counter="40"
             label="Title for this work"
@@ -14,13 +14,13 @@
       </v-layout>
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-text-field prefix="$" v-model="price" label="Sale Price" required></v-text-field>
+          <v-text-field prefix="$" v-model="form.price" label="Sale Price" required></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-radio-group v-model="inOrOut">
+          <v-radio-group v-model="form.inOrOut">
             <v-radio label="Indoor" value="Indoor"></v-radio>
             <v-radio label="Outdoor" value="Outdoor"></v-radio>
           </v-radio-group>
@@ -30,7 +30,7 @@
       <v-layout row>
         <v-flex xs6 offset-xs1>
           <v-text-field
-            v-model="material"
+            v-model="form.material"
             :rules="nameRules"
             :counter="40"
             label="Material(s) used"
@@ -41,7 +41,7 @@
       <v-layout row>
         <v-flex xs6 offset-xs1>
           <v-text-field
-            v-model="size"
+            v-model="form.size"
             :rules="nameRules"
             :counter="40"
             label="Approx Size"
@@ -51,26 +51,23 @@
       </v-layout>
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-textarea v-model="description" label="Description (25 words max)" required></v-textarea>
+          <v-textarea v-model="form.description" label="Description (25 words max)" required></v-textarea>
         </v-flex>
       </v-layout>
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-text-field v-model="specialReqs" label="Special Requirements"></v-text-field>
+          <v-text-field v-model="form.specialReqs" label="Special Requirements"></v-text-field>
         </v-flex>
       </v-layout>
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-text-field v-model="placement" label="Placement preference (optional)"></v-text-field>
+          <v-text-field v-model="form.placement" label="Placement preference (optional)"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row>
         <v-flex xs3 offset-xs1>
-          <label
-            for="file-upload"
-            class="v-btn v-btn--flat info"
-          >Click to Select Image File to Upload</label>
+          <label for="file-upload" class="v-btn v-btn--flat info">Select Image to Upload</label>
           <input
             id="file-upload"
             type="file"
@@ -85,52 +82,66 @@
           />
         </v-flex>
         <v-flex xs3>
-          <v-text-field disabled v-model="originalFileName" label="File to be Uploaded"></v-text-field>
+          <v-text-field disabled v-model="form.originalFileName" label="File to be Uploaded"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row>
         <v-flex xs6 offset-xs1>
-          <v-btn @click="submit" class="primary" :disabled="!valid || loading">Add this piece?</v-btn>
-          <div v-if="loading">
+          <v-btn
+            @click="submit"
+            class="primary"
+            :disabled="!isValid || sendingToServer"
+          >Add this piece?</v-btn>
+          <div v-if="sendingToServer">
             <v-progress-linear :indeterminate="true"></v-progress-linear>
           </div>
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-layout justify-center>
+      <v-dialog v-model="dialog" persistent max-width="390">
+        <v-card>
+          <v-card-title class="headline">{{dialogHeader}}</v-card-title>
+          <v-card-text>{{dialogMessages}}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="dialog = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-layout>
   </v-form>
 </template>
 
 <script>
-import { fileURLToPath } from "url";
-
-async function postData(url, opts) {
-  try {
-    const res = await fetch(url, opts);
-    return await res.json();
-  } catch (e) {
-    console.log("in postData");
-    console.log(e.stack);
-  }
-}
+import { postData, readFile } from "../api/services";
 
 export default {
   data: () => ({
     addInfoURL:
       "https://script.google.com/macros/s/AKfycbzVZQtxm3XbHoBzLIVVD-7Ds_WIkGrjO8se4q-GzEGxyT1rg9fH/exec",
-    email: "george@westborn.com.au",
-    loading: false,
-    valid: false,
-    title: null,
-    price: null,
-    inOrOut: "Indoor",
-    material: null,
-    size: null,
-    description: null,
-    specialReqs: null,
-    placement: null,
+    sendingToServer: false,
+    isValid: false,
+    isError: false,
+    dialog: false,
+    dialogHeader: "",
+    dialogMessages: "",
+    form: {
+      email: "george@westborn.com.au",
+      title: null,
+      price: null,
+      inOrOut: "Indoor",
+      material: null,
+      size: null,
+      description: null,
+      specialReqs: null,
+      placement: null,
+      originalFileName: null,
+      fileContents: null
+    },
     fileToUpload: null,
-    originalFileName: null,
     nameRules: [
       v => !!v || "You need to enter something here",
       v => (v && v.length >= 2) || "You need to enter at least 2 characters"
@@ -139,64 +150,57 @@ export default {
   methods: {
     submit() {
       if (this.$refs.entryForm.validate()) {
-        const formFields = {
-          email: this.email,
-          title: this.title,
-          price: this.price,
-          inOrOut: this.inOrOut,
-          material: this.material,
-          size: this.size,
-          description: this.description,
-          specialReqs: this.specialReqs,
-          placement: this.placement,
-          originalFileName: this.originalFileName,
-          fileContents: null
-        };
-
-        this.loading = true;
-        const self = this;
-        if (this.fileToUpload) {
-          const fr = new FileReader();
-          fr.onload = function(e) {
-            formFields.fileContents = e.target.result.replace(/^.*,/, "");
-            postData(
-              "https://script.google.com/macros/s/AKfycbzVZQtxm3XbHoBzLIVVD-7Ds_WIkGrjO8se4q-GzEGxyT1rg9fH/exec",
-              {
-                method: "post",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(formFields)
-              }
-            ).then(res => {
-              // console.log(self);
-              self.loading = false;
-              self.$refs.entryForm.reset();
-            });
-          };
-          fr.readAsDataURL(this.fileToUpload);
-        } else {
-          formFields.fileContents = "";
-          formFields.originalFileName = "";
-          postData(
-            "https://script.google.com/macros/s/AKfycbzVZQtxm3XbHoBzLIVVD-7Ds_WIkGrjO8se4q-GzEGxyT1rg9fH/exec",
-            {
-              method: "post",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(formFields)
-            }
-          ).then(res => {
-            self.loading = false;
-            self.$refs.entryForm.reset();
-            console.log(self);
-          });
-        }
+        this.sendFormData();
+      } else {
+        console.log("where are we?");
+        this.submitError("Please contact us via email regarding this entry");
       }
+    },
+    async sendFormData() {
+      this.sendingToServer = true;
+      this.form.fileContents = "";
+      const self = this;
+      if (this.fileToUpload) {
+        const res = await readFile(this.fileToUpload);
+        this.form.fileContents = res.replace(/^.*,/, "");
+      }
+      const { ok, error, data } = await postData(this.addInfoURL, this.form);
+      this.sendingToServer = false;
+      if (ok) {
+        if (data.result === "ok") {
+          this.submitSuccess(data.emailKey);
+        } else {
+          this.submitError(data.error);
+        }
+      } else {
+        this.submitError(error);
+      }
+    },
+
+    submitSuccess(result) {
+      this.isError = false;
+      this.showDialog("Entry Added", result);
+      this.isError = false;
+
+      // if (this.dialog) this.$router.push({ path: "/" });
+    },
+    submitError(error) {
+      console.log("submitError");
+      console.log(error);
+      this.showDialog("Ooops - something went wrong", error);
+      this.isError = false;
+    },
+    showDialog(header, message) {
+      this.dialogHeader = header;
+      this.dialogMessages = message;
+      this.dialog = true;
     },
 
     fileChanged(e) {
       if (e) {
         if (e.target.files.length > 0) {
           this.fileToUpload = e.target.files[0];
-          this.originalFileName = this.fileToUpload.name;
+          this.form.originalFileName = this.fileToUpload.name;
         }
       }
     }

@@ -70,9 +70,9 @@
           <v-btn
             @click="submit"
             class="primary"
-            :disabled="!isValid || submitting"
+            :disabled="!isValid || sendingToServer"
           >Submit this Registration?</v-btn>
-          <div v-if="submitting">
+          <div v-if="sendingToServer">
             <v-progress-linear :indeterminate="true"></v-progress-linear>
           </div>
         </v-flex>
@@ -95,28 +95,13 @@
 </template>
 
 <script>
-async function postData(url, obj) {
-  const opts = {
-    method: "post",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(obj)
-  };
-  try {
-    const string = await fetch(url, opts);
-    const res = await string.json();
-    return { ok: true, data: res };
-  } catch (error) {
-    console.log("in postData-catch");
-    console.log(error.stack);
-    return { ok: false, error };
-  }
-}
+import { postData } from "../api/services";
 
 export default {
   data: () => ({
     registerURL:
       "https://script.google.com/macros/s/AKfycbxo2AF_dFaA7mALFpgiX_h6INNrcToPCvbDJX0ZB_ClIokJdKMS/exec",
-    submitting: false,
+    sendingToServer: false,
     isValid: false,
     isError: false,
     dialog: false,
@@ -144,58 +129,41 @@ export default {
         this.sendFormData();
       } else {
         console.log("where are we?");
+        this.submitError("Please contact us via email regarding this entry");
       }
     },
     async sendFormData() {
-      this.submitting = true;
+      this.sendingToServer = true;
       const { ok, error, data } = await postData(this.registerURL, this.form);
-      this.submitting = false;
+      this.sendingToServer = false;
       if (ok) {
-        console.log(data);
         if (data.result === "ok") {
           this.submitSuccess(data.emailKey);
         } else {
-          console.log("here");
           this.submitError(data.error);
         }
       } else {
-        console.log("there");
         this.submitError(error);
       }
     },
     submitSuccess(result) {
       this.isError = false;
-      this.dialogHeader = "All added OK";
-      this.dialogMessages = result;
-      this.dialog = true;
+      this.showDialog("Registration Added", result);
+      this.isError = false;
+
+      // if (this.dialog) this.$router.push({ path: "/" });
     },
     submitError(error) {
       console.log("submitError");
       console.log(error);
-      this.dialogHeader = "Ooops - something went wrong";
-      this.dialogMessages = error;
-      this.dialog = true;
+      this.showDialog("Ooops - something went wrong", error);
       this.isError = false;
+    },
+    showDialog(header, message) {
+      this.dialogHeader = header;
+      this.dialogMessages = message;
+      this.dialog = true;
     }
   }
 };
-
-//   submit() {
-//     if (this.$refs.registerForm.validate()) {
-//       this.submitting = true;
-//       postData(
-//         "https://script.google.com/macros/s/AKfycbxo2AF_dFaA7mALFpgiX_h6INNrcToPCvbDJX0ZB_ClIokJdKMS/exec",
-//         {
-//           method: "post",
-//           headers: { "Content-Type": "text/plain;charset=utf-8" },
-//           body: JSON.stringify(this.form)
-//         }
-//       ).then(res => {
-//         console.log(this);
-//         this.submitting = false;
-//         this.$refs.registerForm.reset();
-//       });
-//     }
-//   }
-// }
 </script>
