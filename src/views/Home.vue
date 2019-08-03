@@ -54,14 +54,55 @@
         </v-flex>
       </v-layout>
     </v-form>
+    <template v-if="isRegistered">
+      <v-layout mt-4 row>
+        <v-flex xs8>
+          <Register-Card :register="register"></Register-Card>
+        </v-flex>
+      </v-layout>
+      <v-layout mt-4 row>
+        <v-flex xs8>
+          <Reg-Detail v-for="entry in entries" :key="entry.timestamp" :entry="entry"></Reg-Detail>
+        </v-flex>
+      </v-layout>
+    </template>
+    <v-layout justify-center>
+      <v-dialog v-model="dialog" persistent max-width="390">
+        <v-card>
+          <v-card-title class="headline">{{dialogHeader}}</v-card-title>
+          <v-card-text>{{dialogMessages}}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="dialog = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-layout>
   </v-container>
 </template>
 <script>
+import { postData, readFile } from "../api/services";
+import RegDetail from "../components/RegDetail.vue";
+import RegisterCard from "../components/RegisterCard";
+
 export default {
+  components: {
+    RegDetail: RegDetail,
+    RegisterCard: RegisterCard
+  },
   data: () => ({
+    getDetailsURL:
+      "https://script.google.com/macros/s/AKfycbwqubyO9eNQWIWJVjyVFFElr3rfi1DwYyu_2KvPbxWdTD8OhShb/exec",
     sendingToServer: false,
-    registeredEmail: null,
+    registeredEmail: "",
     isValid: false,
+    isError: false,
+    dialog: false,
+    dialogHeader: "",
+    dialogMessages: "",
+    entries: [],
+    register: {},
+    isRegistered: false,
     emailRules: [
       v => !!v || "E-mail is required",
       v => /.+@.+/.test(v) || "E-mail must be valid"
@@ -73,6 +114,45 @@ export default {
         this.sendFormData();
       } else {
         console.log("where are we?");
+      }
+    },
+
+    async sendFormData() {
+      this.sendingToServer = true;
+      const { ok, error, data } = await postData(this.getDetailsURL, {
+        email: this.registeredEmail
+      });
+      if (ok) {
+        if (data.result === "ok") {
+          this.register = data.response.register;
+          this.entries = data.response.entries;
+          this.isRegistered = true;
+        } else {
+          this.submitError(data.error);
+        }
+      } else {
+        this.submitError(error);
+      }
+      this.sendingToServer = false;
+    },
+
+    submitError(error) {
+      console.log("submitError");
+      console.log(error);
+      this.showDialog("Ooops - something went wrong", error);
+      this.isError = false;
+    },
+
+    showDialog(header, message) {
+      this.dialogHeader = header;
+      this.dialogMessages = message;
+      this.dialog = true;
+    }
+  },
+  computed: {
+    fullName() {
+      if (this.register.firstName) {
+        return `${this.register.firstName} ${this.register.lastName}`;
       }
     }
   }
