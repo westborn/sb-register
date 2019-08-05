@@ -108,6 +108,11 @@ export default {
       v => /.+@.+/.test(v) || "E-mail must be valid"
     ]
   }),
+  created() {
+    if (localStorage.getItem("currentEmailKey")) {
+      this.registeredEmail = localStorage.getItem("currentEmailKey");
+    }
+  },
   methods: {
     submit() {
       if (this.$refs.detailsForm.validate()) {
