@@ -1,6 +1,7 @@
 <template>
   <v-form v-model="isValid" ref="entryForm">
     <v-container>
+      <h3>Adding an entry for: {{form.email}}</h3>
       <v-layout row>
         <v-flex xs6 offset-xs1>
           <v-text-field
@@ -129,7 +130,7 @@ export default {
     dialogHeader: "",
     dialogMessages: "",
     form: {
-      email: "george@westborn.com.au",
+      email: "",
       title: null,
       price: null,
       inOrOut: "Indoor",
@@ -147,6 +148,26 @@ export default {
       v => (v && v.length >= 2) || "You need to enter at least 2 characters"
     ]
   }),
+
+  beforeRouteEnter(to, from, next) {
+    console.log("entering");
+    if (!localStorage.getItem("currentEmailKey")) {
+      const answer = window.confirm(
+        "Please register or search for a current registation"
+      );
+      next(false);
+    } else {
+      next();
+    }
+  },
+  created() {
+    console.log("App mounted!");
+    if (localStorage.getItem("currentEmailKey")) {
+      this.form.email = localStorage.getItem("currentEmailKey");
+    } else {
+      this.$router.push("/");
+    }
+  },
   methods: {
     submit() {
       if (this.$refs.entryForm.validate()) {
