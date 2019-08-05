@@ -125,6 +125,7 @@ export default {
       if (ok) {
         if (data.result === "ok") {
           this.register = data.response.register;
+          localStorage.setItem("currentEmailKey", this.registeredEmail);
           this.entries = data.response.entries;
           this.isRegistered = true;
         } else {
@@ -147,13 +148,6 @@ export default {
       this.dialogHeader = header;
       this.dialogMessages = message;
       this.dialog = true;
-    }
-  },
-  computed: {
-    fullName() {
-      if (this.register.firstName) {
-        return `${this.register.firstName} ${this.register.lastName}`;
-      }
     }
   }
 };

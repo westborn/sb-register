@@ -124,6 +124,11 @@ export default {
     ]
   }),
   methods: {
+    mounted() {
+      console.log("App mounted!");
+      if (localStorage.getItem("todos"))
+        this.todos = JSON.parse(localStorage.getItem("todos"));
+    },
     submit() {
       if (this.$refs.registerForm.validate()) {
         this.sendFormData();
@@ -139,6 +144,7 @@ export default {
       if (ok) {
         if (data.result === "ok") {
           this.submitSuccess(data.emailKey);
+          localStorage.setItem("currentEmailKey", data.emailKey);
         } else {
           this.submitError(data.error);
         }
