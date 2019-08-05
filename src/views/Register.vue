@@ -124,11 +124,6 @@ export default {
     ]
   }),
   methods: {
-    mounted() {
-      console.log("App mounted!");
-      if (localStorage.getItem("todos"))
-        this.todos = JSON.parse(localStorage.getItem("todos"));
-    },
     submit() {
       if (this.$refs.registerForm.validate()) {
         this.sendFormData();

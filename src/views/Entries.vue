@@ -150,7 +150,6 @@ export default {
   }),
 
   beforeRouteEnter(to, from, next) {
-    console.log("entering");
     if (!localStorage.getItem("currentEmailKey")) {
       const answer = window.confirm(
         "Please register or search for a current registation"
@@ -161,7 +160,6 @@ export default {
     }
   },
   created() {
-    console.log("App mounted!");
     if (localStorage.getItem("currentEmailKey")) {
       this.form.email = localStorage.getItem("currentEmailKey");
     } else {
