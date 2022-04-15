@@ -70,6 +70,7 @@
 		</a>
 		<button
 			type="button"
+			aria-label="Mobile Menu"
 			on:click={() => (hamburgerMenuOpen = !hamburgerMenuOpen)}
 			class="ml-3  inline-flex items-center rounded-lg p-2 text-sm text-gray-100 hover:bg-gray-300 hover:text-primary focus:outline-none focus:ring-0 focus:ring-gray-200 lg:hidden"
 		>

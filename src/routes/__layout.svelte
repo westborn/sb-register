@@ -3,8 +3,17 @@
 	import Nav from '$lib/Nav.svelte';
 </script>
 
+<svelte:head>
+	<title>Scuplture Bermagui - Artist Registration</title>
+</svelte:head>
+
 <Nav />
 <div class="mt-8">
-	<p class="ml-28 -mt-8 text-2xl font-bold text-gray-700">Register - 2023</p>
+	<p
+		class="ml-28 -mt-8 mb-4
+	text-2xl font-bold text-gray-700"
+	>
+		Artist Registration - 2023
+	</p>
 </div>
 <slot />
