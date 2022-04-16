@@ -38,5 +38,9 @@ module.exports = {
 				poppins: ['Poppins', ...defaultTheme.fontFamily.sans]
 			}
 		}
-	}
+	},
+	plugins: [
+		require('@tailwindcss/forms')
+		// ...
+	]
 };
