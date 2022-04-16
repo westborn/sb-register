@@ -8,7 +8,7 @@
 
 	<button
 		type="button"
-		class="inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+		class="mt-2 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 		>Register</button
 	>
 
@@ -21,4 +21,25 @@
 		If the email address below is correct you can proceed to add one or more entries that you'd like
 		to submit by using the "Add Entries" button.
 	</p>
+
+	<div class="relative mt-6 w-full">
+		<input
+			id="email"
+			name="email"
+			type="text"
+			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
+			placeholder="someone@gmail.com"
+		/>
+		<label
+			for="email"
+			class="absolute left-2 -top-5 text-sm text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-sm peer-focus:text-gray-600"
+			>Email address</label
+		>
+	</div>
+
+	<button
+		type="button"
+		class="mt-2 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+		>Add Entries</button
+	>
 </section>
