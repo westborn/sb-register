@@ -1,3 +1,16 @@
+<script>
+	import { goto } from '$app/navigation';
+	import { currentUserEmail } from '../lib/stores.js';
+
+	function routeToPage(route, replaceState) {
+		goto(`/${route}`, { replaceState });
+	}
+
+	function handleClickAddEntries() {
+		routeToPage('register');
+	}
+</script>
+
 <section class="container mx-auto max-w-prose px-3">
 	<h4 class="text-xl font-bold text-primary">Registration Information</h4>
 	<p class="">
@@ -8,6 +21,7 @@
 
 	<button
 		type="button"
+		on:click={() => routeToPage('register')}
 		class="mt-2 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 		>Register</button
 	>
@@ -26,6 +40,7 @@
 		<input
 			id="email"
 			name="email"
+			bind:value={$currentUserEmail}
 			type="text"
 			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
 			placeholder="someone@gmail.com"
@@ -39,7 +54,10 @@
 
 	<button
 		type="button"
-		class="mt-2 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+		on:click={() => handleClickAddEntries()}
+		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 		>Add Entries</button
 	>
 </section>
+
+<pre>{$currentUserEmail}</pre>
