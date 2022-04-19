@@ -1,116 +1,58 @@
 <script>
-	import { currentUserEmail } from '../lib/stores.js'
+	import { goto } from '$app/navigation'
+	import { currentUserEmail, errorStatus, errorMessage } from '../lib/stores.js'
+
+	function routeToPage(route, replaceState) {
+		goto(`/${route}`, { replaceState })
+	}
+	import FormRegister from '../lib/FormRegister.svelte'
 
 	async function fetchData() {
+		$errorStatus = null
 		const response = await fetch('/api?requestType=getentry', {
 			method: 'POST',
 			body: JSON.stringify({
 				email: $currentUserEmail
 			})
 		})
-		return await response.json()
+		const data = await response.json()
+		if (data.result === 'error') {
+			$errorStatus = 'register'
+			$errorMessage = data.error
+			routeToPage('')
+		} else {
+			$errorStatus = null
+		}
+		return data
 	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
 	<h4 class="mt-6 text-xl font-bold text-primary">Registration for Exhibitor</h4>
-
-	<div class="relative mt-6 w-full">
-		<input
-			id="firstName"
-			name="firstName"
-			type="text"
-			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
-			placeholder="Your first name"
-		/>
-		<label
-			for="firstName"
-			class="absolute left-2 -top-5 text-sm text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-sm peer-focus:text-gray-600"
-			>First Name</label
-		>
-	</div>
-
-	<div class="relative mt-6 w-full">
-		<input
-			id="lastName"
-			name="lastName"
-			type="text"
-			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
-			placeholder="Your first name"
-		/>
-		<label
-			for="lastName"
-			class="absolute left-2 -top-5 text-sm text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-sm peer-focus:text-gray-600"
-			>Surname</label
-		>
-	</div>
-
-	<div class="relative mt-6 w-full">
-		<input
-			id="phone"
-			name="phone"
-			type="text"
-			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
-			placeholder="someone@gmail.com"
-		/>
-		<label
-			for="phone"
-			class="absolute left-2 -top-5 text-sm text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-sm peer-focus:text-gray-600"
-			>Phone</label
-		>
-	</div>
-
-	<div class="relative mt-6 w-full">
-		<input
-			id="email"
-			name="email"
-			type="text"
-			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
-			placeholder="someone@gmail.com"
-		/>
-		<label
-			for="email"
-			class="absolute left-2 -top-5 text-sm text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-sm peer-focus:text-gray-600"
-			>Email address</label
-		>
-	</div>
-
-	<div class="relative mt-6 w-full">
-		<input
-			id="postcode"
-			name="postcode"
-			type="text"
-			class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
-			placeholder="someone@gmail.com"
-		/>
-		<label
-			for="postcode"
-			class="absolute left-2 -top-5 text-sm text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-sm peer-focus:text-gray-600"
-			>Postcode</label
-		>
-	</div>
-
-	<button
-		type="button"
-		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Add Entries</button
-	>
+	{#if $currentUserEmail}
+		{#await fetchData()}
+			<!-- spinner/loader -->
+			<div
+				style="border-top-color:transparent"
+				class="w-16 h-16 m-6 border-8 border-accent border-solid rounded-full animate-spin"
+			/>
+		{:then body}
+			<pre>{JSON.stringify(body, null, 2)}</pre>
+			<!-- display the curent use details -->
+			<div class="p-2">
+				<p class="text-lg mt-4">
+					{body.data.firstName}
+					{body.data.lastName} ({body.data.email})
+				</p>
+				<p class="text-lg">{body.data.phone} - {body.data.postcode}</p>
+			</div>
+		{:catch error}
+			<p>An error occurred!</p>
+			<pre> {error}</pre>
+		{/await}
+		<!-- TODO - add a button to delete the entry -->
+		<!-- TODO - get entries and display as a list -->
+	{:else}
+		<FormRegister />
+	{/if}
 </section>
-
-<!-- form: {
-  firstName: null,
-  lastName: null,
-  phone: null,
-  email: null,
-  postcode: null,
-}, -->
-{#if $currentUserEmail}
-	{#await fetchData()}
-		<p>...Loading</p>
-	{:then data}
-		<pre>{JSON.stringify(data, null, 2)}</pre>
-	{:catch error}
-		<p>An error occurred!</p>
-		<pre> {error}</pre>
-	{/await}
-{/if}

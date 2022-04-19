@@ -1,13 +1,9 @@
 <script>
-	import { goto } from '$app/navigation';
-	import { currentUserEmail } from '../lib/stores.js';
+	import { goto } from '$app/navigation'
+	import { currentUserEmail, errorStatus, errorMessage } from '../lib/stores.js'
 
 	function routeToPage(route, replaceState) {
-		goto(`/${route}`, { replaceState });
-	}
-
-	function handleClickAddEntries() {
-		routeToPage('register');
+		goto(`/${route}`, { replaceState })
 	}
 </script>
 
@@ -52,12 +48,14 @@
 		>
 	</div>
 
+	{#if $errorStatus === 'register'}
+		<p class="m-2 text-red-500">{$errorMessage}</p>
+	{/if}
 	<button
 		type="button"
-		on:click={() => handleClickAddEntries()}
-		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+		disabled={!$currentUserEmail}
+		on:click={() => routeToPage('register')}
+		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase  text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg disabled:opacity-25"
 		>Add Entries</button
 	>
 </section>
-
-<pre>{$currentUserEmail}</pre>

@@ -1,3 +1,6 @@
-import { writable } from 'svelte/store';
+import { writable } from 'svelte/store'
 
-export const currentUserEmail = writable(null);
+export const currentUserEmail = writable(null)
+
+export const errorStatus = writable('')
+export const errorMessage = writable('')
