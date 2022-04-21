@@ -1,9 +1,33 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, errorStatus, errorMessage } from '../lib/stores.js'
+	import { currentUserEmail, errorStatus, errorMessage, currentEntry } from '../lib/stores.js'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })
+	}
+
+	let fetchingData = false
+
+	async function getEntry() {
+		fetchingData = true
+		$errorStatus = null
+		const response = await fetch('/api?requestType=getentry', {
+			method: 'POST',
+			body: JSON.stringify({
+				email: $currentUserEmail
+			})
+		})
+		const data = await response.json()
+		fetchingData = false
+		if (data.result === 'error') {
+			$errorStatus = 'register'
+			$errorMessage = data.error
+		} else {
+			$errorStatus = null
+			$currentEntry = data.data
+			routeToPage('entry')
+		}
+		return data
 	}
 </script>
 
@@ -54,8 +78,15 @@
 	<button
 		type="button"
 		disabled={!$currentUserEmail}
-		on:click={() => routeToPage('register')}
+		on:click={() => getEntry()}
 		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase  text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg disabled:opacity-25"
 		>Add Entries</button
 	>
+
+	{#if fetchingData}
+		<div
+			style="border-top-color:transparent"
+			class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
+		/>
+	{/if}
 </section>
