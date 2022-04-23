@@ -16,7 +16,6 @@
 	// confirmation
 
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, errorStatus, errorMessage } from '../lib/stores.js'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })

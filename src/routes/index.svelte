@@ -1,16 +1,17 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, errorStatus, errorMessage, currentEntry } from '../lib/stores.js'
+	import { currentUserEmail, currentRegistration } from '../lib/stores.js'
+	import { entryStore } from '../lib/entryStore.js'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })
 	}
 
 	let fetchingData = false
+	let errorMessage = ''
 
 	async function getEntry() {
 		fetchingData = true
-		$errorStatus = null
 		const response = await fetch('/api?requestType=getentry', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -20,11 +21,11 @@
 		const data = await response.json()
 		fetchingData = false
 		if (data.result === 'error') {
-			$errorStatus = 'register'
-			$errorMessage = data.error
+			errorMessage = data.error
 		} else {
-			$errorStatus = null
-			$currentEntry = data.data
+			console.log(data)
+			currentRegistration.set(data.data.registration)
+			entryStore.set(data.data.entries)
 			routeToPage('entry')
 		}
 		return data
@@ -72,8 +73,8 @@
 		>
 	</div>
 
-	{#if $errorStatus === 'register'}
-		<p class="m-2 text-red-500">{$errorMessage}</p>
+	{#if errorMessage}
+		<p class="m-2 text-red-500">{errorMessage}</p>
 	{/if}
 	<button
 		type="button"

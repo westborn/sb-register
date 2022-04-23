@@ -21,13 +21,13 @@
 		<legend class="text-gray-600">Entry Category</legend>
 		<div class="mt-1">
 			<label class="inline-flex items-center">
-				<input class="form-radio" type="radio" checked name="radio-direct" value="Outdoor" />
+				<input class="form-radio" type="radio" checked name="inOrOut" value="Outdoor" />
 				<span class="ml-2">Outdoor</span>
 			</label>
 		</div>
 		<div>
 			<label class="inline-flex items-center">
-				<input class="form-radio" type="radio" name="radio-direct" value="Indoor" />
+				<input class="form-radio" type="radio" name="inOrOut" value="Indoor" />
 				<span class="ml-2">Indoor</span>
 			</label>
 		</div>
@@ -56,10 +56,4 @@
 	<div class="relative mt-8 w-full">
 		<InputText inputFieldID="originalFileName" placeholder="File to Upload (TODO)" />
 	</div>
-
-	<button
-		type="button"
-		class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Add Entry</button
-	>
 </div>
