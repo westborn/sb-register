@@ -12,23 +12,24 @@
 
 	async function getEntry() {
 		fetchingData = true
-		const response = await fetch('/api?requestType=getentry', {
+		errorMessage = ''
+		const res = await fetch('/api?requestType=getentry', {
 			method: 'POST',
 			body: JSON.stringify({
 				email: $currentUserEmail
 			})
 		})
-		const data = await response.json()
+		const response = await res.json()
 		fetchingData = false
-		if (data.result === 'error') {
-			errorMessage = data.error
+		console.log(response)
+		if (response.result === 'error') {
+			errorMessage = response.data
 		} else {
-			console.log(data)
-			currentRegistration.set(data.data.registration)
-			entryStore.set(data.data.entries)
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
 			routeToPage('entry')
 		}
-		return data
+		return response
 	}
 </script>
 

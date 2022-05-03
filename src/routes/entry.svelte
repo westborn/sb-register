@@ -18,27 +18,30 @@
 	entryStore.subscribe((value) => {
 		entries = value
 	})
+	let isEdit = false
 
-	//get all the functions and data from felte
+	//get all the functions and data from felte form
 	const {
 		form,
 		data: formData,
 		reset: formReset,
 		setFields
 	} = createForm({
-		onSubmit: (values) => {
-			console.log(values)
-		},
-		onSuccess(response, context) {
-			// Do something with the returned value from `onSubmit`.
-			console.log('Success')
-			console.log(response)
-			console.log(context)
-		},
-		onError(err, context) {
-			// Do something with the error thrown from `onSubmit`.
-			console.log('Error')
+		onSubmit: (values, context) => {
+			console.log(`submit - id:${values.id} - isEdit: ${isEdit}`)
+			// console.log(JSON.stringify(values, null, 2))
+			// console.log(JSON.stringify(context, null, 2))
 		}
+		// onSuccess(response, context) {
+		// 	// Do something with the returned value from `onSubmit`.
+		// 	console.log('Success')
+		// 	console.log(JSON.stringify(response, null, 2))
+		// 	console.log(JSON.stringify(context, null, 2))
+		// },
+		// onError(err, context) {
+		// 	// Do something with the error thrown from `onSubmit`.
+		// 	console.log('Error')
+		// }
 	})
 
 	let addEntry = (entry) => {
@@ -49,13 +52,13 @@
 	let deleteEntry = (id) => {
 		entryStore.deleteEntry(id)
 	}
-	let isEdit = false
 
 	let editEntry = (entry) => {
 		console.log('edit', entry)
 		isEdit = true
 		formReset()
 		setFields({
+			id: entry.id,
 			title: entry.title,
 			price: entry.price,
 			inOrOut: entry.inOrOut,
@@ -97,7 +100,10 @@
 <section class="container mx-auto max-w-prose px-3">
 	<h4 class="mt-6 text-xl font-bold text-primary">Manage Entries</h4>
 	<p class="mt-4 text-base">
-		<strong> - {$currentUserEmail} - </strong>
+		Entry for <strong>
+			{$currentRegistration.firstName}
+			{$currentRegistration.lastName}
+		</strong>
 		<button
 			type="button"
 			disabled={!$currentUserEmail}
@@ -114,6 +120,8 @@
 	</div>
 
 	<form use:form>
+		<input type="hidden" id="id" name="id" />
+
 		<FormEntry />
 
 		{#if isEdit === false}
@@ -158,5 +166,5 @@
 		>
 	{/each}
 </section>
-<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
+<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
 <pre>{JSON.stringify($entryStore, null, 2)}</pre>
