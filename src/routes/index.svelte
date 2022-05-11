@@ -1,7 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration } from '../lib/stores.js'
-	import { entryStore } from '../lib/entryStore.js'
+	import { currentUserEmail, currentRegistration, entryStore } from '../lib/stores.js'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })

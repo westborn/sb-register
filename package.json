@@ -23,6 +23,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"felte": "^1.1.7"
+		"felte": "^1.1.7",
+		"uuid": "^8.3.2"
 	}
 }
