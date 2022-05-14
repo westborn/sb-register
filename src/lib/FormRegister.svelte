@@ -75,10 +75,4 @@
 			placeholder="I confirm all this information is correct!"
 		/>
 	</div>
-
-	<button
-		type="button"
-		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Add Entries</button
-	>
 </div>
