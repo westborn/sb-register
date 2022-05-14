@@ -8,6 +8,21 @@
 	// specialRequirements
 	// originalFileName
 	// imageURL
+
+	// const entryReset = {
+	// 	id: uuidv4(),
+	// 	email: $currentUserEmail,
+	// 	title: '',
+	// 	price: '',
+	// 	inOrOut: 'Outdoor',
+	// 	material: '',
+	// 	dimensions: '',
+	// 	description: '',
+	// 	specialRequirements: '',
+	// 	originalFileName: '',
+	// 	imageURL: ''
+	// }
+
 	import { createForm } from 'felte'
 	import { v4 as uuidv4 } from 'uuid'
 	import { goto } from '$app/navigation'
@@ -20,7 +35,7 @@
 	}
 
 	let entries
-	let isEdit = false
+	let requestType = 'createEntry'
 
 	let fetchingData = false
 	let errorMessage = ''
@@ -37,23 +52,13 @@
 		setFields
 	} = createForm({
 		onSubmit: (values, context) => {
-			console.log(`submit - id:${values.id} - isEdit: ${isEdit}`)
+			console.log(`submit - id:${values.id} - requestType: ${requestType}`)
 			// console.log(JSON.stringify(values, null, 2))
 			// console.log(JSON.stringify(context, null, 2))
 		}
-		// onSuccess(response, context) {
-		// 	// Do something with the returned value from `onSubmit`.
-		// 	console.log('Success')
-		// 	console.log(JSON.stringify(response, null, 2))
-		// 	console.log(JSON.stringify(context, null, 2))
-		// },
-		// onError(err, context) {
-		// 	// Do something with the error thrown from `onSubmit`.
-		// 	console.log('Error')
-		// }
 	})
 
-	let sendToServer = async (requestType, data) => {
+	let sendToServer = async (data) => {
 		fetchingData = true
 		errorMessage = ''
 		console.log('sending ', requestType)
@@ -73,8 +78,9 @@
 	}
 
 	let addEntry = async (entry) => {
+		requestType = 'createEntry'
 		const newEntry = { ...entry, id: uuidv4(), email: $currentUserEmail }
-		const response = await sendToServer('addentry', newEntry)
+		const response = await sendToServer(newEntry)
 		if (response.result === 'error') {
 			errorMessage = response.data
 		} else {
@@ -84,21 +90,24 @@
 	}
 
 	let deleteEntry = async (id) => {
-		const response = await sendToServer('delentry', { id: id })
+		requestType = 'deleteEntry'
+		const response = await sendToServer({ id })
 		if (response.result === 'error') {
 			errorMessage = response.data
 		} else {
 			entryStore.deleteEntry(id)
 			formReset()
 		}
+		requestType = 'createEntry'
 	}
 
 	let editEntry = (entry) => {
+		requestType = 'editEntry'
 		console.log('edit', entry)
-		isEdit = true
 		formReset()
 		setFields({
 			id: entry.id,
+			email: $currentUserEmail,
 			title: entry.title,
 			price: entry.price,
 			inOrOut: entry.inOrOut,
@@ -112,26 +121,30 @@
 		console.log('data')
 	}
 
-	let updateEntry = (entry) => {
-		isEdit = !isEdit
-		console.log('update', entry)
-		entryStore.modifyEntry(entry)
-		//todo send to backend
+	let modifyEntry = async (entry) => {
+		requestType = 'modifyEntry'
+		const response = await sendToServer(entry)
+		if (response.result === 'error') {
+			errorMessage = response.data
+		} else {
+			entryStore.modifyEntry(entry)
+			formReset()
+			requestType = 'createEntry'
+		}
+	}
+
+	let resetEntry = () => {
+		requestType = 'createEntry'
 		formReset()
 	}
 
-	const entryReset = {
-		id: uuidv4(),
-		email: $currentUserEmail,
-		title: '',
-		price: '',
-		inOrOut: 'Outdoor',
-		material: '',
-		dimensions: '',
-		description: '',
-		specialRequirements: '',
-		originalFileName: '',
-		imageURL: ''
+	function handleEdit(event) {
+		const entryToEdit = $entryStore.find((item) => item.id === event.detail)
+		editEntry(entryToEdit)
+	}
+
+	function handleDelete(event) {
+		deleteEntry(event.detail)
 	}
 </script>
 
@@ -141,7 +154,7 @@
 	{:else}
 		<h4 class="mt-6 text-xl font-bold text-primary">Manage Entries</h4>
 		<p class="mt-4 text-base">
-			Entry for <strong>
+			Entries for <strong>
 				{$currentRegistration.firstName}
 				{$currentRegistration.lastName}
 			</strong>
@@ -149,8 +162,8 @@
 				type="button"
 				disabled={!$currentUserEmail}
 				on:click={() => goto('/register')}
-				class="inline-block rounded bg-accent-200 px-3 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
-				>Change?</button
+				class="inline-block ml-6 rounded bg-accent-200 px-3 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
+				>Change Registration?</button
 			>
 		</p>
 
@@ -165,7 +178,7 @@
 
 			<FormEntry />
 
-			{#if isEdit === false}
+			{#if requestType === 'createEntry'}
 				{#if errorMessage}
 					<p class="mt-6 text-red-500">{errorMessage}</p>
 				{/if}
@@ -182,15 +195,20 @@
 						class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
 					/>
 				{/if}
-			{:else}
+			{:else if requestType === 'editEntry'}
 				<button
-					on:click={() => updateEntry($formData)}
+					on:click={() => modifyEntry($formData)}
 					type="submit"
 					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Edit Entry</button
 				>
+				<button
+					on:click={() => resetEntry()}
+					type="submit"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					>Cancel</button
+				>
 			{/if}
-			<pre>{JSON.stringify($formData, null, 2)}</pre>
 		</form>
 
 		<div class="mt-12 flex items-center">
@@ -199,28 +217,10 @@
 			<div class="flex-grow border-t border-gray-400" />
 		</div>
 
-		<!-- <Accordion /> -->
-		<!-- {#if $entryStore != undefined} -->
-		{#each $entryStore as entry}
-			<h5 class="mt-6 ">{entry.title}</h5>
-			<p class="">{entry.description}</p>
-			<p class="">{entry.material}</p>
-			<p class="">{entry.price}</p>
-			<p class="">{entry.specialRequirements}</p>
-			<!-- <img alt="Image of Work" src={entry.imageURL} width="200" /> -->
-			<p class="">{entry.id}</p>
-			<button
-				on:click={() => editEntry(entry)}
-				class="inline-block rounded bg-accent-200 px-3 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
-				>Edit</button
-			>
-			<button
-				on:click={() => deleteEntry(entry.id)}
-				class="inline-block rounded bg-red-600 px-3 text-sm text-white shadow-md transition duration-150 ease-in-out hover:bg-red-300 hover:shadow-lg focus:bg-red-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-100 active:shadow-lg disabled:opacity-25"
-				>Delete</button
-			>
-		{/each}
+		{#if requestType === 'createEntry'}
+			<Accordion sections={$entryStore} on:edit={handleEdit} on:delete={handleDelete} />
+		{/if}
 	{/if}
 </section>
-<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
-<pre>{JSON.stringify($entryStore, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
+<!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

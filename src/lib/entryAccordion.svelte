@@ -1,133 +1,65 @@
-<div class="accordion" id="accordionExample">
-	<div class="accordion-item border border-gray-200 bg-white">
-		<h2 class="accordion-header mb-0" id="headingOne">
-			<button
-				class="
-        accordion-button
-        relative
-        flex
-        w-full
-        items-center
-        rounded-none
-        border-0
-        bg-white py-4 px-5
-        text-left
-        text-base
-        text-gray-800
-        transition
-        focus:outline-none
-      "
-				type="button"
-				data-bs-toggle="collapse"
-				data-bs-target="#collapseOne"
-				aria-expanded="true"
-				aria-controls="collapseOne"
-			>
-				Accordion Item #1
+<script>
+	import { createEventDispatcher } from 'svelte'
+	const dispatch = createEventDispatcher()
+
+	import { slide } from 'svelte/transition'
+
+	export let sections
+
+	// don't mutate state when we add properties for display management
+	// so take a deep copy of what was passed in
+	let disp = JSON.parse(JSON.stringify(sections))
+
+	const expand = (section) => {
+		disp = disp.map((s) => {
+			if (s.id === section.id) {
+				s.active ? (s.active = false) : (s.active = true)
+			}
+			return s
+		})
+	}
+</script>
+
+<div class=" rounded-lg border bg-gray-50">
+	{#each disp as section}
+		<div class="m-2 bg-gray-100 p-2 text-gray-800">
+			<button class="text-lg hover:bg-blue-100" on:click={() => expand(section)}>
+				<span>
+					{#if section.active}
+						<span class="text-primary-400">&#9660;</span>
+					{:else}
+						<span class="text-primary-400">&#9650;</span>
+					{/if}
+				</span>
+
+				{section.title}
+				<span class="text-xs">
+					({section.inOrOut})
+				</span>
 			</button>
-		</h2>
-		<div
-			id="collapseOne"
-			class="accordion-collapse collapse show"
-			aria-labelledby="headingOne"
-			data-bs-parent="#accordionExample"
-		>
-			<div class="accordion-body py-4 px-5">
-				<strong>This is the first item's accordion body.</strong> It is shown by default, until the
-				collapse plugin adds the appropriate classes that we use to style each element. These
-				classes control the overall appearance, as well as the showing and hiding via CSS
-				transitions. You can modify any of this with custom CSS or overriding our default variables.
-				It's also worth noting that just about any HTML can go within the
-				<code>.accordion-body</code>, though the transition does limit overflow.
-			</div>
+			{#if section.active}
+				<div class="mb-2 bg-slate-50 px-5 text-sm" transition:slide>
+					<p>{section.description}</p>
+					<p>{section.inOrOut} - {section.price}</p>
+					<p>({section.dimensions}) {section.material}</p>
+					<p>{section?.specialRequirements}</p>
+					<p>{section?.originalFileName}</p>
+					<p>{section?.imageURL}</p>
+				</div>
+				<div class="flex justify-between px-8">
+					<button
+						on:click={() => dispatch('edit', section.id)}
+						class="rounded bg-accent-200 px-7 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
+						>Edit</button
+					>
+
+					<button
+						on:click={() => dispatch('delete', section.id)}
+						class="rounded bg-red-600 px-7 text-sm text-white shadow-md transition duration-150 ease-in-out hover:bg-red-300 hover:shadow-lg focus:bg-red-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-100 active:shadow-lg disabled:opacity-25"
+						>Delete</button
+					>
+				</div>
+			{/if}
 		</div>
-	</div>
-	<div class="accordion-item border border-gray-200 bg-white">
-		<h2 class="accordion-header mb-0" id="headingTwo">
-			<button
-				class="
-        accordion-button
-        collapsed
-        relative
-        flex
-        w-full
-        items-center
-        rounded-none
-        border-0
-        bg-white py-4 px-5
-        text-left
-        text-base
-        text-gray-800
-        transition
-        focus:outline-none
-      "
-				type="button"
-				data-bs-toggle="collapse"
-				data-bs-target="#collapseTwo"
-				aria-expanded="false"
-				aria-controls="collapseTwo"
-			>
-				Accordion Item #2
-			</button>
-		</h2>
-		<div
-			id="collapseTwo"
-			class="accordion-collapse collapse"
-			aria-labelledby="headingTwo"
-			data-bs-parent="#accordionExample"
-		>
-			<div class="accordion-body py-4 px-5">
-				<strong>This is the second item's accordion body.</strong> It is hidden by default, until
-				the collapse plugin adds the appropriate classes that we use to style each element. These
-				classes control the overall appearance, as well as the showing and hiding via CSS
-				transitions. You can modify any of this with custom CSS or overriding our default variables.
-				It's also worth noting that just about any HTML can go within the
-				<code>.accordion-body</code>, though the transition does limit overflow.
-			</div>
-		</div>
-	</div>
-	<div class="accordion-item border border-gray-200 bg-white">
-		<h2 class="accordion-header mb-0" id="headingThree">
-			<button
-				class="
-        accordion-button
-        collapsed
-        relative
-        flex
-        w-full
-        items-center
-        rounded-none
-        border-0
-        bg-white py-4 px-5
-        text-left
-        text-base
-        text-gray-800
-        transition
-        focus:outline-none
-      "
-				type="button"
-				data-bs-toggle="collapse"
-				data-bs-target="#collapseThree"
-				aria-expanded="false"
-				aria-controls="collapseThree"
-			>
-				Accordion Item #3
-			</button>
-		</h2>
-		<div
-			id="collapseThree"
-			class="accordion-collapse collapse"
-			aria-labelledby="headingThree"
-			data-bs-parent="#accordionExample"
-		>
-			<div class="accordion-body py-4 px-5">
-				<strong>This is the third item's accordion body.</strong> It is hidden by default, until the
-				collapse plugin adds the appropriate classes that we use to style each element. These
-				classes control the overall appearance, as well as the showing and hiding via CSS
-				transitions. You can modify any of this with custom CSS or overriding our default variables.
-				It's also worth noting that just about any HTML can go within the
-				<code>.accordion-body</code>, though the transition does limit overflow.
-			</div>
-		</div>
-	</div>
+	{/each}
 </div>

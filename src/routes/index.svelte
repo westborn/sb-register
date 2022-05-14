@@ -12,7 +12,7 @@
 	async function getEntry() {
 		fetchingData = true
 		errorMessage = ''
-		const res = await fetch('/api?requestType=getentry', {
+		const res = await fetch('/api?requestType=getEntry', {
 			method: 'POST',
 			body: JSON.stringify({
 				email: $currentUserEmail
@@ -53,8 +53,8 @@
 		your Registration.
 	</p>
 	<p>
-		If the email address below is correct you can proceed to add one or more entries that you'd like
-		to submit by using the "Add Entries" button.
+		If the email address below is registered you can proceed to add one or more entries that you'd
+		like to submit by using the "Add Entries" button.
 	</p>
 
 	<div class="relative mt-6 w-full">
