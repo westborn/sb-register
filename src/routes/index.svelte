@@ -14,7 +14,7 @@
 		routeToPage('register')
 	}
 
-	async function getEntry() {
+	async function getEntry(pageToRouteTo) {
 		fetchingData = true
 		errorMessage = ''
 		const res = await fetch('/api?requestType=getEntry', {
@@ -31,7 +31,7 @@
 		} else {
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
-			routeToPage('entry')
+			routeToPage(pageToRouteTo)
 		}
 		return response
 	}
@@ -84,9 +84,17 @@
 	<button
 		type="button"
 		disabled={!$currentUserEmail}
-		on:click={() => getEntry()}
+		on:click={() => getEntry('entry')}
 		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase  text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg disabled:opacity-25"
 		>Add Entries</button
+	>
+
+	<button
+		type="button"
+		disabled={!$currentUserEmail}
+		on:click={() => getEntry('view')}
+		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase  text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg disabled:opacity-25"
+		>Show My Registration</button
 	>
 
 	{#if fetchingData}

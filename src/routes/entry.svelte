@@ -218,9 +218,14 @@
 		</div>
 
 		{#if requestType === 'createEntry'}
-			<Accordion sections={$entryStore} on:edit={handleEdit} on:delete={handleDelete} />
+			<Accordion
+				sections={$entryStore}
+				showButtons={true}
+				on:edit={handleEdit}
+				on:delete={handleDelete}
+			/>
 		{/if}
 	{/if}
 </section>
-<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
+<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
 <!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

@@ -5,6 +5,7 @@
 	import { slide } from 'svelte/transition'
 
 	export let sections
+	export let showButtons = false
 
 	// don't mutate state when we add properties for display management
 	// so take a deep copy of what was passed in
@@ -23,7 +24,7 @@
 <div class=" rounded-lg border bg-gray-50">
 	{#each disp as section}
 		<div class="m-2 bg-gray-100 p-2 text-gray-800">
-			<button class="text-lg hover:bg-blue-100" on:click={() => expand(section)}>
+			<button class="w-full text-left text-lg hover:bg-blue-100" on:click={() => expand(section)}>
 				<span>
 					{#if section.active}
 						<span class="text-primary-400">&#9660;</span>
@@ -46,19 +47,21 @@
 					<p>{section?.originalFileName}</p>
 					<p>{section?.imageURL}</p>
 				</div>
-				<div class="flex justify-between px-8">
-					<button
-						on:click={() => dispatch('edit', section.id)}
-						class="rounded bg-accent-200 px-7 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
-						>Edit</button
-					>
+				{#if showButtons}
+					<div class="flex justify-between px-8">
+						<button
+							on:click={() => dispatch('edit', section.id)}
+							class="rounded bg-accent-200 px-7 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
+							>Edit</button
+						>
 
-					<button
-						on:click={() => dispatch('delete', section.id)}
-						class="rounded bg-red-600 px-7 text-sm text-white shadow-md transition duration-150 ease-in-out hover:bg-red-300 hover:shadow-lg focus:bg-red-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-100 active:shadow-lg disabled:opacity-25"
-						>Delete</button
-					>
-				</div>
+						<button
+							on:click={() => dispatch('delete', section.id)}
+							class="rounded bg-red-600 px-7 text-sm text-white shadow-md transition duration-150 ease-in-out hover:bg-red-300 hover:shadow-lg focus:bg-red-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-100 active:shadow-lg disabled:opacity-25"
+							>Delete</button
+						>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	{/each}
