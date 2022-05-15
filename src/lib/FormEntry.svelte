@@ -46,7 +46,18 @@
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="description" placeholder="Description for the catalogue (25 words)" />
+		<textarea
+			id="description"
+			name="description"
+			rows="3"
+			class="peer w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
+			placeholder="Description for the catalogue (25 words)"
+		/>
+		<label
+			for="description"
+			class="absolute left-2 -top-4 text-xs text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-gray-600"
+			>Description for the catalogue (25 words)</label
+		>
 	</div>
 
 	<div class="relative mt-8 w-full">

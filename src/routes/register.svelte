@@ -4,8 +4,8 @@
 	// email
 	// phone
 	// postcode
-	// installation
-	// deinstallation
+	// bumpIn
+	// bumpOut
 	// crane
 	// displayRequirements
 	// bankAccountName
@@ -30,8 +30,8 @@
 				email: $currentRegistration.email,
 				phone: $currentRegistration.phone,
 				postcode: $currentRegistration.postcode,
-				installation: $currentRegistration.installation,
-				deinstallation: $currentRegistration.deinstallation,
+				bumpIn: $currentRegistration.bumpIn,
+				bumpOut: $currentRegistration.bumpOut,
 				crane: $currentRegistration.crane,
 				displayRequirements: $currentRegistration.displayRequirements,
 				bankAccountName: $currentRegistration.bankAccountName,
@@ -42,7 +42,7 @@
 				confirmation: $currentRegistration.confirmation
 			})
 			console.log('editing')
-			requestType = 'editRegistration'
+			requestType = 'modifyRegistration'
 		} else {
 			requestType = 'createRegistration'
 		}
@@ -90,7 +90,7 @@
 		return resMessage
 	}
 
-	let validRegistration = (data) => {
+	let registrationIsValid = (data) => {
 		if (
 			data.email === '' ||
 			data.firstName === '' ||
@@ -101,13 +101,22 @@
 			data.bankAccount === '' ||
 			data.confirmation === ''
 		) {
+			errorMessage = 'Please fill in all fields'
 			return false
 		}
+
+		if (requestType === 'modifyRegistration') {
+			if (data.email != $currentRegistration.email) {
+				errorMessage = "Sorry, you can't change the email for a registration"
+				return false
+			}
+		}
+		errorMessage = ''
 		return true
 	}
 
 	let addRegistration = async (data) => {
-		if (!validRegistration(data)) {
+		if (!registrationIsValid(data)) {
 			errorMessage = 'Please fill in all fields'
 		} else {
 			requestType = 'createRegistration'
@@ -120,25 +129,23 @@
 				errorMessage = response.data
 			} else {
 				$currentRegistration = newRegistration
-				formReset()
+				$currentUserEmail = newRegistration.email
+				routeToPage('entry')
 			}
 		}
 	}
 
 	let modifyRegistration = async (data) => {
-		if (!validRegistration(data)) {
-			errorMessage = 'Please fill in all fields'
-		} else {
+		if (registrationIsValid(data)) {
 			fetchingData = true
 			errorMessage = ''
-			requestType = 'editRegistration'
+			requestType = 'modifyRegistration'
 			const response = await sendToServer(data)
 			fetchingData = false
 			if (response.result === 'error') {
 				errorMessage = response.data
 			} else {
-				$currentRegistration = data
-				formReset()
+				resetRegistration()
 			}
 		}
 	}
@@ -174,7 +181,6 @@
 			>Register</button
 		>
 	{:else}
-		<p>Editing</p>
 		<button
 			on:click={() => modifyRegistration($formData)}
 			disabled={fetchingData}
@@ -197,4 +203,4 @@
 		/>
 	{/if}
 </section>
-<pre>{$currentUserEmail}-{fetchingData}</pre>
+<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
