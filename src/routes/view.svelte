@@ -22,7 +22,7 @@
 			Registration for <strong
 				>{$currentRegistration.firstName} {$currentRegistration.lastName}</strong
 			>
-			<div class="mt-6 grid">
+			<div class="mt-6 grid grid-cols-[13ch_1fr] items-center">
 				<TextList item="Email" itemValue={$currentRegistration.email} />
 				<TextList item="Phone" itemValue={$currentRegistration.phone} />
 				<TextList item="Postcode" itemValue={$currentRegistration.postcode} />

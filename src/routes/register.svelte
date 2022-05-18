@@ -20,6 +20,7 @@
 	import { v4 as uuidv4 } from 'uuid'
 	import { goto } from '$app/navigation'
 	import { currentUserEmail, currentRegistration } from '../lib/stores.js'
+	import FormRegister from '../lib/FormRegister.svelte'
 
 	onMount(() => {
 		if ($currentUserEmail != null) {
@@ -155,8 +156,6 @@
 		$currentUserEmail = null
 		routeToPage('')
 	}
-
-	import FormRegister from '../lib/FormRegister.svelte'
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
