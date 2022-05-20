@@ -20,11 +20,11 @@
 
 <div>
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="firstName" placeholder="Your First Name" />
+		<InputText inputFieldID="firstName" placeholder="Your First Name" requiredField />
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="lastName" placeholder="Surname" />
+		<InputText inputFieldID="lastName" placeholder="Surname" requiredField />
 	</div>
 
 	<div class="relative mt-8 w-full">
@@ -32,7 +32,7 @@
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="email" placeholder="Email Address" />
+		<InputText inputFieldID="email" placeholder="Email Address" requiredField />
 	</div>
 
 	<div class="relative mt-8 w-full">
@@ -115,13 +115,21 @@
 		/>
 	</div>
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="bankAccountName" placeholder="Name on your Bank Account" />
+		<InputText
+			inputFieldID="bankAccountName"
+			placeholder="Name on your Bank Account"
+			requiredField
+		/>
 	</div>
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="bankBSB" placeholder="BSB of your Bank Account" />
+		<InputText inputFieldID="bankBSB" placeholder="BSB of your Bank Account" requiredField />
 	</div>
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="bankAccount" placeholder="Account number of your Bank Account" />
+		<InputText
+			inputFieldID="bankAccount"
+			placeholder="Account number of your Bank Account"
+			requiredField
+		/>
 	</div>
 
 	<div class="relative mt-8 w-full px-2">

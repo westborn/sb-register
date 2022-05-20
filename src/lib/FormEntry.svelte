@@ -14,7 +14,7 @@
 
 <div>
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="title" placeholder="Title for this entry" />
+		<InputText inputFieldID="title" placeholder="Title for this entry" requiredField />
 	</div>
 
 	<div class="relative mt-8 w-full px-2">
@@ -34,7 +34,7 @@
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="price" placeholder="Price" />
+		<InputText inputFieldID="price" placeholder="Price" requiredField />
 	</div>
 
 	<div class="relative mt-8 w-full">
