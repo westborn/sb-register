@@ -26,9 +26,9 @@
 	import { createForm } from 'felte'
 	import { v4 as uuidv4 } from 'uuid'
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration, entryStore } from '../lib/stores.js'
-	import FormEntry from '../lib/FormEntry.svelte'
-	import Accordion from '../lib/entryAccordion.svelte'
+	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import FormEntry from '$lib/FormEntry.svelte'
+	import Accordion from '$lib/EntryAccordion.svelte'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })
@@ -36,6 +36,7 @@
 
 	let entries
 	let requestType = 'createEntry'
+	let showButtons = true
 
 	let fetchingData = false
 	let errorMessage = ''
@@ -77,25 +78,40 @@
 		return resMessage
 	}
 
+	let entryIsValid = (data) => {
+		if (data.title === '' || data.price === '' || data.description === '') {
+			errorMessage = 'Please fill in required fields'
+			return false
+		}
+		errorMessage = ''
+		return true
+	}
+
 	let addEntry = async (entry) => {
+		if (!entryIsValid(entry)) {
+			return
+		}
 		requestType = 'createEntry'
 		const newEntry = { ...entry, id: uuidv4(), email: $currentUserEmail }
 		const response = await sendToServer(newEntry)
 		if (response.result === 'error') {
 			errorMessage = response.data
 		} else {
-			entryStore.createEntry(newEntry)
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
+			showButtons = true
 			formReset()
 		}
 	}
 
 	let deleteEntry = async (id) => {
 		requestType = 'deleteEntry'
-		const response = await sendToServer({ id })
+		const response = await sendToServer({ id, email: $currentUserEmail })
 		if (response.result === 'error') {
 			errorMessage = response.data
 		} else {
-			entryStore.deleteEntry(id)
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
 			formReset()
 		}
 		requestType = 'createEntry'
@@ -122,6 +138,9 @@
 	}
 
 	let modifyEntry = async (entry) => {
+		if (!entryIsValid(entry)) {
+			return
+		}
 		requestType = 'modifyEntry'
 		const response = await sendToServer(entry)
 		if (response.result === 'error') {
@@ -129,6 +148,8 @@
 		} else {
 			entryStore.modifyEntry(entry)
 			formReset()
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
 			requestType = 'createEntry'
 		}
 	}
@@ -152,24 +173,28 @@
 	{#if !$currentRegistration}
 		<h1 class="text-2xl font-bold">Please register before trying to add entries</h1>
 	{:else}
-		<h4 class="mt-6 text-xl font-bold text-primary">Manage Entries</h4>
-		<p class="mt-4 text-base">
-			Entries for <strong>
-				{$currentRegistration.firstName}
-				{$currentRegistration.lastName}
-			</strong>
+		<div class="flex items-center justify-between">
+			<h4 class="text-xl font-bold text-primary">
+				Entries for - {$currentRegistration.email}
+			</h4>
 			<button
 				type="button"
-				disabled={!$currentUserEmail}
-				on:click={() => goto('/register')}
-				class="inline-block ml-6 rounded bg-accent-200 px-3 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
-				>Change Registration?</button
-			>
-		</p>
+				on:click={() => routeToPage('')}
+				class="text-sm rounded-md bg-primary-300 px-5 py-1 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+				>Back
+			</button>
+		</div>
+		<div class="mt-6">
+			{#if requestType === 'createEntry'}
+				<Accordion {showButtons} on:edit={handleEdit} on:delete={handleDelete} />
+			{/if}
+		</div>
 
-		<div class="mt-8 flex items-center">
+		<div class="mt-6 -ml-10 -mr-10 flex items-center">
 			<div class="flex-grow border-t border-gray-400" />
-			<span class="mx-4 flex-shrink text-gray-600">Add a new Entry</span>
+			<span class="mx-4 flex-shrink text-gray-600"
+				>{requestType === 'createEntry' ? 'Add a new Entry' : 'Edit this Entry'}</span
+			>
 			<div class="flex-grow border-t border-gray-400" />
 		</div>
 
@@ -189,12 +214,6 @@
 					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Add an Entry</button
 				>
-				{#if fetchingData}
-					<div
-						style="border-top-color:transparent"
-						class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
-					/>
-				{/if}
 			{:else if requestType === 'editEntry'}
 				<button
 					on:click={() => modifyEntry($formData)}
@@ -202,30 +221,21 @@
 					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Edit Entry</button
 				>
-				<button
-					on:click={() => resetEntry()}
-					type="submit"
-					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-					>Cancel</button
-				>
+			{/if}
+			<button
+				on:click={() => resetEntry()}
+				type="submit"
+				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+				>Cancel</button
+			>
+			{#if fetchingData}
+				<div
+					style="border-top-color:transparent"
+					class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
+				/>
 			{/if}
 		</form>
-
-		<div class="mt-12 flex items-center">
-			<div class="flex-grow border-t border-gray-400" />
-			<span class="mx-4 flex-shrink text-gray-600">Entries already added</span>
-			<div class="flex-grow border-t border-gray-400" />
-		</div>
-
-		{#if requestType === 'createEntry'}
-			<Accordion
-				sections={$entryStore}
-				showButtons={true}
-				on:edit={handleEdit}
-				on:delete={handleDelete}
-			/>
-		{/if}
 	{/if}
 </section>
-<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
 <!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

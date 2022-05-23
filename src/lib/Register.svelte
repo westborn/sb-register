@@ -14,16 +14,29 @@
 	// transport
 	// accommodation
 	// confirmation
+	import { goto } from '$app/navigation'
+	function routeToPage(route, replaceState) {
+		goto(`/${route}`, { replaceState })
+	}
 
 	import { onMount } from 'svelte'
 	import { createForm } from 'felte'
 	import { v4 as uuidv4 } from 'uuid'
-	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration } from '../lib/stores.js'
-	import FormRegister from '../lib/FormRegister.svelte'
+	import { createEventDispatcher } from 'svelte'
+	const dispatch = createEventDispatcher()
+
+	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import FormRegister from '$lib/FormRegister.svelte'
+
+	let requestType = 'createRegistration'
+
+	let fetchingData = false
+	let errorMessage = ''
 
 	onMount(() => {
-		if ($currentUserEmail != null) {
+		if (Object.entries($currentRegistration).length == 0) {
+			requestType = 'createRegistration'
+		} else {
 			setFields({
 				id: $currentRegistration.id,
 				firstName: $currentRegistration.firstName,
@@ -42,21 +55,9 @@
 				accommodation: $currentRegistration.accommodation,
 				confirmation: $currentRegistration.confirmation
 			})
-			console.log('editing')
 			requestType = 'modifyRegistration'
-		} else {
-			requestType = 'createRegistration'
 		}
 	})
-
-	function routeToPage(route, replaceState) {
-		goto(`/${route}`, { replaceState })
-	}
-
-	let requestType = 'createRegistration'
-
-	let fetchingData = false
-	let errorMessage = ''
 
 	//get all the functions and data from felte form
 	const {
@@ -117,9 +118,7 @@
 	}
 
 	let addRegistration = async (data) => {
-		if (!registrationIsValid(data)) {
-			errorMessage = 'Please fill in all fields'
-		} else {
+		if (registrationIsValid(data)) {
 			requestType = 'createRegistration'
 			fetchingData = true
 			errorMessage = ''
@@ -129,9 +128,9 @@
 			if (response.result === 'error') {
 				errorMessage = response.data
 			} else {
-				$currentRegistration = newRegistration
-				$currentUserEmail = newRegistration.email
-				routeToPage('entry')
+				currentRegistration.set(response.data.registration)
+				entryStore.set(response.data.entries)
+				dispatch('registered')
 			}
 		}
 	}
@@ -146,20 +145,24 @@
 			if (response.result === 'error') {
 				errorMessage = response.data
 			} else {
-				resetRegistration()
+				currentRegistration.set(response.data.registration)
+				entryStore.set(response.data.entries)
+				dispatch('registered')
 			}
 		}
-	}
-
-	let resetRegistration = () => {
-		$currentRegistration = null
-		$currentUserEmail = null
-		routeToPage('')
 	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
-	<h4 class="mt-6 text-xl font-bold text-primary">Registration for Exhibitor</h4>
+	<div class="flex items-center justify-between">
+		<h4 class="text-xl font-bold text-primary">Registration for Exhibitor</h4>
+		<button
+			type="button"
+			on:click={() => routeToPage('')}
+			class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			>Back
+		</button>
+	</div>
 
 	<form use:form>
 		<input type="hidden" id="id" name="id" />
@@ -190,7 +193,7 @@
 	{/if}
 
 	<button
-		on:click={() => resetRegistration()}
+		on:click={() => dispatch('cancel')}
 		type="submit"
 		class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 		>Cancel</button
@@ -203,3 +206,4 @@
 	{/if}
 </section>
 <pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
+<pre>{requestType}</pre>

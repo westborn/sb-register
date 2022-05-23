@@ -1,7 +1,7 @@
 <script>
 	// Some ideas from this post - http://quicknuggets.com/react/reusable-stepper-with-react-and-tailwindcss/
-	export let steps = [],
-		currentActive = 1
+	export let steps = []
+	export let currentActive = 1
 	let circles, progress
 
 	export const handleProgress = (stepIncrement) => {

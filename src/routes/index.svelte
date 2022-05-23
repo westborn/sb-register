@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration, entryStore } from '../lib/stores.js'
+	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })
@@ -9,12 +9,7 @@
 	let fetchingData = false
 	let errorMessage = ''
 
-	function handleRegister() {
-		$currentUserEmail = null
-		routeToPage('register')
-	}
-
-	async function getEntry(pageToRouteTo) {
+	async function handelUserAction(userAction) {
 		fetchingData = true
 		errorMessage = ''
 		const res = await fetch('/api?requestType=getEntry', {
@@ -25,42 +20,53 @@
 		})
 		const response = await res.json()
 		fetchingData = false
-		console.log(response)
+		console.log('response', response)
 		if (response.result === 'error') {
 			errorMessage = response.data
-		} else {
+			return
+		}
+
+		console.log(userAction, response.data.registration, response.data)
+		if (userAction === 'new') {
+			if (Object.entries(response.data.registration).length != 0) {
+				errorMessage = 'An entry already exists for that email address'
+				return
+			}
+			// TODO set up multistep new registration form
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
-			routeToPage(pageToRouteTo)
+			routeToPage('registration')
+			return
+		} else if (userAction === 'view') {
+			if (Object.entries(response.data.registration).length === 0) {
+				errorMessage = 'No registration found for that email address'
+				return
+			}
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
+			routeToPage('view')
+			return
+		} else if (userAction === 'registration') {
+			if (Object.entries(response.data.registration).length === 0) {
+				errorMessage = 'No registration found for that email address'
+				return
+			}
+			// TODO existing registration
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
+			routeToPage('registration')
+			return
 		}
-		return response
+		errorMessage = 'How did you get here?'
+		return
 	}
+
+	let btnClasses =
+		'text-sm rounded-md bg-primary-300 px-5 py-1 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg'
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
-	<h4 class="text-xl font-bold text-primary">Registration Information</h4>
-	<p class="">
-		If you haven't registered yet, please select "Register" and enter the details required. This is
-		not a committment, just a pre-registration to assist us in identifying and communicating with
-		all artists who may be interested in entering this year's event.
-	</p>
-
-	<button
-		type="button"
-		on:click={() => handleRegister()}
-		class="mt-2 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Register</button
-	>
-
-	<h4 class="mt-6 text-xl font-bold text-primary">Already Registered?</h4>
-	<p class="">
-		If you have already registered please enter your email address below to retrieve the detail of
-		your Registration.
-	</p>
-	<p>
-		If the email address below is registered you can proceed to add one or more entries that you'd
-		like to submit by using the "Add Entries" button.
-	</p>
+	<h4 class="text-xl font-bold text-primary">Registration Process</h4>
 
 	<div class="relative mt-6 w-full">
 		<input
@@ -81,21 +87,19 @@
 	{#if errorMessage}
 		<p class="m-2 text-red-500">{errorMessage}</p>
 	{/if}
-	<button
-		type="button"
-		disabled={!$currentUserEmail}
-		on:click={() => getEntry('entry')}
-		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase  text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg disabled:opacity-25"
-		>Add Entries</button
-	>
+	<div class="mt-6 flex justify-between">
+		<button type="button" on:click={() => handelUserAction('new')} class={btnClasses}
+			>New Registration
+		</button>
 
-	<button
-		type="button"
-		disabled={!$currentUserEmail}
-		on:click={() => getEntry('view')}
-		class="mt-4 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase  text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg disabled:opacity-25"
-		>Show My Registration</button
-	>
+		<button type="button" on:click={() => handelUserAction('view')} class={btnClasses}
+			>View Registration
+		</button>
+
+		<button type="button" on:click={() => handelUserAction('registration')} class={btnClasses}
+			>Continue Registering</button
+		>
+	</div>
 
 	{#if fetchingData}
 		<div

@@ -56,7 +56,9 @@
 		<label
 			for="description"
 			class="absolute left-2 -top-4 text-xs text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-gray-600"
-			>Description for the catalogue (25 words)</label
+			>Description for the catalogue (25 words)<span
+				class="after:ml-0.5 after:text-sm after:text-red-500 after:content-['*'] "
+			/></label
 		>
 	</div>
 

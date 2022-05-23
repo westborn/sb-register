@@ -12,7 +12,7 @@ https://svelte.dev/repl/8eb738732cf74edd86f680c53e6ba253?version=3.44.2
   - progess bar with connected circles
   - form steps are all components (not routes)
     - move the files around
-    - what hapoens to API routs?
+    - what happens to API routes?
     - do we need to do this in sveltkit or will frontend svelte be enough
     - I think magic link requires a server?
   - array of steps required

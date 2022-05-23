@@ -3,13 +3,13 @@
 	const dispatch = createEventDispatcher()
 
 	import { slide } from 'svelte/transition'
+	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
-	export let sections
 	export let showButtons = false
 
 	// don't mutate state when we add properties for display management
 	// so take a deep copy of what was passed in
-	let disp = JSON.parse(JSON.stringify(sections))
+	let disp = JSON.parse(JSON.stringify($entryStore))
 
 	const expand = (section) => {
 		disp = disp.map((s) => {

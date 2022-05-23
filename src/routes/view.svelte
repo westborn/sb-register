@@ -1,8 +1,8 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration, entryStore } from '../lib/stores.js'
-	import Accordion from '../lib/entryAccordion.svelte'
-	import TextList from '../lib/TextList.svelte'
+	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import Accordion from '$lib/EntryAccordion.svelte'
+	import TextList from '$lib/TextList.svelte'
 
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState })
@@ -15,9 +15,23 @@
 
 <section class="container mx-auto max-w-prose px-3">
 	{#if !$currentRegistration}
-		<h1 class="text-2xl font-bold">Please register before trying to view entries</h1>
+		<h1 class="mb-6 text-xl font-bold">Please register before trying to view entries</h1>
+		<button
+			type="button"
+			on:click={() => routeToPage('')}
+			class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			>Back
+		</button>
 	{:else}
-		<h4 class="mt-6 text-xl font-bold text-primary">Registration Details</h4>
+		<div class="flex items-center justify-between">
+			<h4 class="text-xl font-bold text-primary">Registration Details</h4>
+			<button
+				type="button"
+				on:click={() => routeToPage('')}
+				class="text-sm rounded-md bg-primary-300 px-5 py-1 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+				>Back
+			</button>
+		</div>
 		<div class="mt-4 text-base">
 			Registration for <strong
 				>{$currentRegistration.firstName} {$currentRegistration.lastName}</strong
@@ -44,12 +58,7 @@
 			<div class="flex-grow border-t border-gray-400" />
 		</div>
 
-		<Accordion
-			sections={$entryStore}
-			showButtons={false}
-			on:edit={handleEdit}
-			on:delete={handleDelete}
-		/>
+		<Accordion showButtons={false} on:edit={handleEdit} on:delete={handleDelete} />
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
