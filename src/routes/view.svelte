@@ -15,7 +15,7 @@
 
 <section class="container mx-auto max-w-prose px-3">
 	{#if !$currentRegistration}
-		<h1 class="mb-6 text-xl font-bold">Please register before trying to view entries</h1>
+		<h1 class="mb-6 text-xl font-bold">Please register first</h1>
 		<button
 			type="button"
 			on:click={() => routeToPage('')}

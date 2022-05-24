@@ -15,17 +15,13 @@
 	// accommodation
 	// confirmation
 
-	import { goto } from '$app/navigation'
-	function routeToPage(route, replaceState) {
-		goto(`/${route}`, { replaceState })
-	}
-
 	import { onMount } from 'svelte'
 	import { createForm } from 'felte'
 	import { createEventDispatcher } from 'svelte'
 	const dispatch = createEventDispatcher()
 
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import GoBack from '$lib/GoBack.svelte'
 	import FormConfirm from '$lib/FormConfirm.svelte'
 	let requestType = 'modifyRegistration'
 	let fetchingData = false
@@ -120,18 +116,32 @@
 			}
 		}
 	}
+
+	let resetEntry = () => {
+		formReset()
+		setFields({
+			id: $currentRegistration.id,
+			firstName: $currentRegistration.firstName,
+			lastName: $currentRegistration.lastName,
+			email: $currentRegistration.email,
+			phone: $currentRegistration.phone,
+			postcode: $currentRegistration.postcode,
+			bumpIn: $currentRegistration.bumpIn,
+			bumpOut: $currentRegistration.bumpOut,
+			crane: $currentRegistration.crane,
+			displayRequirements: $currentRegistration.displayRequirements,
+			bankAccountName: $currentRegistration.bankAccountName,
+			bankBSB: $currentRegistration.bankBSB,
+			bankAccount: $currentRegistration.bankAccount,
+			transport: $currentRegistration.transport,
+			accommodation: $currentRegistration.accommodation,
+			confirmation: $currentRegistration.confirmation
+		})
+	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
-	<div class="flex items-center justify-between">
-		<h4 class="text-xl font-bold text-primary">Confirmation for Exhibitor</h4>
-		<button
-			type="button"
-			on:click={() => routeToPage('')}
-			class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-			>Back
-		</button>
-	</div>
+	<GoBack stepTitle="Confirm Details for - {$currentRegistration.email}" />
 
 	<form use:form>
 		<input type="hidden" id="id" name="id" />
@@ -150,7 +160,7 @@
 		>Edit Registration</button
 	>
 	<button
-		on:click={() => dispatch('cancel')}
+		on:click={() => resetEntry()}
 		type="submit"
 		class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 		>Cancel</button

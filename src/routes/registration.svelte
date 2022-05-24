@@ -26,7 +26,7 @@
 			next = steps.length - 1
 		}
 
-		if ($currentRegistration.email == null) {
+		if ($currentRegistration?.email == null) {
 			return 0
 		}
 
@@ -45,32 +45,43 @@
 	}
 </script>
 
-<ProgressBar {steps} {currentActive} />
+<section class="container mx-auto max-w-prose px-3">
+	{#if !$currentRegistration}
+		<h1 class="mb-6 text-xl font-bold">Please register first</h1>
+		<button
+			type="button"
+			on:click={() => routeToPage('')}
+			class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			>Back
+		</button>
+	{:else}
+		<ProgressBar {steps} {currentActive} />
 
-<div class="mt-10">
-	{#if currentActive == 0}
-		<Register on:registered={() => handleProgress(+1)} on:cancel={() => routeToPage('')} />
-	{:else if currentActive == 1}
-		<Entry />
-	{:else if currentActive == 2}
-		<Confirm />
-	{:else if currentActive == 3}
-		<Complete />
+		<div class="mt-10">
+			{#if currentActive == 0}
+				<Register on:registered={() => handleProgress(+1)} on:cancel={() => routeToPage('')} />
+			{:else if currentActive == 1}
+				<Entry />
+			{:else if currentActive == 2}
+				<Confirm />
+			{:else if currentActive == 3}
+				<Complete />
+			{/if}
+		</div>
+
+		<div class="mt-10 flex max-w-2xl justify-around">
+			<button
+				class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-8 py-1 font-semibold text-gray-700"
+				on:click={() => handleProgress(-1)}
+				disabled={currentActive == 0}>Previous Step</button
+			>
+			<button
+				class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-10 py-1 font-semibold text-gray-700"
+				on:click={() => handleProgress(+1)}
+				disabled={currentActive == steps.length}>Next Step</button
+			>
+		</div>
 	{/if}
-</div>
-
-<div class="mt-10 flex max-w-2xl justify-around">
-	<button
-		class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-8 py-1 font-semibold text-gray-700"
-		on:click={() => handleProgress(-1)}
-		disabled={currentActive == 0}>Previous Step</button
-	>
-	<button
-		class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-10 py-1 font-semibold text-gray-700"
-		on:click={() => handleProgress(+1)}
-		disabled={currentActive == steps.length}>Next Step</button
-	>
-</div>
-
+</section>
 <!-- <pre>{currentActive}</pre> -->
 <!-- <pre>{$currentRegistration.email}</pre> -->
