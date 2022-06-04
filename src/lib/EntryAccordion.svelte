@@ -48,10 +48,18 @@
 			{#if section.active}
 				<div class="mb-2 bg-slate-50 px-5 text-sm" transition:slide>
 					<p>{section.description}</p>
-					<p>{section.inOrOut} - {section.price}</p>
-					<p>({section.dimensions}) {section.material}</p>
+					<div class="mx-auto flex items-center justify-between">
+						<p class="text-lg">
+							{section.price.toLocaleString('en-AU', {
+								style: 'currency',
+								currency: 'AUD'
+							})}
+						</p>
+						<p>({section.dimensions})</p>
+					</div>
+
+					<p>{section.material}</p>
 					<p>{section?.specialRequirements}</p>
-					<p>{section?.originalFileName}</p>
 
 					<div
 						class="mx-auto mt-10 flex h-60 w-60 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
