@@ -64,10 +64,10 @@
 					<div
 						class="mx-auto mt-10 flex h-60 w-60 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
 					>
-						{#if section?.imageURL}
+						{#if section?.images[0]?.imageURL}
 							<img
 								class="h-60 w-60 object-scale-down p-1"
-								src={getViewURL(section?.imageURL)}
+								src={getViewURL(section?.images[0]?.imageURL)}
 								alt="Preview"
 							/>
 						{:else}

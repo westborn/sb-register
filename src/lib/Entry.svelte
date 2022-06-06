@@ -127,8 +127,8 @@
 			dimensions: entry.dimensions,
 			description: entry.description,
 			specialRequirements: entry.specialRequirements,
-			originalFileName: entry.originalFileName,
-			imageURL: entry.imageURL
+			originalFileName: entry.images[0]?.originalFileName,
+			imageURL: entry.images[0]?.imageURL
 		})
 		console.log('data')
 	}
@@ -220,4 +220,4 @@
 	</form>
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
-<!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->
+<pre>{JSON.stringify($entryStore, null, 2)}</pre>
