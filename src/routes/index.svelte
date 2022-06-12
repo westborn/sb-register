@@ -2,10 +2,6 @@
 	import { goto } from '$app/navigation'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
-	function routeToPage(route, replaceState) {
-		goto(`/${route}`, { replaceState })
-	}
-
 	let fetchingData = false
 	let errorMessage = ''
 
@@ -35,7 +31,7 @@
 			// TODO set up multistep new registration form
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
-			routeToPage('registration')
+			goto('/registration')
 			return
 		} else if (userAction === 'view') {
 			if (Object.entries(response.data.registration).length === 0) {
@@ -44,7 +40,7 @@
 			}
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
-			routeToPage('view')
+			goto('/view')
 			return
 		} else if (userAction === 'registration') {
 			if (Object.entries(response.data.registration).length === 0) {
@@ -54,7 +50,7 @@
 			// TODO existing registration
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
-			routeToPage('registration')
+			goto('/registration')
 			return
 		}
 		errorMessage = 'How did you get here?'
