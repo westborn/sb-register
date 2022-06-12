@@ -84,4 +84,5 @@
 	{/if}
 </section>
 <!-- <pre>{currentActive}</pre> -->
-<!-- <pre>{$currentRegistration.email}</pre> -->
+<pre>{$currentRegistration.email}</pre>
+<pre>{$currentUserEmail}</pre>

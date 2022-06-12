@@ -6,8 +6,6 @@
 	// dimensions
 	// description
 	// specialRequirements
-	// originalFileName
-	// imageURL
 
 	// const entryReset = {
 	// 	id: uuidv4(),
@@ -19,8 +17,14 @@
 	// 	dimensions: '',
 	// 	description: '',
 	// 	specialRequirements: '',
-	// 	originalFileName: '',
-	// 	imageURL: ''
+	// }
+
+	// const image = {
+	// 	id: '',
+	// 	entryId: '',
+	// 	imageURL: '',
+	// 	imageFileName: '',
+	// 	originalFileName: ''
 	// }
 
 	import { createForm } from 'felte'
@@ -126,9 +130,7 @@
 			material: entry.material,
 			dimensions: entry.dimensions,
 			description: entry.description,
-			specialRequirements: entry.specialRequirements,
-			originalFileName: entry.images[0]?.originalFileName,
-			imageURL: entry.images[0]?.imageURL
+			specialRequirements: entry.specialRequirements
 		})
 		console.log('data')
 	}
@@ -220,4 +222,4 @@
 	</form>
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
-<pre>{JSON.stringify($entryStore, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

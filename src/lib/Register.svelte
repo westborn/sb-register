@@ -34,12 +34,15 @@
 	onMount(() => {
 		if (Object.entries($currentRegistration).length == 0) {
 			requestType = 'createRegistration'
+			setFields({
+				email: $currentUserEmail
+			})
 		} else {
 			setFields({
 				id: $currentRegistration.id,
 				firstName: $currentRegistration.firstName,
 				lastName: $currentRegistration.lastName,
-				email: $currentRegistration.email,
+				email: $currentUserEmail,
 				phone: $currentRegistration.phone,
 				postcode: $currentRegistration.postcode,
 				bumpIn: $currentRegistration.bumpIn,
@@ -64,11 +67,8 @@
 		reset: formReset,
 		setFields
 	} = createForm({
-		onSubmit: (values, context) => {
-			console.log(`submit - id:${values.id} - requestType: ${requestType}`)
-			// console.log(JSON.stringify(values, null, 2))
-			// console.log(JSON.stringify(context, null, 2))
-		}
+		// define an onSubmit function to disable default action
+		onSubmit: (values, context) => {}
 	})
 
 	let sendToServer = async (data) => {
@@ -91,25 +91,14 @@
 	}
 
 	let registrationIsValid = (data) => {
-		if (
-			data.email === '' ||
-			data.firstName === '' ||
-			data.lastName === '' ||
-			data.phone === '' ||
-			data.bankAccountName === '' ||
-			data.bankBSB === '' ||
-			data.bankAccount === '' ||
-			data.confirmation === ''
-		) {
+		if (data.email === '' || data.firstName === '' || data.lastName === '' || data.phone === '') {
 			errorMessage = 'Please fill in all required fields'
 			return false
 		}
 
-		if (requestType === 'modifyRegistration') {
-			if (data.email != $currentRegistration.email) {
-				errorMessage = "Sorry, you can't change the email for a registration"
-				return false
-			}
+		if (data.email != $currentUserEmail) {
+			errorMessage = "Sorry, you can't change the email for a registration"
+			return false
 		}
 		errorMessage = ''
 		return true
@@ -152,7 +141,7 @@
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
-	<GoBack stepTitle="Registration for - {$currentRegistration.email}" />
+	<GoBack stepTitle="Registration for - {$currentUserEmail}" />
 
 	<form use:form>
 		<input type="hidden" id="id" name="id" />

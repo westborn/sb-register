@@ -108,4 +108,4 @@
 		/>
 	{/if}
 </section>
-<!-- <pre>{$currentUserEmail}</pre> -->
+<pre>{$currentUserEmail}</pre>

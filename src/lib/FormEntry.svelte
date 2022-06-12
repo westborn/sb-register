@@ -6,8 +6,6 @@
 	// dimensions
 	// description
 	// specialRequirements
-	// originalFileName
-	// imageURL
 
 	import InputText from './InputText.svelte'
 </script>
@@ -64,9 +62,5 @@
 
 	<div class="relative mt-8 w-full">
 		<InputText inputFieldID="specialRequirements" placeholder="Any special requirements?" />
-	</div>
-
-	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="originalFileName" placeholder="File to Upload (TODO)" />
 	</div>
 </div>
