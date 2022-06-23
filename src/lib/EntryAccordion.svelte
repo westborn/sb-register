@@ -46,7 +46,7 @@
 				</span>
 			</button>
 			{#if section.active}
-				<div class="mb-2 bg-slate-50 px-5 text-sm" transition:slide>
+				<div class="mb-2 bg-slate-50 p-5 text-sm" transition:slide>
 					<p>{section.description}</p>
 					<div class="mx-auto flex items-center justify-between">
 						<p class="text-lg">
@@ -62,12 +62,12 @@
 					<p>{section?.specialRequirements}</p>
 
 					<div
-						class="mx-auto mt-10 flex h-60 w-60 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
+						class="mx-auto mt-10 flex h-48 w-48 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
 					>
 						<!-- TODO Display Images ?? -->
 						{#if section?.images[0]?.imageURL}
 							<img
-								class="h-60 w-60 object-scale-down p-1"
+								class="h-48 w-48 object-scale-down p-1"
 								src={getViewURL(section?.images[0]?.imageURL)}
 								alt="Preview"
 							/>

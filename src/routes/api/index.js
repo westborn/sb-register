@@ -17,7 +17,7 @@ export async function post({ request }) {
 	}
 
 	const fetchUrl = `${googleWebAppUrl}?requestType=${requestType}`
-
+	console.log(JSON.stringify(data, null, 2))
 	const response = await fetch(fetchUrl, {
 		method: 'POST',
 		headers: { 'Content-Type': 'text/plain' },

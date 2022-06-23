@@ -27,12 +27,22 @@
 	// 	originalFileName: ''
 	// }
 
+	// const updateImage = {
+	// 	id: '',
+	// 	email: '',
+	// 	entryId: '',
+	// 	originalFileName: '',
+	// 	imageFileName: '', //: artistSurname_title_id
+	// 	blobDataURL: ''
+	// }
+
 	import { createForm } from 'felte'
 	import { v4 as uuidv4 } from 'uuid'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
 	import FormEntry from '$lib/FormEntry.svelte'
 	import Accordion from '$lib/EntryAccordion.svelte'
+	import Upload from '../routes/upload.svelte'
 
 	let entries
 	let requestType = 'createEntry'
@@ -187,6 +197,8 @@
 		<input type="hidden" id="id" name="id" />
 
 		<FormEntry />
+
+		<Upload />
 
 		{#if requestType === 'createEntry'}
 			{#if errorMessage}

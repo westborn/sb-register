@@ -100,4 +100,4 @@
 		>
 	</div>
 </section>
-<pre>{JSON.stringify($formData, null, 2)}</pre>
+<pre>{JSON.stringify(imageContent, null, 2)}</pre>
