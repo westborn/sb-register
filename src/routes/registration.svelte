@@ -8,9 +8,6 @@
 	import { goto } from '$app/navigation'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
-	function routeToPage(route, replaceState) {
-		goto(`/${route}`, { replaceState })
-	}
 	let steps = ['Register', 'Entries', 'Confirm', 'Complete']
 
 	let currentActive = 1
@@ -50,7 +47,7 @@
 		<h1 class="mb-6 text-xl font-bold">Please register first</h1>
 		<button
 			type="button"
-			on:click={() => routeToPage('')}
+			on:click={() => goto('/')}
 			class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Back
 		</button>
@@ -59,7 +56,7 @@
 
 		<div class="mt-10">
 			{#if currentActive == 0}
-				<Register on:registered={() => handleProgress(+1)} on:cancel={() => routeToPage('')} />
+				<Register on:registered={() => handleProgress(+1)} on:cancel={() => goto('/')} />
 			{:else if currentActive == 1}
 				<Entry />
 			{:else if currentActive == 2}
@@ -84,5 +81,5 @@
 	{/if}
 </section>
 <!-- <pre>{currentActive}</pre> -->
-<pre>{$currentRegistration.email}</pre>
-<pre>{$currentUserEmail}</pre>
+<!-- <pre>{$currentRegistration.email}</pre> -->
+<!-- <pre>{$currentUserEmail}</pre> -->

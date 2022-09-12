@@ -4,10 +4,6 @@
 	import Accordion from '$lib/EntryAccordion.svelte'
 	import TextList from '$lib/TextList.svelte'
 
-	function routeToPage(route, replaceState) {
-		goto(`/${route}`, { replaceState })
-	}
-
 	function handleEdit(event) {}
 
 	function handleDelete(event) {}
@@ -18,7 +14,7 @@
 		<h1 class="mb-6 text-xl font-bold">Please register first</h1>
 		<button
 			type="button"
-			on:click={() => routeToPage('')}
+			on:click={() => goto('/')}
 			class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Back
 		</button>
@@ -27,7 +23,7 @@
 			<h4 class="text-xl font-bold text-primary">Registration Details</h4>
 			<button
 				type="button"
-				on:click={() => routeToPage('')}
+				on:click={() => goto('/')}
 				class="rounded-md bg-primary-300 px-5 py-1 text-sm font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 				>Back
 			</button>
@@ -62,4 +58,4 @@
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
-<pre>{JSON.stringify($entryStore, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

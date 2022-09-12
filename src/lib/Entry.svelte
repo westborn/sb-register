@@ -27,17 +27,34 @@
 	// 	originalFileName: ''
 	// }
 
+	// const updateImage = {
+	// 	id: '',
+	// 	email: '',
+	// 	entryId: '',
+	// 	originalFileName: '',
+	// 	imageFileName: '', //: artistSurname_title_id
+	// 	blobDataURL: ''
+	// }
+
 	import { createForm } from 'felte'
 	import { v4 as uuidv4 } from 'uuid'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
 	import FormEntry from '$lib/FormEntry.svelte'
 	import Accordion from '$lib/EntryAccordion.svelte'
+	import FileUpload from '$lib/FileUpload.svelte'
+
+	// Modal from https://svelte.dev/repl/514f1335749a4eae9d34ad74dc277f20?version=3.37.0
+	import Modal, { getModal } from '$lib/Modal.svelte'
+	let imageRes = null
+	// Callback function provided to the `open` function, it receives the value given to the `close` function call, or `undefined` if the Modal was closed with escape or clicking the X, etc.
+	function setSelection(res) {
+		imageRes = res
+	}
 
 	let entries
 	let requestType = 'createEntry'
 	let showButtons = true
-
 	let fetchingData = false
 	let errorMessage = ''
 
@@ -53,7 +70,7 @@
 		setFields
 	} = createForm({
 		onSubmit: (values, context) => {
-			console.log(`submit - id:${values.id} - requestType: ${requestType}`)
+			// console.log(`submit - id:${values.id} - requestType: ${requestType}`)
 			// console.log(JSON.stringify(values, null, 2))
 			// console.log(JSON.stringify(context, null, 2))
 		}
@@ -92,16 +109,38 @@
 			return
 		}
 		requestType = 'createEntry'
-		const newEntry = { ...entry, id: uuidv4(), email: $currentUserEmail }
+		const entryId = uuidv4()
+		const newEntry = { ...entry, id: entryId, email: $currentUserEmail }
 		const response = await sendToServer(newEntry)
 		if (response.result === 'error') {
 			errorMessage = response.data
-		} else {
-			currentRegistration.set(response.data.registration)
-			entryStore.set(response.data.entries)
-			showButtons = true
-			formReset()
+			return
 		}
+
+		// did they upload an image ?
+		if (imageRes != null) {
+			requestType = 'createImage'
+			const imageId = uuidv4()
+
+			const newImage = {
+				id: imageId,
+				email: $currentUserEmail,
+				entryId: entryId,
+				originalFileName: imageRes.fileName,
+				imageFileName: `${$currentRegistration.lastName}_${newEntry.title}_${imageId}`, //: artistSurname_title_id
+				blobDataURL: imageRes.image
+			}
+			const imgResponse = await sendToServer(newImage)
+			if (imgResponse.result === 'error') {
+				errorMessage = imgResponse.data
+				return
+			}
+		}
+		currentRegistration.set(response.data.registration)
+		entryStore.set(response.data.entries)
+		imageRes = null
+		showButtons = true
+		formReset()
 	}
 
 	let deleteEntry = async (id) => {
@@ -119,7 +158,6 @@
 
 	let editEntry = (entry) => {
 		requestType = 'editEntry'
-		console.log('edit', entry)
 		formReset()
 		setFields({
 			id: entry.id,
@@ -132,7 +170,6 @@
 			description: entry.description,
 			specialRequirements: entry.specialRequirements
 		})
-		console.log('data')
 	}
 
 	let modifyEntry = async (entry) => {
@@ -177,8 +214,10 @@
 
 	<div class="mt-6 -ml-10 -mr-10 flex items-center">
 		<div class="flex-grow border-t border-gray-400" />
-		<span class="mx-4 flex-shrink text-gray-600"
-			>{requestType === 'createEntry' ? 'Add a new Entry' : 'Edit this Entry'}</span
+		<span class="mx-4 flex-shrink text-2xl text-accent-600"
+			>{requestType === 'createEntry'
+				? 'Add a new Entry? - Complete this form'
+				: 'Edit this Entry'}</span
 		>
 		<div class="flex-grow border-t border-gray-400" />
 	</div>
@@ -187,6 +226,23 @@
 		<input type="hidden" id="id" name="id" />
 
 		<FormEntry />
+
+		<button
+			on:click={() => getModal('getImage').open(setSelection)}
+			class="mt-4 block rounded bg-gray-300 px-6 py-2.5 text-xs font-semibold text-gray-500 shadow-md transition duration-150 ease-in-out hover:bg-gray-400 hover:shadow-lg focus:bg-gray-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-400 active:shadow-lg"
+			>Add an Image?</button
+		>
+		<!-- <p>
+			{#if imageRes}
+				ImageRes: {JSON.stringify(imageRes, null, 2)}
+			{:else}
+				Nothing
+			{/if}
+		</p> -->
+
+		<Modal id="getImage">
+			<FileUpload />
+		</Modal>
 
 		{#if requestType === 'createEntry'}
 			{#if errorMessage}
