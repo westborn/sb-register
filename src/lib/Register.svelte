@@ -185,4 +185,4 @@
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
-<pre>{requestType}</pre> -->
+<!-- <pre>{requestType}</pre> --> -->

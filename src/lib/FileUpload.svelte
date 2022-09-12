@@ -1,9 +1,7 @@
 <!-- Special thanks to Dcode for this tutorial: https://youtu.be/VElnT8EoEEM -->
 <script>
-	import { createEventDispatcher } from 'svelte'
-	const dispatch = createEventDispatcher()
-
 	import { createForm } from 'felte'
+	import { getModal } from '$lib/Modal.svelte'
 
 	//get all the functions and data from felte form
 	const {
@@ -40,6 +38,10 @@
 			return
 		}
 		showImage = false
+	}
+
+	function handleImageSelected() {
+		getModal('getImage').close({ fileName: input.files[0].name, image: imageContent })
 	}
 </script>
 
@@ -85,15 +87,15 @@
 	<div class="mx-auto flex flex-col items-center justify-center">
 		{#if showImage}
 			<button
-				on:click={() => {
-					dispatch('selectedImage', { fileName: input.files[0].name, image: imageContent })
-				}}
+				on:click={() => handleImageSelected()}
 				type="submit"
-				class="mt-8  inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase
+				text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg
+				focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 				>Yes, select this image</button
 			>{/if}
 		<button
-			on:click={() => dispatch('cancel')}
+			on:click={() => getModal('getImage').close(null)}
 			type="submit"
 			class="mt-8  inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Cancel</button

@@ -34,9 +34,9 @@
 			<button class="w-full text-left text-lg hover:bg-blue-100" on:click={() => expand(section)}>
 				<span>
 					{#if section.active}
-						<span class="text-primary-400">&#9660;</span>
+						<span class="text-accent-600">&#9660;</span>
 					{:else}
-						<span class="text-primary-400">&#9650;</span>
+						<span class="text-accent-600">&#9650;</span>
 					{/if}
 				</span>
 
