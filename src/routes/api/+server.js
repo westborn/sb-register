@@ -1,3 +1,4 @@
+import { json as json$1 } from '@sveltejs/kit'
 const googleWebAppUrl =
 	'https://script.google.com/macros/s/AKfycby2JsrlG5KMf0TzSVRssn0qvJejDIvXX_mM7Pj5t88NymCCiSepmu-s5H_7TP5MNEJl_A/exec'
 
@@ -5,7 +6,7 @@ const googleWebAppUrl =
 // use the search param to determine which function to call on the backend
 // fetch has to be a stringified json object and text/plain to avoid CORS issues
 
-export async function post({ request }) {
+export async function POST({ request }) {
 	const data = await request.json()
 
 	var requestType
@@ -24,5 +25,5 @@ export async function post({ request }) {
 		body: JSON.stringify(data)
 	})
 	const res = await response.json()
-	return { body: res }
+	return json$1(res)
 }

@@ -2,13 +2,9 @@
 	"name": "sb-register",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
-		"package": "svelte-kit package",
-		"preview": "svelte-kit preview",
-		"prepare": "svelte-kit sync",
-		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. .",
-		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
@@ -16,10 +12,13 @@
 		"@tailwindcss/forms": "^0.5.2",
 		"autoprefixer": "^10.4.7",
 		"postcss": "^8.4.14",
+		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.6.2",
 		"prettier-plugin-tailwindcss": "^0.1.11",
-		"svelte": "^3.48.0",
-		"tailwindcss": "^3.0.24"
+		"svelte": "^3.44.0",
+		"svelte-preprocess": "^4.10.7",
+		"tailwindcss": "^3.1.5",
+		"vite": "^3.0.0"
 	},
 	"type": "module",
 	"dependencies": {
