@@ -7,6 +7,7 @@ const googleWebAppUrl =
 // fetch has to be a stringified json object and text/plain to avoid CORS issues
 
 export async function POST({ request }) {
+	console.log('api call')
 	const data = await request.json()
 
 	var requestType

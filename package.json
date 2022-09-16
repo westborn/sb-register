@@ -4,12 +4,14 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"push": "clasp push"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"@tailwindcss/forms": "^0.5.2",
+		"@types/google-apps-script": "^1.0.55",
 		"autoprefixer": "^10.4.7",
 		"postcss": "^8.4.14",
 		"postcss-load-config": "^4.0.1",
