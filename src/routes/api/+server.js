@@ -1,6 +1,7 @@
 import { json as json$1 } from '@sveltejs/kit'
 const googleWebAppUrl =
-	'https://script.google.com/macros/s/AKfycby2JsrlG5KMf0TzSVRssn0qvJejDIvXX_mM7Pj5t88NymCCiSepmu-s5H_7TP5MNEJl_A/exec'
+	'https://script.google.com/macros/s/AKfycbzecQpGn-nJNf06HOZYt1E191pKW6j_wlUlpV6I0lTy8AgyeeKJKjW1YjYUjPt1YwLBCg/exec'
+// 'https://script.google.com/macros/s/AKfycbxt7YM1X7CoaZcb6ZQwg0psiEPRkOj71gmPhdNI4n2X/dev'
 
 // send a post request to the google sheet backend web app
 // use the search param to determine which function to call on the backend
@@ -9,18 +10,9 @@ const googleWebAppUrl =
 export async function POST({ request }) {
 	console.log('api call')
 	const data = await request.json()
+	// console.log(data)
 
-	var requestType
-	try {
-		const url = new URL(request.url)
-		requestType = url.searchParams.get('requestType')
-	} catch (err) {
-		requestType = 'notFound'
-	}
-
-	const fetchUrl = `${googleWebAppUrl}?requestType=${requestType}`
-	console.log(JSON.stringify(data, null, 2))
-	const response = await fetch(fetchUrl, {
+	const response = await fetch(googleWebAppUrl, {
 		method: 'POST',
 		headers: { 'Content-Type': 'text/plain' },
 		body: JSON.stringify(data)

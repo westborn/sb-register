@@ -26,20 +26,20 @@
 
 	import FormRegister from '$lib/FormRegister.svelte'
 
-	let requestType = 'createRegistration'
+	let actionRequest = 'createRegistration'
 
 	let fetchingData = false
 	let errorMessage = ''
 
 	onMount(() => {
 		if (Object.entries($currentRegistration).length == 0) {
-			requestType = 'createRegistration'
+			actionRequest = 'createRegistration'
 			setFields({
 				email: $currentUserEmail
 			})
 		} else {
 			setFields({
-				id: $currentRegistration.id,
+				registrationId: $currentRegistration.registrationId,
 				firstName: $currentRegistration.firstName,
 				lastName: $currentRegistration.lastName,
 				email: $currentUserEmail,
@@ -56,7 +56,7 @@
 				accommodation: $currentRegistration.accommodation,
 				confirmation: $currentRegistration.confirmation
 			})
-			requestType = 'modifyRegistration'
+			actionRequest = 'modifyRegistration'
 		}
 	})
 
@@ -74,15 +74,15 @@
 	let sendToServer = async (data) => {
 		fetchingData = true
 		errorMessage = ''
-		console.log('sending ', requestType)
+		console.log('sending ', actionRequest)
 		console.log(data)
-		const res = await fetch(`/api?requestType=${requestType}`, {
+		const res = await fetch(`/api`, {
 			method: 'POST',
-			body: JSON.stringify({ data })
+			body: JSON.stringify({ action: actionRequest, data })
 		})
 		const resMessage = await res.json()
 		fetchingData = false
-		console.log('receiving	', requestType)
+		console.log('receiving	', actionRequest)
 		console.log(resMessage)
 		if (resMessage.result === 'error') {
 			errorMessage = resMessage.data
@@ -106,7 +106,7 @@
 
 	let addRegistration = async (data) => {
 		if (registrationIsValid(data)) {
-			requestType = 'createRegistration'
+			actionRequest = 'createRegistration'
 			fetchingData = true
 			errorMessage = ''
 			const newRegistration = { ...data, id: uuidv4() }
@@ -126,7 +126,7 @@
 		if (registrationIsValid(data)) {
 			fetchingData = true
 			errorMessage = ''
-			requestType = 'modifyRegistration'
+			actionRequest = 'modifyRegistration'
 			const response = await sendToServer(data)
 			fetchingData = false
 			if (response.result === 'error') {
@@ -144,7 +144,7 @@
 	<GoBack stepTitle="Registration for - {$currentUserEmail}" />
 
 	<form use:form>
-		<input type="hidden" id="id" name="id" />
+		<input type="hidden" id="registrationId" name="registrationId" />
 
 		<FormRegister />
 	</form>
@@ -153,7 +153,7 @@
 		<p class="mt-6 text-red-500">{errorMessage}</p>
 	{/if}
 
-	{#if requestType === 'createRegistration'}
+	{#if actionRequest === 'createRegistration'}
 		<button
 			on:click={() => addRegistration($formData)}
 			disabled={fetchingData}
@@ -184,5 +184,6 @@
 		/>
 	{/if}
 </section>
-<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
-<!-- <pre>{requestType}</pre> --> -->
+<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
+<!-- <pre>{actionRequest}</pre> -->
+<!-- <pre>{JSON.stringify($formData, null, 2)}</pre> -->

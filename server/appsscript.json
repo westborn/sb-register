@@ -1,25 +1,25 @@
 {
-	"timeZone": "Australia/Sydney",
-	"dependencies": {
-		"enabledAdvancedServices": [
-			{
-				"userSymbol": "Drive",
-				"serviceId": "drive",
-				"version": "v2"
-			}
-		],
-		"libraries": [
-			{
-				"userSymbol": "wbLib",
-				"libraryId": "1oLToj6noRZvFkLNP3-0vWRK1BJNHO9bie3gAHi81qSF3vWrlJMOTRFzG",
-				"version": "6"
-			}
-		]
-	},
-	"webapp": {
-		"access": "ANYONE_ANONYMOUS",
-		"executeAs": "USER_DEPLOYING"
-	},
-	"exceptionLogging": "STACKDRIVER",
-	"runtimeVersion": "V8"
+  "timeZone": "Australia/Sydney",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Drive",
+        "serviceId": "drive",
+        "version": "v2"
+      }
+    ],
+    "libraries": [
+      {
+        "userSymbol": "wbLib",
+        "libraryId": "1oLToj6noRZvFkLNP3-0vWRK1BJNHO9bie3gAHi81qSF3vWrlJMOTRFzG",
+        "version": "8"
+      }
+    ]
+  },
+  "webapp": {
+    "executeAs": "USER_DEPLOYING",
+    "access": "ANYONE_ANONYMOUS"
+  }
 }

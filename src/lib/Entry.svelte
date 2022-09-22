@@ -37,7 +37,6 @@
 	// }
 
 	import { createForm } from 'felte'
-	import { v4 as uuidv4 } from 'uuid'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
 	import FormEntry from '$lib/FormEntry.svelte'
@@ -109,21 +108,29 @@
 			return
 		}
 		requestType = 'createEntry'
-		const entryId = uuidv4()
-		const newEntry = { ...entry, id: entryId, email: $currentUserEmail }
+		const entryId = 'NotSet'
+		const newEntry = {
+			...entry,
+			registrationId: $currentRegistration.registrationId,
+			entryId: entryId,
+			email: $currentUserEmail
+		}
 		const response = await sendToServer(newEntry)
 		if (response.result === 'error') {
 			errorMessage = response.data
 			return
 		}
 
+		currentRegistration.set(response.data.registration)
+		entryStore.set(response.data.entries)
+
 		// did they upload an image ?
 		if (imageRes != null) {
 			requestType = 'createImage'
-			const imageId = uuidv4()
+			const imageId = 'NotSet'
 
 			const newImage = {
-				id: imageId,
+				imageId,
 				email: $currentUserEmail,
 				entryId: entryId,
 				originalFileName: imageRes.fileName,
@@ -136,8 +143,7 @@
 				return
 			}
 		}
-		currentRegistration.set(response.data.registration)
-		entryStore.set(response.data.entries)
+
 		imageRes = null
 		showButtons = true
 		formReset()
@@ -145,7 +151,7 @@
 
 	let deleteEntry = async (id) => {
 		requestType = 'deleteEntry'
-		const response = await sendToServer({ id, email: $currentUserEmail })
+		const response = await sendToServer({ entryId, email: $currentUserEmail })
 		if (response.result === 'error') {
 			errorMessage = response.data
 		} else {
@@ -160,7 +166,8 @@
 		requestType = 'editEntry'
 		formReset()
 		setFields({
-			id: entry.id,
+			entryId: entry.id,
+			registrationId: $currentRegistration.registrationId,
 			email: $currentUserEmail,
 			title: entry.title,
 			price: entry.price,
@@ -223,7 +230,8 @@
 	</div>
 
 	<form use:form>
-		<input type="hidden" id="id" name="id" />
+		<input type="hidden" id="entryId" name="entryId" />
+		<input type="hidden" id="registrationId" name="registrationId" />
 
 		<FormEntry />
 

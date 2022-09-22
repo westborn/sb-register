@@ -57,5 +57,5 @@
 		<Accordion showButtons={false} on:edit={handleEdit} on:delete={handleDelete} />
 	{/if}
 </section>
-<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
+<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
 <!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

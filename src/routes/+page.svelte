@@ -8,10 +8,13 @@
 	async function handelUserAction(userAction) {
 		fetchingData = true
 		errorMessage = ''
-		const res = await fetch('/api?requestType=getEntry', {
+		const res = await fetch('/api', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: $currentUserEmail
+				action: 'getDetailsByEmail',
+				data: {
+					email: $currentUserEmail
+				}
 			})
 		})
 		const response = await res.json()
