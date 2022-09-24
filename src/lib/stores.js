@@ -3,6 +3,8 @@ import { writable } from 'svelte/store'
 const currentUserEmail = writable(null)
 const currentRegistration = writable(null)
 
+const stepsAllowed = writable(true)
+
 const entryStore = (() => {
 	const state = []
 	const { subscribe, set, update } = writable(state)
@@ -37,4 +39,4 @@ const entryStore = (() => {
 	}
 })()
 
-export { currentUserEmail, currentRegistration, entryStore }
+export { currentUserEmail, currentRegistration, entryStore, stepsAllowed }

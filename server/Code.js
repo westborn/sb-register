@@ -322,6 +322,7 @@ function deleteEntry(request, ss) {
 		return sendResponse('error', 'Invalid ID for delete')
 	}
 	try {
+		//TODO delete associated image
 		const sheet = ss.getSheetByName('Entries')
 		const rowToDelete = wbLib.getRowFromColumnSearch(
 			sheet.getDataRange().getValues(),
@@ -409,7 +410,7 @@ function getEntriesByEmail(email, ss) {
 
 	// get the images linked with the entry id
 	const entries = entriesForThisEmail.map((entry) => {
-		const images = allImages.filter((imageItem) => imageItem.entryId === entry.id)
+		const images = allImages.filter((imageItem) => imageItem.entryId === entry.entryId)
 		return { ...entry, images }
 	})
 

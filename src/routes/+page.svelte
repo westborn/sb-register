@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
 
 	let fetchingData = false
 	let errorMessage = ''
@@ -18,6 +18,7 @@
 			})
 		})
 		const response = await res.json()
+		$stepsAllowed = true
 		fetchingData = false
 		console.log('response', response)
 		if (response.result === 'error') {

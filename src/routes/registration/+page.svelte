@@ -6,7 +6,7 @@
 
 	import ProgressBar from '$lib/Progress.Bar.svelte'
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
 
 	let steps = ['Register', 'Entries', 'Confirm', 'Complete']
 
@@ -65,21 +65,23 @@
 				<Complete />
 			{/if}
 		</div>
-
-		<div class="mt-10 flex max-w-2xl justify-around">
-			<button
-				class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-8 py-1 font-semibold text-gray-700"
-				on:click={() => handleProgress(-1)}
-				disabled={currentActive == 0}>Previous Step</button
-			>
-			<button
-				class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-10 py-1 font-semibold text-gray-700"
-				on:click={() => handleProgress(+1)}
-				disabled={currentActive == steps.length}>Next Step</button
-			>
-		</div>
+		{#if $stepsAllowed}
+			<div class="mt-10 flex max-w-2xl justify-around">
+				<button
+					class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-8 py-1 font-semibold text-gray-700"
+					on:click={() => handleProgress(-1)}
+					disabled={currentActive == 0}>Previous Step</button
+				>
+				<button
+					class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-10 py-1 font-semibold text-gray-700"
+					on:click={() => handleProgress(+1)}
+					disabled={currentActive == steps.length}>Next Step</button
+				>
+			</div>
+		{/if}
 	{/if}
 </section>
-<!-- <pre>{currentActive}</pre> -->
-<!-- <pre>{$currentRegistration.email}</pre> -->
-<!-- <pre>{$currentUserEmail}</pre> -->
+<pre>{currentActive}</pre>
+<pre>{$currentRegistration.email}</pre>
+<pre>{$currentUserEmail}</pre>
+<pre>{$stepsAllowed}</pre>

@@ -13,7 +13,7 @@
 
 	const expand = (section) => {
 		disp = disp.map((s) => {
-			if (s.id === section.id) {
+			if (s.entryId === section.entryId) {
 				s.active ? (s.active = false) : (s.active = true)
 			}
 			return s
@@ -75,17 +75,18 @@
 							<span>Image Preview</span>
 						{/if}
 					</div>
+					<!-- <pre>{JSON.stringify(section, null, 2)}</pre> -->
 				</div>
 				{#if showButtons}
 					<div class="flex justify-between px-8">
 						<button
-							on:click={() => dispatch('edit', section.id)}
+							on:click={() => dispatch('edit', section.entryId)}
 							class="rounded bg-accent-200 px-7 text-sm text-black shadow-md transition duration-150 ease-in-out hover:bg-accent-300 hover:shadow-lg focus:bg-accent-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-accent-100 active:shadow-lg disabled:opacity-25"
 							>Edit</button
 						>
 
 						<button
-							on:click={() => dispatch('delete', section.id)}
+							on:click={() => dispatch('delete', section.entryId)}
 							class="rounded bg-red-600 px-7 text-sm text-white shadow-md transition duration-150 ease-in-out hover:bg-red-300 hover:shadow-lg focus:bg-red-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-100 active:shadow-lg disabled:opacity-25"
 							>Delete</button
 						>
