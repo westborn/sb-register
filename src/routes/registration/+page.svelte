@@ -81,7 +81,7 @@
 		{/if}
 	{/if}
 </section>
-<pre>{currentActive}</pre>
-<pre>{$currentRegistration.email}</pre>
-<pre>{$currentUserEmail}</pre>
-<pre>{$stepsAllowed}</pre>
+<!-- <pre>{currentActive}</pre> -->
+<!-- <pre>{$currentRegistration.email}</pre> -->
+<!-- <pre>{$currentUserEmail}</pre> -->
+<!-- <pre>{$stepsAllowed}</pre> -->

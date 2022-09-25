@@ -37,9 +37,11 @@
 	// }
 	import { onMount } from 'svelte'
 
-	import { ACTION } from '$lib/CONSTANTS.js'
 	import { createForm } from 'felte'
+
+	import { ACTION } from '$lib/CONSTANTS.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+
 	import EntryFields from '$lib/EntryFields.svelte'
 	import FileUpload from '$lib/FileUpload.svelte'
 
@@ -48,6 +50,7 @@
 	export let onClose
 
 	onMount(() => {
+		//setup fields to enter/upate
 		let entry = {
 			entryId: entryIdToEdit,
 			registrationId: $currentRegistration.registrationId,
@@ -60,10 +63,11 @@
 			description: '',
 			specialRequirements: ''
 		}
-		if (entryAction === ACTION.EDITING_ENTRY)
+		if (entryAction === ACTION.EDITING_ENTRY) {
 			entry = $entryStore.find((item) => item.entryId === entryIdToEdit)
-
-		console.log(entry)
+			currentImage = entry.images[0]
+		}
+		// console.log(entry)
 
 		setFields({
 			entryId: entry.entryId,
@@ -79,14 +83,6 @@
 		})
 	})
 
-	let imageRes = { image: {}, imageFileName: {} }
-	function setImageDetails(e) {
-		imageRes = { image: e.detail.image, imageFileName: e.detail.fileName }
-	}
-
-	let fetchingData = false
-	let errorMessage = ''
-
 	//get all the functions and data from felte form
 	const {
 		form,
@@ -100,6 +96,17 @@
 			// console.log(JSON.stringify(context, null, 2))
 		}
 	})
+
+	let currentImage
+	let fetchingData = false
+	let errorMessage = ''
+
+	//image information to pass up when an image is selected
+	let imageRes = { image: {}, imageFileName: {} }
+
+	function setImageDetails(e) {
+		imageRes = { image: e.detail.image, imageFileName: e.detail.fileName }
+	}
 
 	async function sendToServer(data) {
 		fetchingData = true
@@ -115,7 +122,7 @@
 		const resMessage = await res.json()
 		fetchingData = false
 		console.log('receiving	', entryAction)
-		console.log(resMessage)
+		// console.log(resMessage)
 		if (resMessage.result === 'error') {
 			errorMessage = resMessage.data
 		}
@@ -123,6 +130,10 @@
 	}
 
 	function entryIsValid(data) {
+		if (!imageRes.image.length) {
+			errorMessage = 'You MUST supply an image with each entry'
+			return false
+		}
 		if (data.title === '' || data.price === '' || data.description === '') {
 			errorMessage = 'Please fill in required fields'
 			return false
@@ -157,41 +168,15 @@
 			originalFileName: imageRes.imageFileName
 		}
 
-		console.log(newEntry)
-		console.log(newImage)
-
-		return
-		const response = await sendToServer(newEntry)
+		const response = await sendToServer({ newEntry, newImage })
 		if (response.result === 'error') {
 			errorMessage = response.data
 			return
 		}
 
-		// did they upload an image ?
-		if (imageRes != null) {
-			entryAction = ACTION.CREATE_IMAGE
-			const imageId = 'NotSet'
-
-			const newImage = {
-				imageId,
-				email: $currentUserEmail,
-				entryId: entryId,
-				originalFileName: imageRes.fileName,
-				imageFileName: `${$currentRegistration.lastName}_${newEntry.title}_${imageId}`, //: artistSurname_title_id
-				blobDataURL: imageRes.image
-			}
-			const imgResponse = await sendToServer(newImage)
-			if (imgResponse.result === 'error') {
-				errorMessage = imgResponse.data
-				return
-			}
-		}
-
 		currentRegistration.set(response.data.registration)
 		entryStore.set(response.data.entries)
-		imageRes = null
-		showButtons = true
-		entryAction = null
+		onClose()
 	}
 
 	async function deleteEntry(id) {
@@ -209,54 +194,52 @@
 		if (!entryIsValid(entry)) {
 			return
 		}
+
+		// has the image changed?
+		//display the existing image initially
+		// have button to upouidate the image
+		// send entry and image to modify
+
 		const response = await sendToServer(entry)
 		if (response.result === 'error') {
 			errorMessage = response.data
-		} else {
-			entryStore.modifyEntry(entry)
-			formReset()
-			currentRegistration.set(response.data.registration)
-			entryStore.set(response.data.entries)
-			entryAction = null
+			return
 		}
-	}
 
-	function resetEntry() {
-		formReset()
+		currentRegistration.set(response.data.registration)
+		entryStore.set(response.data.entries)
+		onClose()
 	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
 	<form use:form>
-		<input type="hidden" id="entryId" name="entryId" />
-		<input type="hidden" id="registrationId" name="registrationId" />
-		<input type="hidden" id="email" name="email" />
-
 		<EntryFields />
 		<FileUpload on:fileUpload={setImageDetails} />
-
-		{#if entryAction === ACTION.ADDING_ENTRY}
+		{#if !fetchingData}
+			{#if entryAction === ACTION.ADDING_ENTRY}
+				<button
+					on:click={() => addEntry($formData)}
+					disabled={fetchingData}
+					type="submit"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					>Add this Entry</button
+				>
+			{:else if entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY}
+				<button
+					on:click={() => modifyEntry($formData)}
+					type="submit"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					>Edit Entry</button
+				>
+			{/if}
 			<button
-				on:click={() => addEntry($formData)}
-				disabled={fetchingData}
+				on:click={onClose}
 				type="submit"
 				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-				>Add this Entry</button
-			>
-		{:else if entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY}
-			<button
-				on:click={() => modifyEntry($formData)}
-				type="submit"
-				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-				>Edit Entry</button
+				>Cancel</button
 			>
 		{/if}
-		<button
-			on:click={onClose}
-			type="submit"
-			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-			>Cancel</button
-		>
 		{#if fetchingData}
 			<div
 				style="border-top-color:transparent"
@@ -271,5 +254,5 @@
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
 <!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->
-<pre>{JSON.stringify($formData, null, 2)}</pre>
-<pre>{JSON.stringify(entryAction, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($formData, null, 2)}</pre> -->
+<!-- <pre>{JSON.stringify(entryAction, null, 2)}</pre> -->

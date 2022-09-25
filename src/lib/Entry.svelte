@@ -44,7 +44,6 @@
 
 	let entryIdToEdit = ''
 	let showButtons = true
-	let errorMessage = ''
 	let entryAction = ''
 
 	function showAdd() {
@@ -66,6 +65,7 @@
 	}
 
 	function cancelEntering() {
+		console.log('close called')
 		$stepsAllowed = true
 		entryAction = null
 	}
@@ -90,4 +90,4 @@
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
-<!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->
+<pre>{JSON.stringify($entryStore, null, 2)}</pre>

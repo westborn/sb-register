@@ -8,8 +8,11 @@
 	let imageContent
 
 	function onChange() {
+		// no file chosen OR current file is changed to none
+		if (input.files.length === 0) {
+			dispatch('fileUpload', { fileName: '', image: '' })
+		}
 		const file = input.files[0]
-
 		if (file) {
 			const reader = new FileReader()
 			reader.addEventListener('load', function () {
