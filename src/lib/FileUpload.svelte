@@ -10,7 +10,7 @@
 	function onChange() {
 		// no file chosen OR current file is changed to none
 		if (input.files.length === 0) {
-			dispatch('fileUpload', { fileName: '', image: '' })
+			dispatch('fileUpload', null)
 		}
 		const file = input.files[0]
 		if (file) {

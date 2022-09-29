@@ -17,14 +17,14 @@
 
 	import { onMount } from 'svelte'
 	import { createForm } from 'felte'
-	import { v4 as uuidv4 } from 'uuid'
 	import { createEventDispatcher } from 'svelte'
 	const dispatch = createEventDispatcher()
 
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
 
-	import FormRegister from '$lib/FormRegister.svelte'
+	import RegisterForm from '$lib/RegisterForm.svelte'
+	import TextList from '$lib/TextList.svelte'
 
 	let actionRequest = 'createRegistration'
 
@@ -35,28 +35,27 @@
 		if (Object.entries($currentRegistration).length == 0) {
 			actionRequest = 'createRegistration'
 			setFields({
-				email: $currentUserEmail
-			})
-		} else {
-			setFields({
-				registrationId: $currentRegistration.registrationId,
-				firstName: $currentRegistration.firstName,
-				lastName: $currentRegistration.lastName,
+				registrationId: 'NotSet',
+				firstName: '',
+				lastName: '',
 				email: $currentUserEmail,
-				phone: $currentRegistration.phone,
-				postcode: $currentRegistration.postcode,
-				bumpIn: $currentRegistration.bumpIn,
-				bumpOut: $currentRegistration.bumpOut,
-				crane: $currentRegistration.crane,
-				displayRequirements: $currentRegistration.displayRequirements,
-				bankAccountName: $currentRegistration.bankAccountName,
-				bankBSB: $currentRegistration.bankBSB,
-				bankAccount: $currentRegistration.bankAccount,
-				transport: $currentRegistration.transport,
-				accommodation: $currentRegistration.accommodation,
-				confirmation: $currentRegistration.confirmation
+				phone: '',
+				postcode: '',
+				bumpIn: '',
+				bumpOut: '',
+				crane: '',
+				displayRequirements: '',
+				bankAccountName: '',
+				bankBSB: '',
+				bankAccount: '',
+				transport: '',
+				accommodation: '',
+				confirmation: ''
 			})
-			actionRequest = 'modifyRegistration'
+			$stepsAllowed = false
+		} else {
+			actionRequest = 'showRegistration'
+			$stepsAllowed = true
 		}
 	})
 
@@ -96,10 +95,6 @@
 			return false
 		}
 
-		if (data.email != $currentUserEmail) {
-			errorMessage = "Sorry, you can't change the email for a registration"
-			return false
-		}
 		errorMessage = ''
 		return true
 	}
@@ -109,7 +104,7 @@
 			actionRequest = 'createRegistration'
 			fetchingData = true
 			errorMessage = ''
-			const newRegistration = { ...data, id: uuidv4() }
+			const newRegistration = { ...data }
 			const response = await sendToServer(newRegistration)
 			fetchingData = false
 			if (response.result === 'error') {
@@ -117,23 +112,8 @@
 			} else {
 				currentRegistration.set(response.data.registration)
 				entryStore.set(response.data.entries)
-				dispatch('registered')
-			}
-		}
-	}
+				$stepsAllowed = true
 
-	let modifyRegistration = async (data) => {
-		if (registrationIsValid(data)) {
-			fetchingData = true
-			errorMessage = ''
-			actionRequest = 'modifyRegistration'
-			const response = await sendToServer(data)
-			fetchingData = false
-			if (response.result === 'error') {
-				errorMessage = response.data
-			} else {
-				currentRegistration.set(response.data.registration)
-				entryStore.set(response.data.entries)
 				dispatch('registered')
 			}
 		}
@@ -142,18 +122,18 @@
 
 <section class="container mx-auto max-w-prose px-3">
 	<GoBack stepTitle="Registration for - {$currentUserEmail}" />
+	{#if actionRequest === 'showRegistration'}
+		<div class="mt-6 grid grid-cols-[13ch_1fr] items-center">
+			<TextList item="First Name" itemValue={$currentRegistration.firstName} />
+			<TextList item="Surname" itemValue={$currentRegistration.lastName} />
+			<TextList item="Phone" itemValue={$currentRegistration.phone} />
+			<TextList item="Postcode" itemValue={$currentRegistration.postcode} />
+		</div>
+	{:else}
+		<form use:form>
+			<RegisterForm />
+		</form>
 
-	<form use:form>
-		<input type="hidden" id="registrationId" name="registrationId" />
-
-		<FormRegister />
-	</form>
-
-	{#if errorMessage}
-		<p class="mt-6 text-red-500">{errorMessage}</p>
-	{/if}
-
-	{#if actionRequest === 'createRegistration'}
 		<button
 			on:click={() => addRegistration($formData)}
 			disabled={fetchingData}
@@ -161,27 +141,22 @@
 			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Register</button
 		>
-	{:else}
+
 		<button
-			on:click={() => modifyRegistration($formData)}
-			disabled={fetchingData}
+			on:click={() => dispatch('cancel')}
 			type="submit"
 			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-			>Edit Registration</button
+			>Cancel</button
 		>
 	{/if}
-
-	<button
-		on:click={() => dispatch('cancel')}
-		type="submit"
-		class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Cancel</button
-	>
 	{#if fetchingData}
 		<div
 			style="border-top-color:transparent"
 			class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
 		/>
+	{/if}
+	{#if errorMessage}
+		<p class="mt-6 text-red-500">{errorMessage}</p>
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->

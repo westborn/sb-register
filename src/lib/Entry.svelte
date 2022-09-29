@@ -90,4 +90,4 @@
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
-<pre>{JSON.stringify($entryStore, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->

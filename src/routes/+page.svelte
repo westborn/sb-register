@@ -32,7 +32,6 @@
 				errorMessage = 'An entry already exists for that email address'
 				return
 			}
-			// TODO set up multistep new registration form
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
 			goto('/registration')

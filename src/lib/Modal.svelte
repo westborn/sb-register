@@ -10,6 +10,7 @@
 
 <script>
 	import { onDestroy } from 'svelte'
+	import { browser } from '$app/environment'
 
 	let topDiv
 	let visible = false
@@ -29,7 +30,7 @@
 		if (visible) return
 		prevOnTop = onTop
 		onTop = topDiv
-		window.addEventListener('keydown', keyPress)
+		if (browser) window.addEventListener('keydown', keyPress)
 
 		//this prevents scrolling of the main window on larger screens
 		document.body.style.overflow = 'hidden'
@@ -41,7 +42,7 @@
 
 	function close(retVal) {
 		if (!visible) return
-		window.removeEventListener('keydown', keyPress)
+		if (browser) window.removeEventListener('keydown', keyPress)
 		onTop = prevOnTop
 		if (onTop == null) document.body.style.overflow = ''
 		visible = false
@@ -53,7 +54,7 @@
 
 	onDestroy(() => {
 		delete modals[id]
-		window.removeEventListener('keydown', keyPress)
+		if (browser) window.removeEventListener('keydown', keyPress)
 	})
 </script>
 

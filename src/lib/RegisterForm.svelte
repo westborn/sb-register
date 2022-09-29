@@ -32,10 +32,6 @@
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="email" placeholder="Email Address" requiredField />
-	</div>
-
-	<div class="relative mt-8 w-full">
 		<InputText inputFieldID="postcode" placeholder="Postcode" />
 	</div>
 </div>

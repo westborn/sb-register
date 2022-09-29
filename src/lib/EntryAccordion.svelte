@@ -3,6 +3,8 @@
 	const dispatch = createEventDispatcher()
 
 	import { slide } from 'svelte/transition'
+
+	import { getViewURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	export let showButtons = false
@@ -18,13 +20,6 @@
 			}
 			return s
 		})
-	}
-
-	function getIdFromUrl(url) {
-		return url.match(/[-\w]{25,}(?!.*[-\w]{25,})/)
-	}
-	function getViewURL(url) {
-		return `https://drive.google.com/uc?export=view&id=${getIdFromUrl(url)}`
 	}
 </script>
 

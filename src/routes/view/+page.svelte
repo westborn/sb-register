@@ -29,11 +29,10 @@
 			</button>
 		</div>
 		<div class="mt-4 text-base">
-			Registration for <strong
-				>{$currentRegistration.firstName} {$currentRegistration.lastName}</strong
-			>
 			<div class="mt-6 grid grid-cols-[13ch_1fr] items-center">
 				<TextList item="Email" itemValue={$currentRegistration.email} />
+				<TextList item="First Name" itemValue={$currentRegistration.firstName} />
+				<TextList item="Surname" itemValue={$currentRegistration.lastName} />
 				<TextList item="Phone" itemValue={$currentRegistration.phone} />
 				<TextList item="Postcode" itemValue={$currentRegistration.postcode} />
 				<TextList item="Bank Account" itemValue={$currentRegistration.bankAccountName} />

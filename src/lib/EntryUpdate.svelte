@@ -40,10 +40,12 @@
 	import { createForm } from 'felte'
 
 	import { ACTION } from '$lib/CONSTANTS.js'
+	import { getViewURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	import EntryFields from '$lib/EntryFields.svelte'
 	import FileUpload from '$lib/FileUpload.svelte'
+	import FileUploadByModal from '$lib/FileUploadByModal.svelte'
 
 	export let entryAction
 	export let entryIdToEdit
@@ -63,11 +65,12 @@
 			description: '',
 			specialRequirements: ''
 		}
-		if (entryAction === ACTION.EDITING_ENTRY) {
+		if (entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY) {
 			entry = $entryStore.find((item) => item.entryId === entryIdToEdit)
 			currentImage = entry.images[0]
 		}
-		// console.log(entry)
+		console.log(entry)
+		console.log(entryAction)
 
 		setFields({
 			entryId: entry.entryId,
@@ -102,7 +105,7 @@
 	let errorMessage = ''
 
 	//image information to pass up when an image is selected
-	let imageRes = { image: {}, imageFileName: {} }
+	let imageRes = null
 
 	function setImageDetails(e) {
 		imageRes = { image: e.detail.image, imageFileName: e.detail.fileName }
@@ -130,7 +133,7 @@
 	}
 
 	function entryIsValid(data) {
-		if (!imageRes.image.length) {
+		if (entryAction === ACTION.ADDING_ENTRY && !imageRes?.image?.length) {
 			errorMessage = 'You MUST supply an image with each entry'
 			return false
 		}
@@ -210,12 +213,46 @@
 		entryStore.set(response.data.entries)
 		onClose()
 	}
+
+	let replacementImage
+	function handleFileUploadReplace(e) {
+		console.log('we are back')
+		if (e.detail) {
+			replacementImage = { image: e.detail.image, imageFileName: e.detail.fileName }
+			console.log('back from modal')
+			console.log(replacementImage.imageFileName)
+		}
+	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
 	<form use:form>
 		<EntryFields />
-		<FileUpload on:fileUpload={setImageDetails} />
+
+		<!--Show the ADD screen-->
+		{#if entryAction === ACTION.ADDING_ENTRY}
+			<FileUpload on:fileUpload={setImageDetails} />
+		{/if}
+
+		<!--Show the EDIT screen-->
+		{#if entryAction === ACTION.EDITING_ENTRY}
+			<div
+				class="mx-auto mt-10 flex h-48 w-48 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
+			>
+				{#if currentImage?.imageURL}
+					<img
+						class="h-48 w-48 object-scale-down p-1"
+						src={getViewURL(currentImage?.imageURL)}
+						alt="Preview"
+					/>
+				{:else}
+					<span>Image Preview</span>
+				{/if}
+			</div>
+			<FileUploadByModal on:fileUploadReplace={handleFileUploadReplace} />
+		{/if}
+
+		<!--Buttons and Spinner-->
 		{#if !fetchingData}
 			{#if entryAction === ACTION.ADDING_ENTRY}
 				<button
@@ -225,22 +262,28 @@
 					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Add this Entry</button
 				>
-			{:else if entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY}
+			{:else if entryAction === ACTION.EDITING_ENTRY}
 				<button
 					on:click={() => modifyEntry($formData)}
 					type="submit"
 					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-					>Edit Entry</button
+					>Save Changes</button
 				>
-			{/if}
+			{:else if entryAction === ACTION.DELETING_ENTRY}
+				<button
+					on:click={() => deleteEntry($formData)}
+					type="submit"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					>Delete Entry</button
+				>{/if}
 			<button
 				on:click={onClose}
 				type="submit"
 				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 				>Cancel</button
 			>
-		{/if}
-		{#if fetchingData}
+		{:else}
+			<!-- fetchingData -->
 			<div
 				style="border-top-color:transparent"
 				class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
