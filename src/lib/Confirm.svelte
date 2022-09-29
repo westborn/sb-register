@@ -1,51 +1,54 @@
 <script>
-	// firstName
-	// lastName
-	// email
-	// phone
-	// postcode
-	// bumpIn
-	// bumpOut
-	// crane
-	// displayRequirements
+	// accommodation
+	// bankAccount
 	// bankAccountName
 	// bankBSB
-	// bankAccount
-	// transport
-	// accommodation
+	// bumpIn
+	// bumpOut
 	// confirmation
+	// crane
+	// displayRequirements
+	// email
+	// firstName
+	// lastName
+	// phone
+	// postcode
+	// registrationId
+	// timestamp
+	// transport
 
 	import { onMount } from 'svelte'
 	import { createForm } from 'felte'
 	import { createEventDispatcher } from 'svelte'
 	const dispatch = createEventDispatcher()
 
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
-	import FormConfirm from '$lib/FormConfirm.svelte'
-	let requestType = 'modifyRegistration'
+	import ConfirmForm from '$lib/ConfirmForm.svelte'
+	let actionType = 'modifyRegistration'
 	let fetchingData = false
 	let errorMessage = ''
 
 	onMount(() => {
 		setFields({
-			id: $currentRegistration.id,
-			firstName: $currentRegistration.firstName,
-			lastName: $currentRegistration.lastName,
-			email: $currentRegistration.email,
-			phone: $currentRegistration.phone,
-			postcode: $currentRegistration.postcode,
-			bumpIn: $currentRegistration.bumpIn,
-			bumpOut: $currentRegistration.bumpOut,
-			crane: $currentRegistration.crane,
-			displayRequirements: $currentRegistration.displayRequirements,
+			accommodation: $currentRegistration.accommodation,
+			bankAccount: $currentRegistration.bankAccount,
 			bankAccountName: $currentRegistration.bankAccountName,
 			bankBSB: $currentRegistration.bankBSB,
-			bankAccount: $currentRegistration.bankAccount,
-			transport: $currentRegistration.transport,
-			accommodation: $currentRegistration.accommodation,
-			confirmation: $currentRegistration.confirmation
+			bumpIn: $currentRegistration.bumpIn,
+			bumpOut: $currentRegistration.bumpOut,
+			confirmation: $currentRegistration.confirmation,
+			crane: $currentRegistration.crane,
+			displayRequirements: $currentRegistration.displayRequirements,
+			email: $currentUserEmail,
+			firstName: $currentRegistration.firstName,
+			lastName: $currentRegistration.lastName,
+			phone: $currentRegistration.phone,
+			postcode: $currentRegistration.postcode,
+			registrationId: $currentRegistration.registrationId,
+			transport: $currentRegistration.transport
 		})
+		$stepsAllowed = false
 	})
 
 	//get all the functions and data from felte form
@@ -56,7 +59,7 @@
 		setFields
 	} = createForm({
 		onSubmit: (values, context) => {
-			console.log(`submit - id:${values.id} - requestType: ${requestType}`)
+			// console.log(`submit - id:${values.id} - actionType: ${actionType}`)
 			// console.log(JSON.stringify(values, null, 2))
 			// console.log(JSON.stringify(context, null, 2))
 		}
@@ -65,16 +68,16 @@
 	let sendToServer = async (data) => {
 		fetchingData = true
 		errorMessage = ''
-		console.log('sending ', requestType)
-		console.log(data)
-		const res = await fetch(`/api?requestType=${requestType}`, {
+		// console.log('sending ', actionType)
+		// console.log(data)
+		const res = await fetch(`/api`, {
 			method: 'POST',
-			body: JSON.stringify({ data })
+			body: JSON.stringify({ action: actionType, data })
 		})
 		const resMessage = await res.json()
 		fetchingData = false
-		console.log('receiving	', requestType)
-		console.log(resMessage)
+		// console.log('receiving	', actionType)
+		// console.log(resMessage)
 		if (resMessage.result === 'error') {
 			errorMessage = resMessage.data
 		}
@@ -92,10 +95,6 @@
 			return false
 		}
 
-		if (data.email != $currentRegistration.email) {
-			errorMessage = "Sorry, you can't change the email for a registration"
-			return false
-		}
 		errorMessage = ''
 		return true
 	}
@@ -104,7 +103,7 @@
 		if (registrationIsValid(data)) {
 			fetchingData = true
 			errorMessage = ''
-			requestType = 'modifyRegistration'
+			actionType = 'modifyRegistration'
 			const response = await sendToServer(data)
 			fetchingData = false
 			if (response.result === 'error') {
@@ -112,31 +111,33 @@
 			} else {
 				currentRegistration.set(response.data.registration)
 				entryStore.set(response.data.entries)
+				$stepsAllowed = true
 				dispatch('confirmed')
 			}
 		}
 	}
 
-	let resetEntry = () => {
-		formReset()
+	function cancelConfirm() {
 		setFields({
-			id: $currentRegistration.id,
-			firstName: $currentRegistration.firstName,
-			lastName: $currentRegistration.lastName,
-			email: $currentRegistration.email,
-			phone: $currentRegistration.phone,
-			postcode: $currentRegistration.postcode,
-			bumpIn: $currentRegistration.bumpIn,
-			bumpOut: $currentRegistration.bumpOut,
-			crane: $currentRegistration.crane,
-			displayRequirements: $currentRegistration.displayRequirements,
+			accommodation: $currentRegistration.accommodation,
+			bankAccount: $currentRegistration.bankAccount,
 			bankAccountName: $currentRegistration.bankAccountName,
 			bankBSB: $currentRegistration.bankBSB,
-			bankAccount: $currentRegistration.bankAccount,
-			transport: $currentRegistration.transport,
-			accommodation: $currentRegistration.accommodation,
-			confirmation: $currentRegistration.confirmation
+			bumpIn: $currentRegistration.bumpIn,
+			bumpOut: $currentRegistration.bumpOut,
+			confirmation: $currentRegistration.confirmation,
+			crane: $currentRegistration.crane,
+			displayRequirements: $currentRegistration.displayRequirements,
+			email: $currentUserEmail,
+			firstName: $currentRegistration.firstName,
+			lastName: $currentRegistration.lastName,
+			phone: $currentRegistration.phone,
+			postcode: $currentRegistration.postcode,
+			registrationId: $currentRegistration.registrationId,
+			transport: $currentRegistration.transport
 		})
+		$stepsAllowed = true
+		dispatch('cancel')
 	}
 </script>
 
@@ -144,28 +145,27 @@
 	<GoBack stepTitle="Confirm Details for - {$currentRegistration.email}" />
 
 	<form use:form>
-		<input type="hidden" id="id" name="id" />
-
-		<FormConfirm />
+		<ConfirmForm />
 	</form>
 
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
 	{/if}
-	<button
-		on:click={() => modifyRegistration($formData)}
-		disabled={fetchingData}
-		type="submit"
-		class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Edit Registration</button
-	>
-	<button
-		on:click={() => resetEntry()}
-		type="submit"
-		class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-		>Cancel</button
-	>
-	{#if fetchingData}
+	{#if !fetchingData}
+		<button
+			on:click={() => modifyRegistration($formData)}
+			disabled={fetchingData}
+			type="submit"
+			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			>Save Changes?</button
+		>
+		<button
+			on:click={() => cancelConfirm()}
+			type="submit"
+			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			>Cancel</button
+		>
+	{:else}
 		<div
 			style="border-top-color:transparent"
 			class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"

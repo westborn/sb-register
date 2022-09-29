@@ -14,6 +14,7 @@
 	currentActive = setCurrent(1)
 
 	function setCurrent(newStep) {
+		console.log(`newstep: ${newStep}`)
 		let next = newStep
 
 		if (newStep < 0) {
@@ -40,6 +41,11 @@
 	const handleProgress = (stepIncrement) => {
 		currentActive = setCurrent(currentActive + stepIncrement)
 	}
+
+	const handleCancel = () => {
+		console.log('here')
+		currentActive = 1
+	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
@@ -60,7 +66,7 @@
 			{:else if currentActive == 1}
 				<Entry />
 			{:else if currentActive == 2}
-				<Confirm />
+				<Confirm on:confirmed={() => handleProgress(+1)} on:cancel={() => handleProgress(-1)} />
 			{:else if currentActive == 3}
 				<Complete />
 			{/if}

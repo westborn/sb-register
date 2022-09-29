@@ -1,19 +1,21 @@
 <script>
-	// firstName
-	// lastName
-	// email
-	// phone
-	// postcode
-	// bumpIn
-	// deinstallation
-	// crane
-	// displayRequirements
-	// bankAccountName
-	// bankBSB
-	// bankAccount
-	// transport
-	// accommodation
-	// confirmation
+	// accommodation:  $currentRegistration.accommodation,
+	// bankAccount:  $currentRegistration.bankAccount,
+	// bankAccountName:  $currentRegistration.bankAccountName,
+	// bankBSB:  $currentRegistration.bankBSB,
+	// bumpIn:  $currentRegistration.bumpIn,
+	// bumpOut:  $currentRegistration.bumpOut,
+	// confirmation:  $currentRegistration.confirmation,
+	// crane:  $currentRegistration.crane,
+	// displayRequirements:  $currentRegistration.displayRequirements,
+	// email:  $currentRegistration.email,
+	// firstName:  $currentRegistration.firstName,
+	// lastName:  $currentRegistration.lastName,
+	// phone:  $currentRegistration.phone,
+	// postcode:  $currentRegistration.postcode,
+	// registrationId:  $currentRegistration.registrationId,
+	// timestamp:  $currentRegistration.timestamp,
+	// transport:  $currentRegistration.transport,
 
 	import InputText from './InputText.svelte'
 </script>
