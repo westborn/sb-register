@@ -10,11 +10,9 @@
 
 	let steps = ['Register', 'Entries', 'Confirm', 'Complete']
 
-	let currentActive = 1
-	currentActive = setCurrent(1)
+	$: currentActive = setCurrent()
 
-	function setCurrent(newStep) {
-		console.log(`newstep: ${newStep}`)
+	function setCurrent(newStep = 1) {
 		let next = newStep
 
 		if (newStep < 0) {
@@ -41,11 +39,6 @@
 	const handleProgress = (stepIncrement) => {
 		currentActive = setCurrent(currentActive + stepIncrement)
 	}
-
-	const handleCancel = () => {
-		console.log('here')
-		currentActive = 1
-	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
@@ -59,7 +52,6 @@
 		</button>
 	{:else}
 		<ProgressBar {steps} {currentActive} />
-
 		<div class="mt-10">
 			{#if currentActive == 0}
 				<Register on:registered={() => handleProgress(+1)} on:cancel={() => goto('/')} />
@@ -68,21 +60,23 @@
 			{:else if currentActive == 2}
 				<Confirm on:confirmed={() => handleProgress(+1)} on:cancel={() => handleProgress(-1)} />
 			{:else if currentActive == 3}
-				<Complete />
+				<Complete on:confirmed={() => handleProgress(0)} on:cancel={() => handleProgress(-2)} />
 			{/if}
 		</div>
 		{#if $stepsAllowed}
 			<div class="mt-10 flex max-w-2xl justify-around">
-				<button
-					class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-8 py-1 font-semibold text-gray-700"
-					on:click={() => handleProgress(-1)}
-					disabled={currentActive == 0}>Previous Step</button
-				>
-				<button
-					class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-10 py-1 font-semibold text-gray-700"
-					on:click={() => handleProgress(+1)}
-					disabled={currentActive == steps.length}>Next Step</button
-				>
+				{#if currentActive > 0}
+					<button
+						class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-8 py-1 font-semibold text-gray-700"
+						on:click={() => handleProgress(-1)}>Previous Step</button
+					>
+				{/if}
+				{#if currentActive < steps.length - 1}
+					<button
+						class=" cursor-pointer rounded-lg border-0 bg-emerald-300 px-10 py-1 font-semibold text-gray-700"
+						on:click={() => handleProgress(+1)}>Next Step</button
+					>
+				{/if}
 			</div>
 		{/if}
 	{/if}

@@ -45,6 +45,9 @@
 	let entryIdToEdit = ''
 	let showButtons = true
 	let entryAction = ''
+	$: costOfRegistration = 20 + $entryStore.length * 20
+	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
+	// $: numberOfEntries = $entryStore.length + ' entries'
 
 	function showAdd() {
 		entryIdToEdit = 'NotSet'
@@ -73,6 +76,9 @@
 
 <section class="container mx-auto max-w-prose px-3">
 	<GoBack stepTitle="Entries for - {$currentRegistration.email}" />
+	<p class="mt-2 text-base text-primary-400">
+		Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}
+	</p>
 	{#if $stepsAllowed}
 		<div class="mt-6">
 			<Accordion {showButtons} on:edit={showEdit} on:delete={showDelete} />
@@ -80,8 +86,8 @@
 		<div class="flex items-center justify-center">
 			<button
 				on:click={() => showAdd()}
-				class="mt-2 inline-block rounded bg-primary-400 px-7 py-2 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-				>Add an Entry?</button
+				class="mt-2 inline-block rounded-lg bg-primary-400 px-7 py-2 font-semibold   text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+				>Add an New Entry?</button
 			>
 		</div>
 	{/if}

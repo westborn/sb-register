@@ -1,6 +1,102 @@
 <script>
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { createEventDispatcher } from 'svelte'
+	const dispatch = createEventDispatcher()
+	import { goto } from '$app/navigation'
+
+	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
+	import TextList from '$lib/TextList.svelte'
+
+	let actionType = 'completeRegistration'
+	let fetchingData = false
+	let errorMessage = ''
+	$: costOfRegistration = 20 + $entryStore.length * 20
+	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
+
+	let sendToServer = async (data) => {
+		fetchingData = true
+		errorMessage = ''
+		// console.log('sending ', actionType)
+		// console.log(data)
+		const res = await fetch(`/api`, {
+			method: 'POST',
+			body: JSON.stringify({ action: actionType, data })
+		})
+		const resMessage = await res.json()
+		fetchingData = false
+		// console.log('receiving	', actionType)
+		// console.log(resMessage)
+		if (resMessage.result === 'error') {
+			errorMessage = resMessage.data
+		}
+		return resMessage
+	}
+
+	let completeRegistration = async (data) => {
+		fetchingData = true
+		errorMessage = ''
+		actionType = 'completeRegistration'
+		const response = await sendToServer(data)
+		fetchingData = false
+		if (response.result === 'error') {
+			errorMessage = response.data
+		} else {
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
+			$stepsAllowed = true
+			dispatch('complete')
+			goto('/view')
+		}
+	}
 </script>
 
-<GoBack stepTitle="Complete the Registration for - {$currentRegistration.email}" />
+<section class="container mx-auto max-w-prose px-3">
+	<GoBack stepTitle="Complete the Registration for - {$currentRegistration.email}" />
+
+	<div class="mt-4 text-base">
+		<p class="bold text-xl">Registration number is - {$currentRegistration.registrationId}</p>
+		<div class="mt-6 grid grid-cols-[13ch_1fr] items-center">
+			<TextList item="First Name" itemValue={$currentRegistration.firstName} />
+			<TextList item="Surname" itemValue={$currentRegistration.lastName} />
+			<TextList item="Email" itemValue={$currentRegistration.email} />
+			<TextList item="Phone" itemValue={$currentRegistration.phone} />
+			<TextList item="Postcode" itemValue={$currentRegistration.postcode} />
+			<TextList item="Bank Account" itemValue={$currentRegistration.bankAccountName} />
+			<TextList item="BSB" itemValue={$currentRegistration.bankBSB} />
+			<TextList item="Account" itemValue={$currentRegistration.bankAccount} />
+			<TextList item="Confirmed" itemValue={$currentRegistration.confirmation} />
+		</div>
+		<p class="mt-6 text-xl text-red-400">
+			Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}
+		</p>
+		<p class="mt-4">Please direct deposit ${costOfRegistration} to:</p>
+		<p>Account Name: Edgy Art Inc</p>
+		<p>BSB: 802124</p>
+		<p>Acct Number: 100082466</p>
+		<p>Reference: {$currentRegistration.registrationId} - {$currentRegistration.lastName}</p>
+	</div>
+
+	{#if errorMessage}
+		<p class="mt-6 text-red-500">{errorMessage}</p>
+	{/if}
+	{#if !fetchingData}
+		<button
+			on:click={() =>
+				completeRegistration({
+					registrationId: $currentRegistration.registrationId,
+					email: $currentRegistration.email
+				})}
+			disabled={fetchingData}
+			type="submit"
+			class="mt-8 inline-block w-auto  rounded-lg bg-red-400 px-7 py-3  font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
+			>I CONFIRM I have made the deposit and all details are correct.<br /><span class="text-sm"
+				>(No further changes can be made)</span
+			></button
+		>
+	{:else}
+		<div
+			style="border-top-color:transparent"
+			class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
+		/>
+	{/if}
+</section>

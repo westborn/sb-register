@@ -5,7 +5,7 @@
 	let fetchingData = false
 	let errorMessage = ''
 
-	async function handelUserAction(userAction) {
+	async function handleUserAction(userAction) {
 		fetchingData = true
 		errorMessage = ''
 		const res = await fetch('/api', {
@@ -53,6 +53,10 @@
 			// TODO existing registration
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
+			if ($currentRegistration.confirmation === 'Complete') {
+				goto('/view')
+				return
+			}
 			goto('/registration')
 			return
 		}
@@ -87,15 +91,15 @@
 		<p class="m-2 text-red-500">{errorMessage}</p>
 	{/if}
 	<div class="mt-6 flex justify-between">
-		<button type="button" on:click={() => handelUserAction('new')} class={btnClasses}
+		<button type="button" on:click={() => handleUserAction('new')} class={btnClasses}
 			>New Registration
 		</button>
 
-		<button type="button" on:click={() => handelUserAction('view')} class={btnClasses}
+		<button type="button" on:click={() => handleUserAction('view')} class={btnClasses}
 			>View Registration
 		</button>
 
-		<button type="button" on:click={() => handelUserAction('registration')} class={btnClasses}
+		<button type="button" on:click={() => handleUserAction('registration')} class={btnClasses}
 			>Continue Registering</button
 		>
 	</div>
@@ -107,4 +111,4 @@
 		/>
 	{/if}
 </section>
-<!-- <pre>{$currentUserEmail}</pre> -->
+<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->

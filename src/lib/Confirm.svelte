@@ -22,12 +22,16 @@
 	import { createEventDispatcher } from 'svelte'
 	const dispatch = createEventDispatcher()
 
+	import { ACTION } from '$lib/CONSTANTS.js'
 	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
 	import GoBack from '$lib/GoBack.svelte'
 	import ConfirmForm from '$lib/ConfirmForm.svelte'
-	let actionType = 'modifyRegistration'
+	let actionType = ACTION.EDITING_REGISTRATION
 	let fetchingData = false
 	let errorMessage = ''
+
+	$: costOfRegistration = 20 + $entryStore.length * 20
+	$: numberOfEntries = $entryStore.length === 1 ? '1 entry' : `${$entryStore.length} entries`
 
 	onMount(() => {
 		setFields({
@@ -48,7 +52,7 @@
 			registrationId: $currentRegistration.registrationId,
 			transport: $currentRegistration.transport
 		})
-		$stepsAllowed = false
+		$stepsAllowed = true
 	})
 
 	//get all the functions and data from felte form
@@ -103,7 +107,7 @@
 		if (registrationIsValid(data)) {
 			fetchingData = true
 			errorMessage = ''
-			actionType = 'modifyRegistration'
+			actionType = ACTION.EDITING_REGISTRATION
 			const response = await sendToServer(data)
 			fetchingData = false
 			if (response.result === 'error') {
@@ -142,8 +146,10 @@
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
-	<GoBack stepTitle="Confirm Details for - {$currentRegistration.email}" />
-
+	<GoBack stepTitle="Details for - {$currentRegistration.email}" />
+	<p class="mt-2 text-base text-primary-400">
+		Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}
+	</p>
 	<form use:form>
 		<ConfirmForm />
 	</form>
@@ -156,13 +162,13 @@
 			on:click={() => modifyRegistration($formData)}
 			disabled={fetchingData}
 			type="submit"
-			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-			>Save Changes?</button
+			class="mt-8 inline-block rounded-lg bg-primary-400 px-7 py-3 font-semibold   text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			>Save changes I've made</button
 		>
 		<button
 			on:click={() => cancelConfirm()}
 			type="submit"
-			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			class="mt-8 inline-block rounded-lg bg-primary-400 px-7 py-3 font-semibold   text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Cancel</button
 		>
 	{:else}

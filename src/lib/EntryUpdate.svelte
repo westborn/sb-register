@@ -46,14 +46,22 @@
 	import EntryFields from '$lib/EntryFields.svelte'
 	import FileUpload from '$lib/FileUpload.svelte'
 	import FileUploadByModal from '$lib/FileUploadByModal.svelte'
+	import TextList from '$lib/TextList.svelte'
 
 	export let entryAction
 	export let entryIdToEdit
 	export let onClose
 
+	let entry
+
+	let imageBeforeUpdate
+	let replacementImage
+	let fetchingData = false
+	let errorMessage = ''
+
 	onMount(() => {
 		//setup fields to enter/upate
-		let entry = {
+		entry = {
 			entryId: entryIdToEdit,
 			registrationId: $currentRegistration.registrationId,
 			email: $currentUserEmail,
@@ -67,7 +75,8 @@
 		}
 		if (entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY) {
 			entry = $entryStore.find((item) => item.entryId === entryIdToEdit)
-			currentImage = entry.images[0]
+			imageBeforeUpdate = { ...entry.images[0] }
+			console.log(imageBeforeUpdate)
 		}
 		console.log(entry)
 		console.log(entryAction)
@@ -99,10 +108,6 @@
 			// console.log(JSON.stringify(context, null, 2))
 		}
 	})
-
-	let currentImage
-	let fetchingData = false
-	let errorMessage = ''
 
 	//image information to pass up when an image is selected
 	let imageRes = null
@@ -182,14 +187,18 @@
 		onClose()
 	}
 
-	async function deleteEntry(id) {
-		const response = await sendToServer({ entryId })
+	async function deleteEntry() {
+		const response = await sendToServer({
+			entryId: entry.entryId,
+			imageId: imageBeforeUpdate.imageId,
+			email: $currentUserEmail
+		})
 		if (response.result === 'error') {
 			errorMessage = response.data
 		} else {
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
-			entryAction = null
+			onClose()
 		}
 	}
 
@@ -199,9 +208,19 @@
 		}
 
 		// has the image changed?
-		//display the existing image initially
-		// have button to upouidate the image
+		// add an 'image' property to the entry
 		// send entry and image to modify
+		if (replacementImage?.imageIsBlob) {
+			entry.image = {
+				blobDataURL: replacementImage.image,
+				email: $currentUserEmail,
+				entryId: entry.entryId,
+				imageFileName: `${$currentRegistration.lastName}_${entry.title}_${imageBeforeUpdate.imageId}`,
+				imageURL: imageBeforeUpdate.imageURL,
+				imageId: imageBeforeUpdate.imageId,
+				originalFileName: replacementImage.imageFileName
+			}
+		}
 
 		const response = await sendToServer(entry)
 		if (response.result === 'error') {
@@ -214,35 +233,44 @@
 		onClose()
 	}
 
-	let replacementImage
 	function handleFileUploadReplace(e) {
-		console.log('we are back')
+		console.log('EntryUpdate')
 		if (e.detail) {
-			replacementImage = { image: e.detail.image, imageFileName: e.detail.fileName }
+			replacementImage = {
+				imageIsBlob: true,
+				image: e.detail.image,
+				imageFileName: e.detail.fileName
+			}
 			console.log('back from modal')
 			console.log(replacementImage.imageFileName)
+		} else {
+			replacementImage = {}
+			console.log('EntryUpdate - No image selected')
 		}
 	}
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
 	<form use:form>
-		<EntryFields />
-
 		<!--Show the ADD screen-->
 		{#if entryAction === ACTION.ADDING_ENTRY}
+			<EntryFields />
+
 			<FileUpload on:fileUpload={setImageDetails} />
 		{/if}
 
 		<!--Show the EDIT screen-->
 		{#if entryAction === ACTION.EDITING_ENTRY}
+			<EntryFields />
 			<div
 				class="mx-auto mt-10 flex h-48 w-48 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
 			>
-				{#if currentImage?.imageURL}
+				{#if replacementImage?.imageIsBlob}
+					<img alt="Preview" class="h-48 w-48 object-scale-down p-1" src={replacementImage.image} />
+				{:else if imageBeforeUpdate?.imageURL}
 					<img
 						class="h-48 w-48 object-scale-down p-1"
-						src={getViewURL(currentImage?.imageURL)}
+						src={getViewURL(imageBeforeUpdate?.imageURL)}
 						alt="Preview"
 					/>
 				{:else}
@@ -251,6 +279,29 @@
 			</div>
 			<FileUploadByModal on:fileUploadReplace={handleFileUploadReplace} />
 		{/if}
+
+		<!--Show the DELETE screen-->
+		{#if entryAction === ACTION.DELETING_ENTRY}
+			<p class="mt-6 text-xl text-red-400">
+				Ready to Delete the Entry with title: {entry?.title}
+			</p>
+
+			<div
+				class="mx-auto mt-10 flex h-48 w-48 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
+			>
+				{#if imageBeforeUpdate?.imageURL}
+					<img
+						class="h-48 w-48 object-scale-down p-1"
+						src={getViewURL(imageBeforeUpdate?.imageURL)}
+						alt="Preview"
+					/>
+				{:else}
+					<span>Image Preview</span>
+				{/if}
+			</div>
+		{/if}
+		<!-- <pre>{JSON.stringify(imageBeforeUpdate, null, 2)}</pre> -->
+		<!-- <pre>{JSON.stringify(replacementImage, null, 2)}</pre> -->
 
 		<!--Buttons and Spinner-->
 		{#if !fetchingData}
@@ -271,7 +322,7 @@
 				>
 			{:else if entryAction === ACTION.DELETING_ENTRY}
 				<button
-					on:click={() => deleteEntry($formData)}
+					on:click={() => deleteEntry()}
 					type="submit"
 					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Delete Entry</button

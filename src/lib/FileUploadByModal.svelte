@@ -16,10 +16,12 @@
 		}
 	}
 	function setSelection(res) {
-		console.log(res)
-		console.log(imageRes?.imageFileName)
+		console.log(`setSelection ${res} - ${imageRes?.imageFileName}`)
 		if (res === 'ok' && imageRes?.imageFileName) {
 			dispatch('fileUploadReplace', { fileName: imageRes.imageFileName, image: imageRes.image })
+		} else {
+			console.log('setSelection why?')
+			dispatch('fileUploadReplace', null)
 		}
 	}
 </script>

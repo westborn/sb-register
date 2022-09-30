@@ -30,9 +30,9 @@
 		</div>
 		<div class="mt-4 text-base">
 			<div class="mt-6 grid grid-cols-[13ch_1fr] items-center">
-				<TextList item="Email" itemValue={$currentRegistration.email} />
 				<TextList item="First Name" itemValue={$currentRegistration.firstName} />
 				<TextList item="Surname" itemValue={$currentRegistration.lastName} />
+				<TextList item="Email" itemValue={$currentRegistration.email} />
 				<TextList item="Phone" itemValue={$currentRegistration.phone} />
 				<TextList item="Postcode" itemValue={$currentRegistration.postcode} />
 				<TextList item="Bank Account" itemValue={$currentRegistration.bankAccountName} />
@@ -47,6 +47,10 @@
 			</div>
 		</div>
 
+		{#if $currentRegistration.confirmation === 'Complete'}
+			<p class="mt-6 text-red-400">This entry is completed and can no longer by changed</p>
+		{/if}
+
 		<div class="mt-12 flex items-center">
 			<div class="flex-grow border-t border-gray-400" />
 			<span class="mx-4 flex-shrink text-gray-600">Entries</span>
@@ -56,5 +60,5 @@
 		<Accordion showButtons={false} on:edit={handleEdit} on:delete={handleDelete} />
 	{/if}
 </section>
-<pre>{JSON.stringify($currentRegistration, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->
 <!-- <pre>{JSON.stringify($entryStore, null, 2)}</pre> -->
