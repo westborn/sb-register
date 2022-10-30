@@ -112,23 +112,6 @@
 			placeholder="Any special requirements for the display area"
 		/>
 	</div>
-	<div class="relative mt-8 w-full">
-		<InputText
-			inputFieldID="bankAccountName"
-			placeholder="Name on your Bank Account"
-			requiredField
-		/>
-	</div>
-	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="bankBSB" placeholder="BSB of your Bank Account" requiredField />
-	</div>
-	<div class="relative mt-8 w-full">
-		<InputText
-			inputFieldID="bankAccount"
-			placeholder="Account number of your Bank Account"
-			requiredField
-		/>
-	</div>
 
 	<div class="relative mt-8 w-full px-2">
 		<div class="flex space-x-6">
@@ -165,5 +148,25 @@
 				<span class="ml-1">Maybe</span>
 			</label>
 		</div>
+	</div>
+
+	<div class="relative mt-8 w-full">
+		<InputText
+			inputFieldID="bankAccountName"
+			placeholder="Name on your Bank Account"
+			requiredField
+		/>
+	</div>
+
+	<div class="relative mt-8 w-full">
+		<InputText inputFieldID="bankBSB" placeholder="BSB of your Bank Account" requiredField />
+	</div>
+
+	<div class="relative mt-8 w-full">
+		<InputText
+			inputFieldID="bankAccount"
+			placeholder="Account number of your Bank Account"
+			requiredField
+		/>
 	</div>
 </div>
