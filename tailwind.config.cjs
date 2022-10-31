@@ -1,4 +1,4 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -35,7 +35,8 @@ module.exports = {
 				}
 			},
 			fontFamily: {
-				poppins: ['Poppins', ...defaultTheme.fontFamily.sans]
+				// poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
+				montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans]
 			}
 		}
 	},
@@ -43,4 +44,4 @@ module.exports = {
 		require('@tailwindcss/forms')
 		// ...
 	]
-};
+}

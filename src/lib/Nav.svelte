@@ -2,56 +2,60 @@
 	const menuText = [
 		{
 			text: 'Home',
-			href: '/home'
+			href: '/'
 		},
 		{
-			text: 'About',
-			href: '/aboutus'
+			text: '2023 Exhibition',
+			href: '/2023-2'
 		},
 		{
-			text: 'Support',
-			href: '/support-us'
+			text: 'Become a Sponsor',
+			href: '/sponsor'
 		},
 		{
-			text: '2022',
-			href: '/program-2'
+			text: 'Exhibit this year',
+			href: '/exhibit'
+		},
+		{
+			text: 'Buy an Artwork',
+			href: '/buy'
+		},
+		{
+			text: 'Volunteer',
+			href: '/volunteer'
 		},
 		{
 			text: 'Gallery',
-			href: '/gallery-2'
+			href: '/gallery'
 		},
 		{
-			text: 'For the Artist',
-			href: '/artists-information'
-		},
-		{
-			text: 'For the Buyer',
-			href: '/buyer-information'
+			text: 'About',
+			href: '/about'
 		},
 		{
 			text: 'Contact',
-			href: '/contact-1'
+			href: '/contact'
 		}
-	];
+	]
 
-	let hamburgerMenuOpen = false;
+	let hamburgerMenuOpen = false
 </script>
 
-<nav class="bg-primary">
+<nav>
 	<!-- Hamburger Modal Menu -->
 	<div
 		class:hidden={!hamburgerMenuOpen}
-		class="absolute z-50 h-screen w-screen bg-gray-300/30"
+		class="absolute z-50 h-screen w-screen bg-gray-500/30"
 		on:click={() => (hamburgerMenuOpen = !hamburgerMenuOpen)}
 	>
 		<!-- Vertical Menu -->
 		<aside class="absolute top-0 right-16 bg-gray-300/50 shadow-2xl">
-			<ul class="flex flex-col bg-primary p-4 text-lg text-gray-800">
+			<ul class="flex flex-col bg-white p-4 text-lg text-gray-800">
 				{#each menuText as item}
 					<li class="mr-3">
 						<a
-							class="block p-2 text-left font-bold uppercase text-white no-underline hover:text-accent md:text-sm"
-							href={`https://sculpturebermagui.org.au${item.href}`}>{item.text}</a
+							class="block p-2 text-left text-primary-300 no-underline hover:text-accent md:text-sm"
+							href={`https://staging.sculpturebermagui.org.au${item.href}`}>{item.text}</a
 						>
 					</li>
 				{/each}
@@ -61,18 +65,11 @@
 
 	<!-- Desktop Menu -->
 	<div class="flex h-16 justify-between">
-		<a class="px-6" href="https://sculpturebermagui.org.au/home">
-			<img
-				alt="Sculpture Bermagui"
-				src="https://sculpturebermagui.org.au/wp-content/uploads/2021/02/sculpture-bermagui-logo-2021.png"
-				width="80"
-			/>
-		</a>
 		<button
 			type="button"
 			aria-label="Mobile Menu"
 			on:click={() => (hamburgerMenuOpen = !hamburgerMenuOpen)}
-			class="ml-3  inline-flex items-center rounded-lg p-2 text-sm text-gray-100 hover:bg-gray-300 hover:text-primary focus:outline-none focus:ring-0 focus:ring-gray-200 lg:hidden"
+			class="ml-3 inline-flex items-center rounded-lg p-2 text-sm text-gray-400 hover:bg-gray-100 hover:text-primary focus:outline-none focus:ring-0 focus:ring-gray-200 lg:hidden"
 		>
 			<svg
 				class:hidden={hamburgerMenuOpen}
@@ -101,13 +98,13 @@
 		</button>
 
 		<!-- Horizontal menu -->
-		<div class="hidden w-full pt-2 md:w-1/2  md:justify-end lg:flex ">
+		<div class="ml-10 hidden w-auto lg:flex ">
 			<ul class="list-reset flex flex-1 items-center justify-between md:flex-none">
 				{#each menuText as item}
-					<li class="mr-3">
+					<li class="mr-1">
 						<a
-							class="inline-block px-2 font-bold uppercase text-white no-underline hover:text-accent md:text-sm"
-							href={`https://sculpturebermagui.org.au${item.href}`}>{item.text}</a
+							class="inline-block px-2 text-base font-semibold text-primary-300 no-underline hover:text-accent"
+							href={`https://staging.sculpturebermagui.org.au${item.href}`}>{item.text}</a
 						>
 					</li>
 				{/each}
