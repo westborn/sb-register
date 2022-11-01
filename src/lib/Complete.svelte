@@ -88,8 +88,8 @@
 			disabled={fetchingData}
 			type="submit"
 			class="mt-8 inline-block w-auto  rounded-lg bg-red-400 px-7 py-3  font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
-			>I CONFIRM I have made the deposit and all details are correct.<br /><span class="text-sm"
-				>(No further changes can be made)</span
+			>By clicking here I CONFIRM I have made the deposit and all details are correct.<br /><span
+				class="text-sm">(No further changes can be made)</span
 			></button
 		>
 	{:else}

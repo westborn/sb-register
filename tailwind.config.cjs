@@ -35,8 +35,8 @@ module.exports = {
 				}
 			},
 			fontFamily: {
-				// poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
-				montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans]
+				poppins: ['Poppins', ...defaultTheme.fontFamily.sans]
+				// montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans]
 			}
 		}
 	},

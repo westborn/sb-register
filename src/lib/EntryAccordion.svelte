@@ -32,9 +32,9 @@
 			>
 				<span>
 					{#if entryDisplayed.active}
-						<span class="text-accent-600">&#9660;</span>
-					{:else}
 						<span class="text-accent-600">&#9650;</span>
+					{:else}
+						<span>&#9654;</span>
 					{/if}
 				</span>
 
@@ -44,7 +44,7 @@
 				</span>
 			</button>
 			{#if entryDisplayed.active}
-				<div class="mb-2 bg-slate-50 p-5 text-sm" transition:slide>
+				<div class="mb-2 bg-slate-50 px-5 py-2 text-sm" transition:slide>
 					<p>{entryDisplayed.description}</p>
 					<div class="mx-auto flex items-center justify-between">
 						<p class="text-lg">
