@@ -89,12 +89,7 @@
 	}
 
 	let registrationIsValid = (data) => {
-		if (
-			data.bankAccountName === '' ||
-			data.bankBSB === '' ||
-			data.bankAccount === '' ||
-			data.confirmation === ''
-		) {
+		if (data.bankAccountName === '' || data.bankBSB === '' || data.bankAccount === '') {
 			errorMessage = 'Please fill in all fields'
 			return false
 		}

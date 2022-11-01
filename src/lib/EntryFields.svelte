@@ -31,8 +31,19 @@
 		</div>
 	</div>
 
-	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="price" placeholder="Price" requiredField />
+	<div>
+		<input
+			id="price"
+			name="price"
+			type="text"
+			class="peer h-8 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
+			price
+		/>
+		<label
+			for="price"
+			class="absolute left-2 -top-4 text-xs text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-gray-600"
+			>Price<span class="after:ml-0.5 after:text-sm after:text-red-500 after:content-['*'] " />
+		</label>
 	</div>
 
 	<div class="relative mt-8 w-full">

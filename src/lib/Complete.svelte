@@ -64,7 +64,6 @@
 			<TextList item="Bank Account" itemValue={$currentRegistration.bankAccountName} />
 			<TextList item="BSB" itemValue={$currentRegistration.bankBSB} />
 			<TextList item="Account" itemValue={$currentRegistration.bankAccount} />
-			<TextList item="Confirmed" itemValue={$currentRegistration.confirmation} />
 		</div>
 		<p class="mt-6 text-xl text-red-400">
 			Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}

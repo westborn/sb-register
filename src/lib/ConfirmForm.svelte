@@ -22,22 +22,6 @@
 
 <div>
 	<div class="relative mt-8 w-full px-2">
-		<div class="relative mt-8 w-full">
-			<InputText inputFieldID="firstName" placeholder="Your First Name" requiredField />
-		</div>
-
-		<div class="relative mt-8 w-full">
-			<InputText inputFieldID="lastName" placeholder="Surname" requiredField />
-		</div>
-
-		<div class="relative mt-8 w-full">
-			<InputText inputFieldID="phone" placeholder="Phone" />
-		</div>
-
-		<div class="relative mt-8 w-full">
-			<InputText inputFieldID="postcode" placeholder="Postcode" />
-		</div>
-
 		<div class="mt-8 flex flex-col">
 			<legend class="text-gray-600"
 				>Indicate when you require the Bump In team to be on hand to assist</legend
@@ -115,7 +99,7 @@
 
 	<div class="relative mt-8 w-full px-2">
 		<div class="flex space-x-6">
-			<legend class="text-gray-600">Transport Required?</legend>
+			<legend class="text-gray-600">Would you like to discuss a Transport subsidy</legend>
 			<label>
 				<input class="form-radio" type="radio" name="transport" value="Yes" />
 				<span class="ml-1">Yes</span>
@@ -124,16 +108,12 @@
 				<input class="form-radio" type="radio" checked name="transport" value="No" />
 				<span class="ml-1">No</span>
 			</label>
-
-			<label class="inline-flex items-center">
-				<input class="form-radio" type="radio" name="transport" value="Maybe" />
-				<span class="ml-1">Maybe</span>
-			</label>
 		</div>
 	</div>
+
 	<div class="relative mt-8 w-full px-2">
 		<div class="flex space-x-6">
-			<legend class="text-gray-600">Accommodation Required?</legend>
+			<legend class="text-gray-600">Would you like to discuss an Accommodation subsidy?</legend>
 			<label>
 				<input class="form-radio" type="radio" name="accommodation" value="Yes" />
 				<span class="ml-1">Yes</span>
@@ -141,11 +121,6 @@
 			<label>
 				<input class="form-radio" type="radio" checked name="accommodation" value="No" />
 				<span class="ml-1">No</span>
-			</label>
-
-			<label class="inline-flex items-center">
-				<input class="form-radio" type="radio" name="accommodation" value="Maybe" />
-				<span class="ml-1">Maybe</span>
 			</label>
 		</div>
 	</div>
