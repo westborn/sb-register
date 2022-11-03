@@ -39,9 +39,9 @@
 					class="form-radio"
 					type="radio"
 					name="bumpIn"
-					value="Friday morning - till 12.00 pm 4 March"
+					value="Friday morning - until 12.00 pm 4 March"
 				/>
-				<span class="ml-1">Friday morning - till 12.00 pm 3 March</span>
+				<span class="ml-1">Friday morning - until 12.00 pm 3 March</span>
 			</label>
 		</div>
 	</div>

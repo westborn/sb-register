@@ -400,6 +400,7 @@ function createEntry(data, ss) {
 	// TODO Validate entry
 
 	const newEntry = data.newEntry
+	newEntry['price'] = Number(newEntry['price'].replace(/[^0-9\.]+/g, ''))
 	const newImage = data.newImage
 	newEntry.entryId = bumpId('entryId')
 	try {
@@ -468,6 +469,7 @@ function modifyEntry(request, ss) {
 	try {
 		const sheet = ss.getSheetByName('Entries')
 		const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
+		request['price'] = Number(request['price'].replace(/[^0-9\.]+/g, ''))
 		const row = headers.map((key) => request[String(key)] || '')
 		console.log('modifyEntry')
 		console.log(row)
