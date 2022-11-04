@@ -27,14 +27,20 @@
 				>Indicate when you require the Bump In team to be on hand to assist</legend
 			>
 			<label>
-				<input class="form-radio" type="radio" name="bumpIn" value="Thursday morning 3 March" />
+				<input
+					class="form-radio"
+					type="radio"
+					name="bumpIn"
+					value="Thursday morning 3 March"
+					checked
+				/>
 				<span class="ml-1">Thursday morning 2 March</span>
 			</label>
 			<label>
 				<input class="form-radio" type="radio" name="bumpIn" value="Thursday afternoon 3 March" />
 				<span class="ml-1">Thursday afternoon 2 March</span>
 			</label>
-			<label class="inline-flex items-center">
+			<label>
 				<input
 					class="form-radio"
 					type="radio"
@@ -61,10 +67,16 @@
 				<span class="ml-1">Monday afternoon from 3.00 pm 13 March</span>
 			</label>
 			<label>
-				<input class="form-radio" type="radio" name="bumpOut" value="Tuesday morning 15 March" />
+				<input
+					class="form-radio"
+					type="radio"
+					name="bumpOut"
+					value="Tuesday morning 15 March"
+					checked
+				/>
 				<span class="ml-1">Tuesday morning 14 March</span>
 			</label>
-			<label class="inline-flex items-center">
+			<label>
 				<input class="form-radio" type="radio" name="bumpOut" value="Tuesday afternoon 15 March" />
 				<span class="ml-1">Tuesday afternoon 14 March</span>
 			</label>
@@ -79,11 +91,11 @@
 				<span class="ml-1">Yes</span>
 			</label>
 			<label>
-				<input class="form-radio" type="radio" checked name="crane" value="No" />
+				<input class="form-radio" type="radio" name="crane" value="No" checked />
 				<span class="ml-1">No</span>
 			</label>
 
-			<label class="inline-flex items-center">
+			<label>
 				<input class="form-radio" type="radio" name="crane" value="Maybe" />
 				<span class="ml-1">Maybe</span>
 			</label>
@@ -105,7 +117,7 @@
 				<span class="ml-1">Yes</span>
 			</label>
 			<label>
-				<input class="form-radio" type="radio" checked name="transport" value="No" />
+				<input class="form-radio" type="radio" name="transport" value="No" checked />
 				<span class="ml-1">No</span>
 			</label>
 		</div>
@@ -119,7 +131,7 @@
 				<span class="ml-1">Yes</span>
 			</label>
 			<label>
-				<input class="form-radio" type="radio" checked name="accommodation" value="No" />
+				<input class="form-radio" type="radio" name="accommodation" value="No" checked="checked" />
 				<span class="ml-1">No</span>
 			</label>
 		</div>
