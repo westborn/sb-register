@@ -6,6 +6,7 @@
 	// dimensions
 	// description
 	// specialRequirements
+	// enterMajorPrize
 
 	// const entryReset = {
 	// 	id: uuidv4(),
@@ -17,6 +18,7 @@
 	// 	dimensions: '',
 	// 	description: '',
 	// 	specialRequirements: '',
+	// 	enterMajorPrize:''
 	// }
 
 	// const image = {

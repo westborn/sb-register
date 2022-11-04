@@ -71,7 +71,8 @@
 			material: '',
 			dimensions: '',
 			description: '',
-			specialRequirements: ''
+			specialRequirements: '',
+			enterMajorPrize: ''
 		}
 		if (entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY) {
 			entry = $entryStore.find((item) => item.entryId === entryIdToEdit)
@@ -91,7 +92,8 @@
 			material: entry.material,
 			dimensions: entry.dimensions,
 			description: entry.description,
-			specialRequirements: entry.specialRequirements
+			specialRequirements: entry.specialRequirements,
+			enterMajorPrize: entry.enterMajorPrize
 		})
 	})
 
@@ -164,6 +166,7 @@
 			material: entry.material,
 			price: entry.price,
 			specialRequirements: entry.specialRequirements,
+			enterMajorPrize: entry.enterMajorPrize,
 			registrationId: $currentRegistration.registrationId,
 			title: entry.title
 		}

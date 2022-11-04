@@ -53,6 +53,7 @@
 								currency: 'AUD'
 							})}
 						</p>
+						<p>{entryDisplayed?.enterMajorPrize ? 'Entered in Major Prize' : ''}</p>
 						<p>({entryDisplayed.dimensions})</p>
 					</div>
 

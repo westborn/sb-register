@@ -470,7 +470,7 @@ function modifyEntry(request, ss) {
 	try {
 		const sheet = ss.getSheetByName('Entries')
 		const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
-		request['price'] = Number(request['price'].replace(/[^0-9\.]+/g, ''))
+		// request['price'] = Number(request['price'].replace(/[^0-9\.]+/g, ''))
 		const row = headers.map((key) => request[String(key)] || '')
 		console.log('modifyEntry')
 		console.log(row)
@@ -559,7 +559,7 @@ function makeEntriesHTML(entriesData) {
 		['Entry Description', 'description'],
 		['Material', 'material'],
 		['Dimensions', 'dimensions'],
-		['Special Requirements', 'specialRequirements']
+		['Special Requirements', 'specialRequirements'][('Enter Major Prize', 'enterMajorPrize')]
 	]
 	const priceField = [['Price', 'price']]
 

@@ -64,3 +64,19 @@
 		<InputText inputFieldID="specialRequirements" placeholder="Any special requirements?" />
 	</div>
 </div>
+
+<div class="relative mt-8 w-full px-2">
+	<legend class="text-gray-600">Submit this entry to the Major Prize program?</legend>
+	<div class="mt-1">
+		<label class="inline-flex items-center">
+			<input class="form-radio" type="radio" name="enterMajorPrize" value="Yes" />
+			<span class="ml-2">Yes</span>
+		</label>
+	</div>
+	<div>
+		<label class="inline-flex items-center">
+			<input class="form-radio" type="radio" name="enterMajorPrize" value="" checked />
+			<span class="ml-2">No</span>
+		</label>
+	</div>
+</div>
