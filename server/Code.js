@@ -389,6 +389,7 @@ function completeRegistration(request, ss) {
 			const columnNumber = headers.indexOf('confirmation') + 1
 			sheet.getRange(rowToModify, columnNumber, 1, 1).setValue('Complete')
 		}
+		sendRegistrationConfirmationEmail(ss, request.email)
 		const response = getFullRegistration(request.email, ss)
 		return sendResponse('ok', response.data)
 	} catch (err) {
@@ -498,6 +499,112 @@ function modifyEntry(request, ss) {
 	}
 }
 
+function sendRegistrationConfirmationEmail(
+	ss = SpreadsheetApp.openById(CONFIG.ARTIST_REG_SHEET_ID),
+	email = 'george@westborn.com.au'
+) {
+	const {
+		data: { registration: registrationData },
+		data: { entries: entriesData }
+	} = getFullRegistration(email, ss)
+	const registrationHTML = makeRegistrationHTML(registrationData)
+	const entriesHTML = makeEntriesHTML(entriesData)
+	const costOfRegistration = 20 + entriesData.length * 20
+	const numberOfEntries = entriesData.length === 1 ? `1 entry` : `${entriesData.length} entries`
+	const headerHTML = ` <p style="color: #1d4ed8; font-size: 30px;">Registration for ${registrationData.firstName} ${registrationData.lastName} (${registrationData.registrationId})</p>
+      <p style="color: #1d4ed8; font-size: 18px;">Your registration of ${numberOfEntries} has a total fee of $${costOfRegistration}</p>
+    `
+
+	const htmlBody = headerHTML + registrationHTML + '<hr>' + entriesHTML
+
+	GmailApp.sendEmail(
+		registrationData.email,
+		'Registration confirmation for Sculpture Bermagui',
+		'body text',
+		{
+			htmlBody,
+			replyTo: 'curator@sculpturebermagui.org.au'
+		}
+	)
+}
+
+function makeRegistrationHTML(registrationData) {
+	const regFields = [
+		['Email', 'email'],
+		['Phone', 'phone'],
+		['Postcode', 'postcode'],
+		['Bank Account', 'bankAccountName'],
+		['BSB', 'bankBSB'],
+		['Account', 'bankAccount'],
+		['Transport', 'transport'],
+		['Accommodation', 'accommodation'],
+		['Crane', 'crane'],
+		['Bump In', 'bumpIn'],
+		['Bump Out', 'bumpOut'],
+		['Requirements', 'displayRequirements']
+	]
+
+	const registrationHTML = `
+  <table style="font-family:\'Arial\';border-collapse:collapse;border-spacing:0;"><tbody>
+  ${makeTableRows(regFields, registrationData)}
+  </tbody></table>
+  `
+	return registrationHTML
+}
+
+function makeEntriesHTML(entriesData) {
+	const entryFields = [
+		['Indoor/Outdoor', 'inOrOut'],
+		['Entry Title', 'title'],
+		['Entry Description', 'description'],
+		['Material', 'material'],
+		['Dimensions', 'dimensions'],
+		['Special Requirements', 'specialRequirements']
+	]
+	const priceField = [['Price', 'price']]
+
+	const entryHTML = entriesData
+		.map(
+			(entry, idx) =>
+				`
+  <hr>
+  <p style="color: #1d4ed8; font-size: 20px;">Entry # ${idx + 1}<br/>
+  <table style="font-family:\'Arial\';border-collapse:collapse;border-spacing:0;"><tbody>
+	${makeTableRows(entryFields, entry)}
+  ${makeTableRows(priceField, {
+		price: entry.price.toLocaleString('en-AU', {
+			style: 'currency',
+			currency: 'AUD'
+		})
+	})}
+  </tbody></table>
+  <br/>
+  <img src="${getViewURL(entry.images[0].imageURL)}" width="200">
+  <br/>
+  `
+		)
+		.join('')
+
+	return entryHTML
+}
+
+function makeTableRows(fields, data) {
+	return fields
+		.map(
+			([name, value]) => `
+    <tr>
+    <td style="width:150px;border-style:none;text-align:left;padding-right:2px;padding-left:2px;background-color:#ffffff;color:#1d4ed8;" >
+    ${name}
+    </td>
+    <td style="width:450px;border-style:none;text-align:left;padding-right:2px;padding-left:2px;background-color:#ffffff;color:#111827;" >
+    ${data[value]}
+    </td>
+    </tr>
+  `
+		)
+		.join('')
+}
+
 function getInformationForEmailAddress(email, ss) {
 	if (!email || email.trim() === '') {
 		return sendResponse('error', 'No email provided or invalid email address')
@@ -597,4 +704,12 @@ function bumpId(idType) {
 	const newId = (parseInt(id, 10) + 1).toString().padStart(3, '0')
 	wbLib.setProp(idType, `${frontPart}-${newId}`, prop)
 	return `${frontPart}-${newId}`
+}
+
+function getIdFromUrl(url) {
+	return url.match(/[-\w]{25,}(?!.*[-\w]{25,})/)
+}
+
+function getViewURL(url) {
+	return `https://drive.google.com/uc?export=view&id=${getIdFromUrl(url)}`
 }
