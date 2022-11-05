@@ -35,14 +35,13 @@
 
 	onMount(() => {
 		setFields({
-			accommodation: $currentRegistration.accommodation,
+			accommodation: $currentRegistration.accommodation || 'No',
 			bankAccount: $currentRegistration.bankAccount,
 			bankAccountName: $currentRegistration.bankAccountName,
 			bankBSB: $currentRegistration.bankBSB,
 			bumpIn: $currentRegistration.bumpIn,
 			bumpOut: $currentRegistration.bumpOut,
-			confirmation: $currentRegistration.confirmation,
-			crane: $currentRegistration.crane,
+			crane: $currentRegistration.crane || 'No',
 			displayRequirements: $currentRegistration.displayRequirements,
 			email: $currentUserEmail,
 			firstName: $currentRegistration.firstName,
@@ -50,7 +49,7 @@
 			phone: $currentRegistration.phone,
 			postcode: $currentRegistration.postcode,
 			registrationId: $currentRegistration.registrationId,
-			transport: $currentRegistration.transport
+			transport: $currentRegistration.transport || 'No'
 		})
 		$stepsAllowed = true
 	})
@@ -118,14 +117,13 @@
 
 	function cancelConfirm() {
 		setFields({
-			accommodation: $currentRegistration.accommodation,
+			accommodation: $currentRegistration.accommodation || 'No',
 			bankAccount: $currentRegistration.bankAccount,
 			bankAccountName: $currentRegistration.bankAccountName,
 			bankBSB: $currentRegistration.bankBSB,
 			bumpIn: $currentRegistration.bumpIn,
 			bumpOut: $currentRegistration.bumpOut,
-			confirmation: $currentRegistration.confirmation,
-			crane: $currentRegistration.crane,
+			crane: $currentRegistration.crane || 'No',
 			displayRequirements: $currentRegistration.displayRequirements,
 			email: $currentUserEmail,
 			firstName: $currentRegistration.firstName,
@@ -133,7 +131,7 @@
 			phone: $currentRegistration.phone,
 			postcode: $currentRegistration.postcode,
 			registrationId: $currentRegistration.registrationId,
-			transport: $currentRegistration.transport
+			transport: $currentRegistration.transport || 'No'
 		})
 		$stepsAllowed = true
 		dispatch('cancel')

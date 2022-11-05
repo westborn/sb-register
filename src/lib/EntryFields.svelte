@@ -40,7 +40,7 @@
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="dimensions" placeholder="Size of this piece (L x W x H)" />
+		<InputText inputFieldID="dimensions" placeholder="Size of this piece in cm (L x W x H)" />
 	</div>
 
 	<div class="relative mt-8 w-full">

@@ -31,7 +31,7 @@
 					class="form-radio"
 					type="radio"
 					name="bumpIn"
-					value="Thursday morning 3 March"
+					value="Thursday morning 2 March"
 					checked
 				/>
 				<span class="ml-1">Thursday morning 2 March</span>
@@ -62,7 +62,7 @@
 					class="form-radio"
 					type="radio"
 					name="bumpOut"
-					value="Monday afternoon from 3.00 pm 14 March"
+					value="Monday afternoon from 3.00 pm 13 March"
 				/>
 				<span class="ml-1">Monday afternoon from 3.00 pm 13 March</span>
 			</label>
@@ -71,7 +71,7 @@
 					class="form-radio"
 					type="radio"
 					name="bumpOut"
-					value="Tuesday morning 15 March"
+					value="Tuesday morning 14 March"
 					checked
 				/>
 				<span class="ml-1">Tuesday morning 14 March</span>
