@@ -140,13 +140,17 @@
 	<div class="relative mt-8 w-full">
 		<InputText
 			inputFieldID="bankAccountName"
-			placeholder="Name on your Bank Account"
+			placeholder="Name on your Bank Account (not your bank's name)"
 			requiredField
 		/>
 	</div>
 
 	<div class="relative mt-8 w-full">
-		<InputText inputFieldID="bankBSB" placeholder="BSB of your Bank Account" requiredField />
+		<InputText
+			inputFieldID="bankBSB"
+			placeholder="BSB on your Bank Account (not your bank's name)"
+			requiredField
+		/>
 	</div>
 
 	<div class="relative mt-8 w-full">

@@ -89,7 +89,7 @@
 			<button
 				on:click={() => showAdd()}
 				class="mt-2 inline-block rounded-lg bg-primary-400 px-7 py-2 font-semibold   text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
-				>Add an New Entry?</button
+				>Add a New Entry?</button
 			>
 		</div>
 	{/if}
