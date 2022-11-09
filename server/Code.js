@@ -1,5 +1,5 @@
 this.CONFIG = {
-	ARTIST_REG_SHEET_ID: '1faNJ7Q2x_a4WO0O919487dDrg_0Ky6Y4xiab8Io0_N0'
+	ARTIST_REG_SHEET_ID: '1oLkmfsFswLvI5gGubiAI9TMcx4eQh_L6GQu1p3Lr4AY'
 }
 
 function doPost(e) {
