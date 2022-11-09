@@ -55,7 +55,7 @@
 					<li class="mr-3">
 						<a
 							class="block p-2 text-left text-primary-300 no-underline hover:text-accent md:text-sm"
-							href={`https://staging.sculpturebermagui.org.au${item.href}`}>{item.text}</a
+							href={`https://sculpturebermagui.org.au${item.href}`}>{item.text}</a
 						>
 					</li>
 				{/each}
@@ -104,7 +104,7 @@
 					<li class="mr-1">
 						<a
 							class="inline-block px-2 text-base font-semibold text-primary-300 no-underline hover:text-accent"
-							href={`https://staging.sculpturebermagui.org.au${item.href}`}>{item.text}</a
+							href={`https://sculpturebermagui.org.au${item.href}`}>{item.text}</a
 						>
 					</li>
 				{/each}
