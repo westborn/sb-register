@@ -2,7 +2,7 @@
 
 this.CONFIG = {
 	ARTIST_REG_SHEET_ID:
-		Session.getActiveUser().getEmail() === 'george@sculpturebermagui.org.au'
+		Session.getEffectiveUser().getEmail() === 'george@sculpturebermagui.org.au'
 			? '1faNJ7Q2x_a4WO0O919487dDrg_0Ky6Y4xiab8Io0_N0'
 			: '1oLkmfsFswLvI5gGubiAI9TMcx4eQh_L6GQu1p3Lr4AY'
 }
@@ -29,6 +29,12 @@ function doPost(e) {
 	//     }
 	//    }
 	//   }
+
+	console.log(
+		`doPost Running as - ${Session.getEffectiveUser().getEmail()} and pointing to ${
+			CONFIG.ARTIST_REG_SHEET_ID
+		}`
+	)
 
 	try {
 		const ss = SpreadsheetApp.openById(CONFIG.ARTIST_REG_SHEET_ID)
