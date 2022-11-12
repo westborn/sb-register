@@ -12,6 +12,7 @@
 	let errorMessage = ''
 	$: costOfRegistration = 20 + $entryStore.length * 20
 	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
+	let href = `mailto:accounts@sculpturebermagui.org.au?subject=Request for Payment - Registration ${$currentRegistration.registrationId} ${$currentRegistration.lastName}`
 
 	let sendToServer = async (data) => {
 		fetchingData = true
@@ -65,14 +66,24 @@
 			<TextList item="BSB" itemValue={$currentRegistration.bankBSB} />
 			<TextList item="Account" itemValue={$currentRegistration.bankAccount} />
 		</div>
-		<p class="mt-6 text-xl text-red-400">
+		<p class="mt-6 text-xl text-red-500">
 			Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}
 		</p>
-		<p class="mt-4">Please direct deposit ${costOfRegistration} to:</p>
+		<!-- <p class="mt-4">Please direct deposit ${costOfRegistration} to:</p>
 		<p>Account Name: Edgy Art Inc</p>
 		<p>BSB: 802124</p>
 		<p>Acct Number: 100082466</p>
-		<p>Reference: {$currentRegistration.registrationId} - {$currentRegistration.lastName}</p>
+		<p>Reference: {$currentRegistration.registrationId} - {$currentRegistration.lastName}</p> -->
+		<p class="mt-6 text-lg">
+			We will invoice you for the above fee via email from our Square account. If do not want to pay
+			by Credit or Debit card and you would like to make alternative payment arrangements please
+			email <a class="text-blue-600" {href} target="_blank" rel="noopener noreferrer"
+				>accounts@sculpturebermagui.org.au</a
+			><br />
+
+			<br />
+			Please note that your registration will not be complete until payment has been received.
+		</p>
 	</div>
 
 	{#if errorMessage}
@@ -88,8 +99,8 @@
 			disabled={fetchingData}
 			type="submit"
 			class="mt-8 inline-block w-auto  rounded-lg bg-red-400 px-7 py-3  font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
-			>By clicking here I CONFIRM I have made the deposit and all details are correct.<br /><span
-				class="text-sm">(No further changes can be made)</span
+			>By clicking here I CONFIRM that all details are correct.<br /><span class="text-sm"
+				>(No further changes can be made)</span
 			></button
 		>
 	{:else}
