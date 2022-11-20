@@ -66,6 +66,22 @@
 </div>
 
 <div class="relative mt-8 w-full px-2">
+	<details class="text-gray-600">
+		<summary>Requirements for Major Prize Entries? </summary>
+		You will need to supply a "Supporting Portfolio" containing:<br />
+		<ul class="list-outside list-disc">
+			<li class="mx-8">Artist statement of intent up to A4</li>
+			<li class="mx-8">
+				Up to 4 high quality images of recent exhibition quality works, thus showing the scope of
+				your work. Not more than 5 years previous.
+			</li>
+			<li class="mx-8">An Artist CV, Maximum A4</li>
+			<li class="mx-8">Prior to final judging a publishable image of the 2023 entry.</li>
+		</ul>
+	</details>
+</div>
+
+<div class="w-full py-2 px-2">
 	<legend class="text-gray-600">Submit this entry to the Major Prize program?</legend>
 	<div class="mt-1">
 		<label class="inline-flex items-center">
