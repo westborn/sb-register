@@ -31,23 +31,23 @@
 					class="form-radio"
 					type="radio"
 					name="bumpIn"
-					value="Thursday morning 2 March"
+					value="Thursday morning 9 March"
 					checked
 				/>
-				<span class="ml-1">Thursday morning 2 March</span>
+				<span class="ml-1">Thursday morning 9 March</span>
 			</label>
 			<label>
-				<input class="form-radio" type="radio" name="bumpIn" value="Thursday afternoon 2 March" />
-				<span class="ml-1">Thursday afternoon 2 March</span>
+				<input class="form-radio" type="radio" name="bumpIn" value="Thursday afternoon 9 March" />
+				<span class="ml-1">Thursday afternoon 9 March</span>
 			</label>
 			<label>
 				<input
 					class="form-radio"
 					type="radio"
 					name="bumpIn"
-					value="Friday morning - until 12.00 pm 3 March"
+					value="Friday morning - until 12.00 pm 10 March"
 				/>
-				<span class="ml-1">Friday morning - until 12.00 pm 3 March</span>
+				<span class="ml-1">Friday morning - until 12.00 pm 10 March</span>
 			</label>
 		</div>
 	</div>
@@ -62,23 +62,19 @@
 					class="form-radio"
 					type="radio"
 					name="bumpOut"
-					value="Monday afternoon from 3.00 pm 13 March"
+					value="Sunday afternoon from 3.00 pm 19 March"
 				/>
-				<span class="ml-1">Monday afternoon from 3.00 pm 13 March</span>
+				<span class="ml-1">Sunday afternoon from 3.00 pm 19 March</span>
 			</label>
 			<label>
 				<input
 					class="form-radio"
 					type="radio"
 					name="bumpOut"
-					value="Tuesday morning 14 March"
+					value="Monday morning 20 March"
 					checked
 				/>
-				<span class="ml-1">Tuesday morning 14 March</span>
-			</label>
-			<label>
-				<input class="form-radio" type="radio" name="bumpOut" value="Tuesday afternoon 14 March" />
-				<span class="ml-1">Tuesday afternoon 14 March</span>
+				<span class="ml-1">Monday morning 20 March</span>
 			</label>
 		</div>
 	</div>
