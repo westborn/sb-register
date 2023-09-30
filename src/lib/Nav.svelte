@@ -5,8 +5,8 @@
 			href: '/'
 		},
 		{
-			text: '2023 Exhibition',
-			href: '/2023-2'
+			text: '2024 Exhibition',
+			href: '/2024-2'
 		},
 		{
 			text: 'Become a Sponsor',

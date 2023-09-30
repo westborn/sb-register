@@ -76,8 +76,8 @@
 	<p class="mt-3">
 		Hi Artists<br /><br />
 
-		The process of registration for the 2023 exhibition (March 11th - 19th) has changed a little
-		from last year. We trust these changes make the process a little easier for you.<br /><br />
+		The process of registration for the 2024 exhibition (March 9th - 17th) has changed a little from
+		last year. We trust these changes make the process a little easier for you.<br /><br />
 		There is a 4 step process comprising:<br />
 	</p>
 	<ul class="list-outside list-disc px-4">

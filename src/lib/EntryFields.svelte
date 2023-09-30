@@ -76,7 +76,7 @@
 				your work. Not more than 5 years previous.
 			</li>
 			<li class="mx-8">An Artist CV, Maximum A4</li>
-			<li class="mx-8">Prior to final judging a publishable image of the 2023 entry.</li>
+			<li class="mx-8">Prior to final judging a publishable image of the 2024 entry.</li>
 		</ul>
 	</details>
 </div>

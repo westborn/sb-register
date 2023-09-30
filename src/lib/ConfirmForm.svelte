@@ -31,23 +31,23 @@
 					class="form-radio"
 					type="radio"
 					name="bumpIn"
-					value="Thursday morning 9 March"
+					value="Thursday morning 7 March"
 					checked
 				/>
-				<span class="ml-1">Thursday morning 9 March</span>
+				<span class="ml-1">Thursday morning 7 March</span>
 			</label>
 			<label>
-				<input class="form-radio" type="radio" name="bumpIn" value="Thursday afternoon 9 March" />
-				<span class="ml-1">Thursday afternoon 9 March</span>
+				<input class="form-radio" type="radio" name="bumpIn" value="Thursday afternoon 7 March" />
+				<span class="ml-1">Thursday afternoon 7 March</span>
 			</label>
 			<label>
 				<input
 					class="form-radio"
 					type="radio"
 					name="bumpIn"
-					value="Friday morning - until 12.00 pm 10 March"
+					value="Friday morning - until 12.00 pm 8 March"
 				/>
-				<span class="ml-1">Friday morning - until 12.00 pm 10 March</span>
+				<span class="ml-1">Friday morning - until 12.00 pm 8 March</span>
 			</label>
 		</div>
 	</div>
@@ -62,26 +62,26 @@
 					class="form-radio"
 					type="radio"
 					name="bumpOut"
-					value="Sunday afternoon from 3.00 pm 19 March"
+					value="Sunday afternoon from 3.00 pm 17 March"
 				/>
-				<span class="ml-1">Sunday afternoon from 3.00 pm 19 March</span>
+				<span class="ml-1">Sunday afternoon from 3.00 pm 17 March</span>
 			</label>
 			<label>
 				<input
 					class="form-radio"
 					type="radio"
 					name="bumpOut"
-					value="Monday morning 20 March"
+					value="Monday morning 18 March"
 					checked
 				/>
-				<span class="ml-1">Monday morning 20 March</span>
+				<span class="ml-1">Monday morning 18 March</span>
 			</label>
 		</div>
 	</div>
 
 	<div class="relative mt-8 w-full px-2">
 		<div class="flex space-x-6">
-			<legend class="text-gray-600">Is a Crane Required?</legend>
+			<legend class="text-gray-600">Do you need a Crane?</legend>
 			<label>
 				<input class="form-radio" type="radio" name="crane" value="Yes" />
 				<span class="ml-1">Yes</span>
@@ -107,7 +107,7 @@
 
 	<div class="relative mt-8 w-full px-2">
 		<div class="flex space-x-6">
-			<legend class="text-gray-600">Would you like to discuss a Transport subsidy</legend>
+			<legend class="text-gray-600">Would you like to discuss a Transport subsidy?</legend>
 			<label>
 				<input class="form-radio" type="radio" name="transport" value="Yes" />
 				<span class="ml-1">Yes</span>
@@ -144,7 +144,7 @@
 	<div class="relative mt-8 w-full">
 		<InputText
 			inputFieldID="bankBSB"
-			placeholder="BSB on your Bank Account (not your bank's name)"
+			placeholder="BSB of your Bank Account (not your bank's name)"
 			requiredField
 		/>
 	</div>

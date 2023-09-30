@@ -13,7 +13,7 @@
 		class="ml-28 -mt-8 mb-4
 	text-xl font-bold text-gray-700"
 	>
-		Artist Registration - 2023
+		Artist Registration - 2024
 	</p>
 </div>
 <div class="mx-auto my-8 flex max-w-2xl flex-col justify-around">
