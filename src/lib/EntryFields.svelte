@@ -38,9 +38,22 @@
 	<div class="relative mt-8 w-full">
 		<InputText inputFieldID="material" placeholder="Material used in this piece" />
 	</div>
-
+	<!--
 	<div class="relative mt-8 w-full">
 		<InputText inputFieldID="dimensions" placeholder="Size of this piece in cm (L x W x H)" />
+	</div> -->
+
+	<legend class="mt-8 mb-4 text-gray-600">Size of this piece in centimetres (L x W x H)</legend>
+	<div class="grid grid-cols-3 gap-4">
+		<div class="relative">
+			<InputText inputFieldID="dimLength" placeholder="Length" />
+		</div>
+		<div class="relative">
+			<InputText inputFieldID="dimWidth" placeholder="Width" />
+		</div>
+		<div class="relative">
+			<InputText inputFieldID="dimHeight" placeholder="Height" />
+		</div>
 	</div>
 
 	<div class="relative mt-8 w-full">

@@ -82,6 +82,8 @@
 		console.log(entry)
 		console.log(entryAction)
 
+		const splitDimensions = entry.dimensions.split(/x/)
+
 		setFields({
 			entryId: entry.entryId,
 			registrationId: $currentRegistration.registrationId,
@@ -91,6 +93,9 @@
 			inOrOut: entry.inOrOut,
 			material: entry.material,
 			dimensions: entry.dimensions,
+			dimLength: splitDimensions[0],
+			dimWidth: splitDimensions[1],
+			dimHeight: splitDimensions[2],
 			description: entry.description,
 			specialRequirements: entry.specialRequirements,
 			enterMajorPrize: entry.enterMajorPrize
@@ -148,6 +153,7 @@
 			errorMessage = 'Please fill in required fields'
 			return false
 		}
+		data.dimensions = data.dimLength + 'x' + data.dimWidth + 'x' + data.dimHeight
 		errorMessage = ''
 		return true
 	}
