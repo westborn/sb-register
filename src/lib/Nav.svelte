@@ -5,20 +5,12 @@
 			href: '/'
 		},
 		{
-			text: '2024 Exhibition',
-			href: '/2024-2'
+			text: '2023 Exhibition',
+			href: '/2023-2'
 		},
 		{
 			text: 'Become a Sponsor',
 			href: '/sponsor'
-		},
-		{
-			text: 'Exhibit this year',
-			href: '/exhibit'
-		},
-		{
-			text: 'Buy an Artwork',
-			href: '/buy'
 		},
 		{
 			text: 'Volunteer',
