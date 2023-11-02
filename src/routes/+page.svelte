@@ -2,11 +2,16 @@
 	import { PUBLIC_REGISTRATIONS_OPEN } from '$env/static/public'
 	import { goto } from '$app/navigation'
 	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
+	import { validateEmail } from '$lib/Utilities.js'
 
 	let fetchingData = false
 	let errorMessage = ''
 
 	async function handleUserAction(userAction) {
+		if (!validateEmail($currentUserEmail)) {
+			errorMessage = 'Please enter a valid email address'
+			return
+		}
 		fetchingData = true
 		errorMessage = ''
 		const res = await fetch('/api', {

@@ -14,6 +14,7 @@
 	// transport
 	// accommodation
 	// confirmation
+	// firstNations
 
 	import { onMount } from 'svelte'
 	import { createForm } from 'felte'
@@ -100,12 +101,22 @@
 		return true
 	}
 
+	function isNumeric(str) {
+		if (typeof str != 'string') return false // we only process strings!
+		return (
+			!isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+			!isNaN(parseFloat(str))
+		) // ...and ensure strings of whitespace fail
+	}
+
 	let addRegistration = async (data) => {
 		if (registrationIsValid(data)) {
 			actionRequest = 'createRegistration'
 			fetchingData = true
 			errorMessage = ''
 			const newRegistration = { ...data }
+			// add a leadinng quote (') so sheets doesn't drop leading zeroes
+			if (isNumeric(newRegistration.phone)) newRegistration.phone = "'" + newRegistration.phone
 			const response = await sendToServer(newRegistration)
 			fetchingData = false
 			if (response.result === 'error') {
@@ -129,6 +140,7 @@
 			<TextList item="Surname" itemValue={$currentRegistration.lastName} />
 			<TextList item="Phone" itemValue={$currentRegistration.phone} />
 			<TextList item="Postcode" itemValue={$currentRegistration.postcode} />
+			<TextList item="First Nation" itemValue={$currentRegistration.firstNations} />
 		</div>
 	{:else}
 		<form use:form>

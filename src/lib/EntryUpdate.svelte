@@ -46,7 +46,6 @@
 	import EntryFields from '$lib/EntryFields.svelte'
 	import FileUpload from '$lib/FileUpload.svelte'
 	import FileUploadByModal from '$lib/FileUploadByModal.svelte'
-	import TextList from '$lib/TextList.svelte'
 
 	export let entryAction
 	export let entryIdToEdit
@@ -204,11 +203,12 @@
 		})
 		if (response.result === 'error') {
 			errorMessage = response.data
-		} else {
-			currentRegistration.set(response.data.registration)
-			entryStore.set(response.data.entries)
-			onClose()
+			return
 		}
+
+		currentRegistration.set(response.data.registration)
+		entryStore.set(response.data.entries)
+		onClose()
 	}
 
 	async function modifyEntry(entry) {
