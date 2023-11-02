@@ -41,6 +41,7 @@
 				email: $currentUserEmail,
 				phone: '',
 				postcode: '',
+				firstNations: 'No',
 				bumpIn: '',
 				bumpOut: '',
 				crane: '',

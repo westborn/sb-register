@@ -36,4 +36,25 @@
 	<div class="relative mt-8 w-full">
 		<InputText inputFieldID="postcode" placeholder="Postcode" />
 	</div>
+
+	<div class="relative mt-8 w-full px-2">
+		<div class="flex flex-col space-x-6">
+			<legend class="text-gray-600"
+				>Are you of Aboriginal and/or Torres Strait Islander origin?</legend
+			>
+			<label>
+				<input class="form-radio" type="radio" name="firstNations" value="Yes" />
+				<span class="ml-1">Yes</span>
+			</label>
+			<label>
+				<input class="form-radio" type="radio" name="firstNations" value="No" checked />
+				<span class="ml-1">No</span>
+			</label>
+
+			<label>
+				<input class="form-radio" type="radio" name="firstNations" value="Declined" />
+				<span class="ml-1">Prefer not to say</span>
+			</label>
+		</div>
+	</div>
 </div>
