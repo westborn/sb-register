@@ -25,6 +25,7 @@
 	"type": "module",
 	"dependencies": {
 		"felte": "^1.2.2",
+		"square": "^32.0.0",
 		"uuid": "^8.3.2"
 	}
 }

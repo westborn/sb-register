@@ -14,6 +14,7 @@
 		}
 		fetchingData = true
 		errorMessage = ''
+		console.log('about to send')
 		const res = await fetch('/api', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -23,6 +24,7 @@
 				}
 			})
 		})
+		console.log('back from fethc')
 		const response = await res.json()
 		$stepsAllowed = true
 		fetchingData = false

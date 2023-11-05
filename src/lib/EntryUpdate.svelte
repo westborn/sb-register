@@ -128,7 +128,7 @@
 		console.log('sending ', entryAction)
 		console.log(data)
 
-		const res = await fetch(`/api`, {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({ action: entryAction, data })
 		})

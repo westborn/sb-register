@@ -77,7 +77,7 @@
 		errorMessage = ''
 		console.log('sending ', actionRequest)
 		console.log(data)
-		const res = await fetch(`/api`, {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({ action: actionRequest, data })
 		})

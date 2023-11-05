@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { currentRegistration } from '$lib/stores.js'
 	import Accordion from '$lib/EntryAccordion.svelte'
 	import TextList from '$lib/TextList.svelte'
 
@@ -12,6 +12,7 @@
 <section class="container mx-auto max-w-prose px-3">
 	{#if !$currentRegistration}
 		<h1 class="mb-6 text-xl font-bold">Please register first</h1>
+		<h2>{$currentRegistration}</h2>
 		<button
 			type="button"
 			on:click={() => goto('/')}
