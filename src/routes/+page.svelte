@@ -14,8 +14,7 @@
 		}
 		fetchingData = true
 		errorMessage = ''
-		console.log('about to send')
-		const res = await fetch('/api', {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({
 				action: 'getDetailsByEmail',
@@ -24,7 +23,6 @@
 				}
 			})
 		})
-		console.log('back from fethc')
 		const response = await res.json()
 		$stepsAllowed = true
 		fetchingData = false
