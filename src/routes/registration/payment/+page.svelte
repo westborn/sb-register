@@ -4,7 +4,7 @@
 	import { createEventDispatcher, onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 
-	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
+	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 	import TextList from '$lib/TextList.svelte'
 	import GoBack from '$lib/GoBack.svelte'
 
@@ -15,6 +15,7 @@
 
 	let errorMessage = ''
 	let fetchingData = false
+	const actionType = 'completeRegistration'
 	$: costOfRegistration = 20 + $entryStore.length * 20
 	$: costOfRegistrationInCents = parseInt(costOfRegistration * 100)
 	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
@@ -64,10 +65,10 @@
 
 	function processResponse(response) {
 		// Copy reponse properties to lastStatus properties
-		apiResponse.lastStatus.ok = resp.ok
-		apiResponse.lastStatus.status = resp.status
-		apiResponse.lastStatus.statusText = resp.statusText
-		apiResponse.lastStatus.url = resp.url
+		apiResponse.lastStatus.ok = response.ok
+		apiResponse.lastStatus.status = response.status
+		apiResponse.lastStatus.statusText = response.statusText
+		apiResponse.lastStatus.url = response.url
 
 		if (apiResponse.lastStatus.ok) {
 			return response.json()
@@ -124,6 +125,41 @@
 		}
 	}
 
+	let sendToServer = async (data) => {
+		fetchingData = true
+		errorMessage = ''
+		// console.log('sending ', actionType)
+		// console.log(data)
+		const res = await fetch(`/api/sheets`, {
+			method: 'POST',
+			body: JSON.stringify({ action: actionType, data })
+		})
+		const resMessage = await res.json()
+		fetchingData = false
+		// console.log('receiving	', actionType)
+		// console.log(resMessage)
+		if (resMessage.result === 'error') {
+			errorMessage = resMessage.data
+		}
+		return resMessage
+	}
+
+	async function completeRegistration() {
+		console.log('here doing completeRegistration')
+		fetchingData = true
+		errorMessage = ''
+		const response = await sendToServer({
+			registrationId: $currentRegistration.registrationId,
+			email: $currentRegistration.email
+		})
+		fetchingData = false
+		if (response.result === 'error') {
+			errorMessage = response.data
+		} else {
+			currentRegistration.set(response.data.registration)
+			entryStore.set(response.data.entries)
+		}
+	}
 	async function handlePaymentSubmission() {
 		fetchingData = true
 		errorMessage = 'Sending payment to Card Processor (Square)'
@@ -156,7 +192,10 @@
 			apiResponse.lastStatus.response = data
 			if (apiResponse.lastStatus.ok) {
 				errorMessage = 'Payment completed'
-				return data
+				completeRegistration(data)
+				dispatch('complete')
+				goto('/view')
+				return
 			} else {
 				const errorBody = handleError(apiResponse.lastStatus)
 				errorMessage = 'Payment failed - try again later'
