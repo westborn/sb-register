@@ -1,9 +1,11 @@
 const ACTION = {
+	GETTING_REGISTRATION: 'getDetailsByEmail',
+	ADDING_ENTRY: 'createEntry',
+	DELETING_ENTRY: 'deleteEntry',
+	EDITING_ENTRY: 'modifyEntry',
 	ADDING_REGISTRATION: 'createRegistration',
 	EDITING_REGISTRATION: 'modifyRegistration',
-	ADDING_ENTRY: 'createEntry',
-	EDITING_ENTRY: 'modifyEntry',
-	DELETING_ENTRY: 'deleteEntry',
+	COMPLETING_REGISTRATION: 'completeRegistration',
 	ADDING_IMAGE: 'createImage'
 }
 Object.freeze(ACTION)

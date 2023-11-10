@@ -120,7 +120,9 @@
 		</div>
 
 		{#if errorMessage}
-			<p class="m-2 text-red-500">{errorMessage}</p>
+			<p class="mt-6 text-red-500">{errorMessage}</p>
+		{:else}
+			<p class="mt-6">&nbsp</p>
 		{/if}
 		<div class="mt-6 flex justify-between">
 			<button type="button" on:click={() => handleUserAction('new')} class={btnClasses}

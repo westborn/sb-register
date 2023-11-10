@@ -151,7 +151,10 @@
 
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
+	{:else}
+		<p class="mt-6">&nbsp</p>
 	{/if}
+
 	{#if !fetchingData}
 		<button
 			on:click={() => modifyRegistration($formData)}

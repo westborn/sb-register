@@ -108,12 +108,21 @@
 
 			<br />
 			Please note that your registration will not be complete until payment has been received.
+			<a
+				href="https://sculpturebermagui.org.au\wp-content\uploads\2023\11\Exhibiting-at-Sculpture-Bermagui-2024.pdf"
+				class="text-blue-600 underline hover:underline hover:text-blue-700"
+				target="_blank"
+				rel="noopener noreferrer">Artists Terms and Conditions</a
+			>
 		</p>
 	</div>
 
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
+	{:else}
+		<p class="mt-6">&nbsp</p>
 	{/if}
+
 	{#if fetchingData}
 		<div
 			style="border-top-color:transparent"
@@ -125,10 +134,9 @@
 			on:click={() => goto('/registration/payment')}
 			disabled={fetchingData}
 			type="submit"
-			class="mt-8 inline-block w-auto  rounded-lg bg-red-400 px-7 py-3  font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
+			class="mt-8 inline-block w-auto rounded-lg bg-red-400 px-7 py-3 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
 			>By clicking here I CONFIRM that all details are correct<br />
-			<span class="text-base">and I wish to pay via card payment</span><br />
-			<span class="text-sm">(No further changes can be made)</span>
+			<span class="text-base">and I have read the "Artists Terms & Conditions"</span><br />
 		</button>
 	{/if}
 </section>

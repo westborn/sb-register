@@ -319,27 +319,27 @@
 					on:click={() => addEntry($formData)}
 					disabled={fetchingData}
 					type="submit"
-					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Add this Entry</button
 				>
 			{:else if entryAction === ACTION.EDITING_ENTRY}
 				<button
 					on:click={() => modifyEntry($formData)}
 					type="submit"
-					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Save Changes</button
 				>
 			{:else if entryAction === ACTION.DELETING_ENTRY}
 				<button
 					on:click={() => deleteEntry()}
 					type="submit"
-					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Delete Entry</button
 				>{/if}
 			<button
 				on:click={onClose}
 				type="submit"
-				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+				class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 				>Cancel</button
 			>
 		{:else}
@@ -353,6 +353,8 @@
 
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
+	{:else}
+		<p class="mt-6">&nbsp</p>
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->

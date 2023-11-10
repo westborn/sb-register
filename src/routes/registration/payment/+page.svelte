@@ -1,115 +1,73 @@
 <script>
 	/** @type {import('./$types').PageData} */
 
-	import { createEventDispatcher, onMount } from 'svelte'
+	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { handleUnexpectedError, processResponse, apiResponse } from '$lib/Utilities.js'
+	apiResponse.lastStatus = {}
+
 	import TextList from '$lib/TextList.svelte'
 	import GoBack from '$lib/GoBack.svelte'
 
-	const dispatch = createEventDispatcher()
 	import { PUBLIC_SQUARE_APP_ID, PUBLIC_SQUARE_LOCATION_ID } from '$env/static/public'
 	const appId = PUBLIC_SQUARE_APP_ID
 	const locationId = PUBLIC_SQUARE_LOCATION_ID
 
+	const validStates = {
+		COMMENCING: 'COMMENCE',
+		PAYING: 'PAY',
+		COMPLETING: 'COMPLETE',
+		FINISHED: 'FINISH',
+		PAYMENTERROR: 'PAYMENTERROR'
+	}
+
+	let currentState = validStates.COMMENCING
+	$: currentStateNow = currentState
 	let errorMessage = ''
 	let fetchingData = false
-	const actionType = 'completeRegistration'
 	$: costOfRegistration = 20 + $entryStore.length * 20
 	$: costOfRegistrationInCents = parseInt(costOfRegistration * 100)
 	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
 
 	let card
 
-	let apiResponse = {
-		lastStatus: {
-			ok: false,
-			status: 0,
-			statusText: '',
-			response: null
-		}
-	}
-	function handleUnexpectedError(error) {
-		let msg =
-			'A network error has occurred. Check the apiUrl property to ensure it is set correctly.'
-		console.error(error + ' - ' + msg)
-		return msg
-	}
-
-	function handleError(lastStatus) {
-		let msg = ''
-		switch (lastStatus.status) {
-			case 400:
-				msg = JSON.stringify(lastStatus.response)
-				break
-			case 404:
-				if (lastStatus.response) {
-					msg = lastStatus.response
-				} else {
-					msg = `${lastStatus.statusText} - ${lastStatus.url}`
-				}
-				break
-			case 500:
-				msg = JSON.parse(lastStatus.response).message
-				break
-			default:
-				msg = JSON.stringify(lastStatus)
-				break
-		}
-		if (msg) {
-			console.error(msg)
-		}
-		return msg
-	}
-
-	function processResponse(response) {
-		// Copy reponse properties to lastStatus properties
-		apiResponse.lastStatus.ok = response.ok
-		apiResponse.lastStatus.status = response.status
-		apiResponse.lastStatus.statusText = response.statusText
-		apiResponse.lastStatus.url = response.url
-
-		if (apiResponse.lastStatus.ok) {
-			return response.json()
-		} else {
-			return response.text()
-		}
-	}
-
 	onMount(async () => {
-		fetchingData = true
+		if ($currentRegistration) {
+			fetchingData = true
 
-		const originalStyle = {
-			input: {
-				backgroundColor: '#f5f7f9'
-			},
-			'.input-container': {
-				borderColor: 'transparent',
-				borderRadius: '.25em'
+			const originalStyle = {
+				input: {
+					backgroundColor: '#f5f7f9'
+				},
+				'.input-container': {
+					borderColor: 'transparent',
+					borderRadius: '.25em'
+				}
 			}
-		}
 
-		if (!window.Square) {
-			throw new Error('Square.js failed to load properly')
-		}
-		errorMessage = ''
-		const payments = window.Square.payments(appId, locationId)
-		// console.log('adding payment container')
+			if (!window.Square) {
+				throw new Error('Square.js failed to load properly')
+			}
+			errorMessage = ''
+			const payments = window.Square.payments(appId, locationId)
+			// console.log('adding payment container')
 
-		// INIT CARD
-		try {
-			card = await payments.card({
-				style: originalStyle
-			})
-			await card.attach('#card-container')
-		} catch (e) {
-			// TODO: error handling
-			errorMessage = 'Initializing card failed - please try again later'
-			console.error(errorMessage)
-			return
+			// INIT CARD
+			try {
+				card = await payments.card({
+					style: originalStyle
+				})
+				await card.attach('#card-container')
+			} catch (e) {
+				// TODO: error handling
+				errorMessage = 'Initializing card failed - please try again later'
+				console.error(errorMessage)
+				return
+			}
+			fetchingData = false
 		}
-		fetchingData = false
 	})
 
 	async function tokenize(paymentMethod) {
@@ -125,14 +83,14 @@
 		}
 	}
 
-	let sendToServer = async (data) => {
+	let sendCompleteToServer = async (data) => {
 		fetchingData = true
 		errorMessage = ''
 		// console.log('sending ', actionType)
 		// console.log(data)
 		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
-			body: JSON.stringify({ action: actionType, data })
+			body: JSON.stringify({ action: 'completeRegistration', data })
 		})
 		const resMessage = await res.json()
 		fetchingData = false
@@ -144,23 +102,53 @@
 		return resMessage
 	}
 
-	async function completeRegistration() {
-		console.log('here doing completeRegistration')
+	async function readyToPay() {
+		console.log('readyToPay: here')
+
+		//try to make the CC  payment
+		await handlePaymentSubmission()
+		//if not OK - show any errors and allow retry?
+		if (!apiResponse.lastStatus.ok) return
+
+		//did the payment complete OK
+		const paymentCompleted = apiResponse?.lastStatus?.response?.payment?.status === 'COMPLETED'
+		if (!paymentCompleted) return
+		errorMessage = 'Payment completed'
+		completeRegistration(apiResponse.lastStatus.response)
+		return
+	}
+
+	async function completeRegistration(squarePaymentResponse) {
+		console.log('completeRegistration: here')
+		console.log(squarePaymentResponse.payment.receiptUrl)
 		fetchingData = true
 		errorMessage = ''
-		const response = await sendToServer({
+		const response = await sendCompleteToServer({
 			registrationId: $currentRegistration.registrationId,
 			email: $currentRegistration.email
 		})
-		fetchingData = false
+		console.log('completeRegistration' + response)
 		if (response.result === 'error') {
 			errorMessage = response.data
+			handleUnexpectedError(errorMessage)
 		} else {
+			fetchingData = false
 			currentRegistration.set(response.data.registration)
 			entryStore.set(response.data.entries)
+			currentState = validStates.COMPLETING
 		}
+		return
 	}
+
+	async function finishRegistration() {
+		console.log('finishRegistration: here')
+		fetchingData = false
+		currentState = validStates.FINISHED
+		goto('/view')
+	}
+
 	async function handlePaymentSubmission() {
+		console.log('handlePaymentSubmission: here')
 		fetchingData = true
 		errorMessage = 'Sending payment to Card Processor (Square)'
 		let token
@@ -172,6 +160,8 @@
 			fetchingData = false
 			return
 		}
+		apiResponse.lastStatus = {}
+		currentState = validStates.PAYING
 		try {
 			const paymentResponse = await fetch(`/api/payment`, {
 				method: 'POST',
@@ -183,25 +173,22 @@
 					sourceId: token,
 					amount: costOfRegistrationInCents,
 					email: $currentRegistration.email,
-					note: `Registration fee for ${$currentRegistration.firstName} ${$currentRegistration.lastName} (${$currentUserEmail}) ID:${$currentRegistration.registrationId} `,
+					note: `Registration - ${$currentRegistration.firstName} ${$currentRegistration.lastName} (${$currentUserEmail}) - ID:${$currentRegistration.registrationId} `,
 					reference_id: `Registration ${$currentRegistration.registrationId}`
 				})
 			})
 			const data = await processResponse(paymentResponse)
+			if (!apiResponse.lastStatus.ok) {
+				errorMessage = data
+				currentState = validStates.PAYMENTERROR
+				return
+			}
 			// Fill lastStatus.response with the data returned
 			apiResponse.lastStatus.response = data
-			if (apiResponse.lastStatus.ok) {
-				errorMessage = 'Payment completed'
-				completeRegistration(data)
-				dispatch('complete')
-				goto('/view')
-				return
-			} else {
-				const errorBody = handleError(apiResponse.lastStatus)
-				errorMessage = 'Payment failed - try again later'
-				throw new Error(errorBody)
-			}
+			currentState = validStates.COMPLETING
+			return
 		} catch (err) {
+			currentState = validStates.PAYMENTERROR
 			errorMessage = 'Payment failed'
 			handleUnexpectedError(err)
 			throw new Error(err)
@@ -241,6 +228,8 @@
 	//     versionToken: '9oVj8WymLtKNjFrVyRducOkPvOW98wIlUrOQCdZTUZX6o'
 	//   }
 	// }
+
+	$: apiThings = apiResponse //debugging
 </script>
 
 <section class="container mx-auto max-w-prose px-3">
@@ -260,30 +249,57 @@
 				<TextList item="Surname" itemValue={$currentRegistration?.lastName} />
 				<TextList item="Email" itemValue={$currentRegistration?.email} />
 			</div>
-			<p class="mt-6 text-xl text-red-500">
+			<p class="mt-6 text-xl text-red-400">
 				Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}
 			</p>
 		</div>
 		{#if errorMessage}
 			<p class="mt-6 text-red-500">{errorMessage}</p>
+		{:else}
+			<p class="mt-6">&nbsp</p>
 		{/if}
 
-		<div class="mt-6 max-w-prose px-3">
-			<form
-				on:submit|preventDefault={() => {
-					handlePaymentSubmission(card)
-				}}
-				id="payment-form"
-				method="POST"
-			>
-				<div id="card-container" class="w-100 mx-auto" />
-				<button
-					type="submit"
-					disabled={fetchingData}
-					class="mt-8 inline-block w-auto rounded-lg bg-red-400 px-7 py-3 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg disabled:cursor-not-allowed"
-					>Pay Registration of ${costOfRegistration}</button
+		{#if currentState === validStates.COMMENCING || currentState === validStates.PAYMENTERROR}
+			<div class="mt-6 max-w-prose px-3">
+				<form
+					on:submit|preventDefault={() => {
+						readyToPay()
+					}}
+					id="payment-form"
+					method="POST"
 				>
-			</form>
-		</div>
+					<!-- this is the container that gets the Credit Card fields dropped into it by Square -->
+					<div id="card-container" class="w-100 mx-auto" />
+					<button
+						type="submit"
+						disabled={fetchingData}
+						class="mt-8 inline-block w-auto rounded-lg bg-red-400 px-7 py-3 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg disabled:cursor-not-allowed"
+						>Pay Registration of ${costOfRegistration}</button
+					>
+				</form>
+			</div>
+		{/if}
+
+		{#if currentState === validStates.COMPLETING}
+			<div class="flex flex-col items-center justify-center">
+				<a
+					href={apiResponse?.lastStatus?.response?.payment?.receiptUrl}
+					class="text-blue-600 underline hover:underline hover:text-blue-700"
+					target="_blank"
+					rel="noopener noreferrer">Click here for your receipt</a
+				>
+				<button
+					on:click={() => finishRegistration()}
+					class="mt-2 inline-block rounded-lg bg-primary-400 px-7 py-2 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+					>Registration is now Complete</button
+				>
+			</div>
+		{/if}
 	{/if}
 </section>
+
+<pre class="whitespace-pre-wrap">
+	{apiResponse?.lastStatus?.response?.payment?.receiptUrl}<br />
+	{currentStateNow}<br />
+	{JSON.stringify(apiThings, null, 4)}
+</pre>
