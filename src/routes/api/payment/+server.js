@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit'
-import { Client } from 'square'
+import { ApiError, Client } from 'square'
 import { randomUUID } from 'crypto'
 import { SECRET_SQUARE_ACCESS_TOKEN } from '$env/static/private'
 
@@ -31,8 +31,13 @@ export async function POST({ request }) {
 		console.log('Result from createPayment: ', { result })
 		return json(result)
 	} catch (err) {
+		// TODO - log more concise payment errors
+		// if (err instanceof ApiError) {
+		// 	console.log('yep, apierror:')
+		// 	console.log(err.errors[0].detail)
+		// }
 		console.log('error after POST to api/payment')
-		console.log(err.statusCode, JSON.stringify(err, null, 4))
+		console.log(err.statusCode, JSON.stringify(err?.result, null, 4))
 		const data = JSON.stringify(err.errors, null, 4)
 		const myOptions = { status: 400, statusText: 'It was NOT good!' }
 		const myResponse = new Response(data, myOptions)

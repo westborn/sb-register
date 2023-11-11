@@ -5,7 +5,12 @@
 	import { goto } from '$app/navigation'
 
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
-	import { handleUnexpectedError, processResponse, apiResponse } from '$lib/Utilities.js'
+	import {
+		handleError,
+		handleUnexpectedError,
+		processResponse,
+		apiResponse
+	} from '$lib/Utilities.js'
 	apiResponse.lastStatus = {}
 
 	import TextList from '$lib/TextList.svelte'
@@ -103,7 +108,7 @@
 	}
 
 	async function readyToPay() {
-		console.log('readyToPay: here')
+		// console.log('readyToPay: here')
 
 		//try to make the CC  payment
 		await handlePaymentSubmission()
@@ -119,15 +124,15 @@
 	}
 
 	async function completeRegistration(squarePaymentResponse) {
-		console.log('completeRegistration: here')
-		console.log(squarePaymentResponse.payment.receiptUrl)
+		// console.log('completeRegistration: here')
+		// console.log(squarePaymentResponse.payment.receiptUrl)
 		fetchingData = true
 		errorMessage = ''
 		const response = await sendCompleteToServer({
 			registrationId: $currentRegistration.registrationId,
 			email: $currentRegistration.email
 		})
-		console.log('completeRegistration' + response)
+		// console.log('completeRegistration' + response)
 		if (response.result === 'error') {
 			errorMessage = response.data
 			handleUnexpectedError(errorMessage)
@@ -141,14 +146,14 @@
 	}
 
 	async function finishRegistration() {
-		console.log('finishRegistration: here')
+		// console.log('finishRegistration: here')
 		fetchingData = false
 		currentState = validStates.FINISHED
 		goto('/view')
 	}
 
 	async function handlePaymentSubmission() {
-		console.log('handlePaymentSubmission: here')
+		// console.log('handlePaymentSubmission: here')
 		fetchingData = true
 		errorMessage = 'Sending payment to Card Processor (Square)'
 		let token
@@ -178,16 +183,20 @@
 				})
 			})
 			const data = await processResponse(paymentResponse)
+			// console.log(`handlePaymentSubmission-data: ${JSON.stringify(data, null, 4)}`)
+			apiResponse.lastStatus.response = data
 			if (!apiResponse.lastStatus.ok) {
-				errorMessage = data
+				errorMessage = `Payment Failed, try again later - ${
+					handleError(apiResponse.lastStatus).detail
+				}`
 				currentState = validStates.PAYMENTERROR
 				return
 			}
-			// Fill lastStatus.response with the data returned
-			apiResponse.lastStatus.response = data
+			// Payment response was ok so move on to completing
 			currentState = validStates.COMPLETING
 			return
 		} catch (err) {
+			// console.log('handlePaymentSubmission-err' + err)
 			currentState = validStates.PAYMENTERROR
 			errorMessage = 'Payment failed'
 			handleUnexpectedError(err)
@@ -297,9 +306,9 @@
 		{/if}
 	{/if}
 </section>
-
+<!--
 <pre class="whitespace-pre-wrap">
 	{apiResponse?.lastStatus?.response?.payment?.receiptUrl}<br />
 	{currentStateNow}<br />
 	{JSON.stringify(apiThings, null, 4)}
-</pre>
+</pre> -->

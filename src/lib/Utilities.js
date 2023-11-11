@@ -31,11 +31,13 @@ export function handleUnexpectedError(error) {
 
 export function handleError(lastStatus) {
 	let msg = ''
+	// console.log(lastStatus.status)
 	switch (lastStatus.status) {
 		case 400:
-			msg = JSON.stringify(lastStatus.response)
+			msg = lastStatus.response[0] || 'something bad happened!'
 			break
 		case 404:
+			console.log(404)
 			if (lastStatus.response) {
 				msg = lastStatus.response
 			} else {
@@ -43,28 +45,29 @@ export function handleError(lastStatus) {
 			}
 			break
 		case 500:
+			console.log(500)
 			msg = JSON.parse(lastStatus.response).message
 			break
 		default:
+			console.log('default')
 			msg = JSON.stringify(lastStatus)
 			break
-	}
-	if (msg) {
-		console.error(msg)
 	}
 	return msg
 }
 
-export function processResponse(response) {
+export async function processResponse(response) {
+	// console.log('processResponse commence:')
 	// Copy reponse properties to lastStatus properties
 	apiResponse.lastStatus.ok = response.ok
 	apiResponse.lastStatus.status = response.status
 	apiResponse.lastStatus.statusText = response.statusText
 	apiResponse.lastStatus.url = response.url
 
-	if (apiResponse.lastStatus.ok) {
-		return response.json()
+	// console.log(apiResponse)
+	if (apiResponse.lastStatus.ok || apiResponse.lastStatus.status === 400) {
+		return await response.json()
 	} else {
-		return response.text()
+		return await response.text()
 	}
 }
