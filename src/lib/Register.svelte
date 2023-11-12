@@ -14,6 +14,7 @@
 	// transport
 	// accommodation
 	// confirmation
+	// firstNations
 
 	import { onMount } from 'svelte'
 	import { createForm } from 'felte'
@@ -76,7 +77,7 @@
 		errorMessage = ''
 		console.log('sending ', actionRequest)
 		console.log(data)
-		const res = await fetch(`/api`, {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({ action: actionRequest, data })
 		})
@@ -100,12 +101,22 @@
 		return true
 	}
 
+	function isNumeric(str) {
+		if (typeof str != 'string') return false // we only process strings!
+		return (
+			!isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+			!isNaN(parseFloat(str))
+		) // ...and ensure strings of whitespace fail
+	}
+
 	let addRegistration = async (data) => {
 		if (registrationIsValid(data)) {
 			actionRequest = 'createRegistration'
 			fetchingData = true
 			errorMessage = ''
 			const newRegistration = { ...data }
+			// add a leadinng quote (') so sheets doesn't drop leading zeroes
+			if (isNumeric(newRegistration.phone)) newRegistration.phone = "'" + newRegistration.phone
 			const response = await sendToServer(newRegistration)
 			fetchingData = false
 			if (response.result === 'error') {
@@ -129,6 +140,7 @@
 			<TextList item="Surname" itemValue={$currentRegistration.lastName} />
 			<TextList item="Phone" itemValue={$currentRegistration.phone} />
 			<TextList item="Postcode" itemValue={$currentRegistration.postcode} />
+			<TextList item="First Nation" itemValue={$currentRegistration.firstNations} />
 		</div>
 	{:else}
 		<form use:form>
@@ -139,25 +151,29 @@
 			on:click={() => addRegistration($formData)}
 			disabled={fetchingData}
 			type="submit"
-			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Register</button
 		>
 
 		<button
 			on:click={() => dispatch('cancel')}
 			type="submit"
-			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold  uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			class="mt-8 inline-block rounded bg-primary-400 px-7 py-3 font-semibold uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Cancel</button
 		>
 	{/if}
+
 	{#if fetchingData}
 		<div
 			style="border-top-color:transparent"
 			class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
 		/>
 	{/if}
+
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
+	{:else}
+		<p class="mt-6">&nbsp</p>
 	{/if}
 </section>
 <!-- <pre>{JSON.stringify($currentRegistration, null, 2)}</pre> -->

@@ -47,6 +47,8 @@
 	let entryIdToEdit = ''
 	let showButtons = true
 	let entryAction = ''
+	$stepsAllowed = true
+
 	$: costOfRegistration = 20 + $entryStore.length * 20
 	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
 	// $: numberOfEntries = $entryStore.length + ' entries'

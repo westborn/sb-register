@@ -38,7 +38,7 @@
 				type="file"
 				id="formFile"
 				name="formFile"
-				accept="image/*"
+				accept="image/jpeg, image/jpg, image/png, image/gif"
 				bind:this={input}
 				on:change={onChange}
 				class="form-control block

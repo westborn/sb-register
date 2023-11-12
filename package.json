@@ -8,23 +8,24 @@
 		"push": "clasp push"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "next",
-		"@tailwindcss/forms": "^0.5.2",
-		"@types/google-apps-script": "^1.0.55",
-		"autoprefixer": "^10.4.7",
-		"postcss": "^8.4.14",
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.20.4",
+		"svelte": "^4.0.5",
+		"vite": "^4.4.2",
+		"@tailwindcss/forms": "^0.5.6",
+		"@types/google-apps-script": "^1.0.76",
+		"autoprefixer": "^10.4.16",
+		"postcss": "^8.4.31",
 		"postcss-load-config": "^4.0.1",
-		"prettier": "^2.6.2",
-		"prettier-plugin-tailwindcss": "^0.1.11",
-		"svelte": "^3.44.0",
-		"svelte-preprocess": "^4.10.7",
-		"tailwindcss": "^3.1.5",
-		"vite": "^3.0.0"
+		"prettier": "^3.0.3",
+		"prettier-plugin-tailwindcss": "^0.5.6",
+		"svelte-preprocess": "^5.0.4",
+		"tailwindcss": "^3.3.5"
 	},
 	"type": "module",
 	"dependencies": {
-		"felte": "^1.2.2",
-		"uuid": "^8.3.2"
+		"felte": "^1.2.12",
+		"square": "^32.0.0",
+		"uuid": "^9.0.1"
 	}
 }

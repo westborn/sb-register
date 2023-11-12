@@ -7,7 +7,13 @@
 	import GoBack from '$lib/GoBack.svelte'
 	import TextList from '$lib/TextList.svelte'
 
-	let actionType = 'completeRegistration'
+	// actionType can be:
+	//	commenceCompletion
+	//	enteringCardDetails
+	//	makePayment
+	//	completeRegistration
+
+	let actionType = 'commenceCompletion'
 	let fetchingData = false
 	let errorMessage = ''
 	$: costOfRegistration = 20 + $entryStore.length * 20
@@ -19,7 +25,7 @@
 		errorMessage = ''
 		// console.log('sending ', actionType)
 		// console.log(data)
-		const res = await fetch(`/api`, {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({ action: actionType, data })
 		})
@@ -33,7 +39,18 @@
 		return resMessage
 	}
 
+	// TODO
+	// change complete to include
+	// get a payment auth from square
+	// display modal with the payment auth
+	// get CC details
+	// commit payment
+	// if any errors // abort the complete action
+	// continue with normal complete
+	//
+
 	let completeRegistration = async (data) => {
+		console.log('here doing completeRegistration')
 		fetchingData = true
 		errorMessage = ''
 		actionType = 'completeRegistration'
@@ -74,39 +91,52 @@
 		<p>BSB: 802124</p>
 		<p>Acct Number: 100082466</p>
 		<p>Reference: {$currentRegistration.registrationId} - {$currentRegistration.lastName}</p> -->
-		<p class="mt-6 text-lg">
+		<!-- <p class="mt-6 text-lg">
 			We will invoice you for the above fee via email from our Square account. If do not want to pay
 			by Credit or Debit card and you would like to make alternative payment arrangements please
 			email <a class="text-blue-600" {href} target="_blank" rel="noopener noreferrer"
+				>accounts@sculpturebermagui.org.au</a
+			><br /> -->
+
+		<p class="text-base">
+			You are about to pay the registration fee by Credit or Debit card.
+			<br />
+			If you would like to make alternative payment arrangements please email
+			<a class="text-blue-600 underline" {href} target="_blank" rel="noopener noreferrer"
 				>accounts@sculpturebermagui.org.au</a
 			><br />
 
 			<br />
 			Please note that your registration will not be complete until payment has been received.
+			<a
+				href="https://sculpturebermagui.org.au\wp-content\uploads\2023\11\Exhibiting-at-Sculpture-Bermagui-2024.pdf"
+				class="text-blue-600 underline hover:underline hover:text-blue-700"
+				target="_blank"
+				rel="noopener noreferrer">Artists Terms and Conditions</a
+			>
 		</p>
 	</div>
 
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
-	{/if}
-	{#if !fetchingData}
-		<button
-			on:click={() =>
-				completeRegistration({
-					registrationId: $currentRegistration.registrationId,
-					email: $currentRegistration.email
-				})}
-			disabled={fetchingData}
-			type="submit"
-			class="mt-8 inline-block w-auto  rounded-lg bg-red-400 px-7 py-3  font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
-			>By clicking here I CONFIRM that all details are correct.<br /><span class="text-sm"
-				>(No further changes can be made)</span
-			></button
-		>
 	{:else}
+		<p class="mt-6">&nbsp</p>
+	{/if}
+
+	{#if fetchingData}
 		<div
 			style="border-top-color:transparent"
 			class="m-6 h-16 w-16 animate-spin rounded-full border-8 border-solid border-accent"
 		/>
+	{/if}
+	{#if actionType === 'commenceCompletion' && !fetchingData}
+		<button
+			on:click={() => goto('/registration/payment')}
+			disabled={fetchingData}
+			type="submit"
+			class="mt-8 inline-block w-auto rounded-lg bg-red-400 px-7 py-3 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-red-500 hover:shadow-lg focus:bg-red-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-200 active:shadow-lg"
+			>By clicking here I CONFIRM that all details are correct<br />
+			<span class="text-base">and I have read the "Artists Terms & Conditions"</span><br />
+		</button>
 	{/if}
 </section>

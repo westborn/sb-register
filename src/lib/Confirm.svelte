@@ -45,6 +45,7 @@
 			displayRequirements: $currentRegistration.displayRequirements,
 			email: $currentUserEmail,
 			firstName: $currentRegistration.firstName,
+			firstNations: $currentRegistration.firstNations,
 			lastName: $currentRegistration.lastName,
 			phone: $currentRegistration.phone,
 			postcode: $currentRegistration.postcode,
@@ -73,7 +74,7 @@
 		errorMessage = ''
 		// console.log('sending ', actionType)
 		// console.log(data)
-		const res = await fetch(`/api`, {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({ action: actionType, data })
 		})
@@ -127,6 +128,7 @@
 			displayRequirements: $currentRegistration.displayRequirements,
 			email: $currentUserEmail,
 			firstName: $currentRegistration.firstName,
+			firstNations: $currentRegistration.firstNations,
 			lastName: $currentRegistration.lastName,
 			phone: $currentRegistration.phone,
 			postcode: $currentRegistration.postcode,
@@ -149,19 +151,22 @@
 
 	{#if errorMessage}
 		<p class="mt-6 text-red-500">{errorMessage}</p>
+	{:else}
+		<p class="mt-6">&nbsp</p>
 	{/if}
+
 	{#if !fetchingData}
 		<button
 			on:click={() => modifyRegistration($formData)}
 			disabled={fetchingData}
 			type="submit"
-			class="mt-8 inline-block rounded-lg bg-primary-400 px-7 py-3 font-semibold   text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			class="mt-8 inline-block rounded-lg bg-primary-400 px-7 py-3 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Save changes I've made</button
 		>
 		<button
 			on:click={() => cancelConfirm()}
 			type="submit"
-			class="mt-8 inline-block rounded-lg bg-primary-400 px-7 py-3 font-semibold   text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
+			class="mt-8 inline-block rounded-lg bg-primary-400 px-7 py-3 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 			>Cancel</button
 		>
 	{:else}

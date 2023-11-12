@@ -2,14 +2,19 @@
 	import { PUBLIC_REGISTRATIONS_OPEN } from '$env/static/public'
 	import { goto } from '$app/navigation'
 	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
+	import { validateEmail } from '$lib/Utilities.js'
 
 	let fetchingData = false
 	let errorMessage = ''
 
 	async function handleUserAction(userAction) {
+		if (!validateEmail($currentUserEmail)) {
+			errorMessage = 'Please enter a valid email address'
+			return
+		}
 		fetchingData = true
 		errorMessage = ''
-		const res = await fetch('/api', {
+		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({
 				action: 'getDetailsByEmail',
@@ -115,7 +120,9 @@
 		</div>
 
 		{#if errorMessage}
-			<p class="m-2 text-red-500">{errorMessage}</p>
+			<p class="mt-6 text-red-500">{errorMessage}</p>
+		{:else}
+			<p class="mt-6">&nbsp</p>
 		{/if}
 		<div class="mt-6 flex justify-between">
 			<button type="button" on:click={() => handleUserAction('new')} class={btnClasses}

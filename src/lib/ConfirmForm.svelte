@@ -10,6 +10,7 @@
 	// displayRequirements:  $currentRegistration.displayRequirements,
 	// email:  $currentRegistration.email,
 	// firstName:  $currentRegistration.firstName,
+	// firstNations:  $currentRegistration.firstNations,
 	// lastName:  $currentRegistration.lastName,
 	// phone:  $currentRegistration.phone,
 	// postcode:  $currentRegistration.postcode,
