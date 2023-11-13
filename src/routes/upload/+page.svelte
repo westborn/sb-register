@@ -7,7 +7,7 @@
 
 	function setImageDetails(e) {
 		imageRes = { image: e.detail.image, imageFileName: e.detail.fileName }
-		console.log(`Image File: ${imageRes.imageFileName}`)
+		// console.log(`Image File: ${imageRes.imageFileName}`)
 	}
 </script>
 

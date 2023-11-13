@@ -35,24 +35,27 @@
 
 <nav>
 	<!-- Hamburger Modal Menu -->
-	<div
-		class:hidden={!hamburgerMenuOpen}
-		class="absolute z-50 h-screen w-screen bg-gray-500/30"
-		on:click={() => (hamburgerMenuOpen = !hamburgerMenuOpen)}
-	>
-		<!-- Vertical Menu -->
-		<aside class="absolute top-0 right-16 bg-gray-300/50 shadow-2xl">
-			<ul class="flex flex-col bg-white p-4 text-lg text-gray-800">
-				{#each menuText as item}
-					<li class="mr-3">
-						<a
-							class="block p-2 text-left text-primary-300 no-underline hover:text-accent md:text-sm"
-							href={`https://sculpturebermagui.org.au${item.href}`}>{item.text}</a
-						>
-					</li>
-				{/each}
-			</ul>
-		</aside>
+	<div>
+		<button
+			type="button"
+			class:hidden={!hamburgerMenuOpen}
+			class="absolute z-50 h-screen w-screen bg-gray-500/30"
+			on:click={() => (hamburgerMenuOpen = !hamburgerMenuOpen)}
+		>
+			<!-- Vertical Menu -->
+			<aside class="absolute top-0 right-16 bg-gray-300/50 shadow-2xl">
+				<ul class="flex flex-col bg-white p-4 text-lg text-gray-800">
+					{#each menuText as item}
+						<li class="mr-3">
+							<a
+								class="block p-2 text-left text-primary-300 no-underline hover:text-accent md:text-sm"
+								href={`https://sculpturebermagui.org.au${item.href}`}>{item.text}</a
+							>
+						</li>
+					{/each}
+				</ul>
+			</aside>
+		</button>
 	</div>
 
 	<!-- Desktop Menu -->
@@ -90,7 +93,7 @@
 		</button>
 
 		<!-- Horizontal menu -->
-		<div class="ml-10 hidden w-auto lg:flex ">
+		<div class="ml-10 hidden w-auto lg:flex">
 			<ul class="list-reset flex flex-1 items-center justify-between md:flex-none">
 				{#each menuText as item}
 					<li class="mr-1">

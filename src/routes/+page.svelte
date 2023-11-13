@@ -27,13 +27,13 @@
 		const response = await res.json()
 		$stepsAllowed = true
 		fetchingData = false
-		console.log('response', response)
+		// console.log('response', response)
 		if (response.result === 'error') {
 			errorMessage = response.data
 			return
 		}
 
-		console.log(userAction, response.data.registration, response.data)
+		// console.log(userAction, response.data.registration, response.data)
 		if (userAction === 'new') {
 			if (Object.entries(response.data.registration).length != 0) {
 				errorMessage = 'An entry already exists for that email address'

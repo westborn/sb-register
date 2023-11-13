@@ -24,6 +24,8 @@
 
 	import { ACTION } from '$lib/CONSTANTS.js'
 	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
+	import { isNumeric } from '$lib/Utilities.js'
+
 	import GoBack from '$lib/GoBack.svelte'
 	import ConfirmForm from '$lib/ConfirmForm.svelte'
 	let actionType = ACTION.EDITING_REGISTRATION
@@ -34,13 +36,16 @@
 	$: numberOfEntries = $entryStore.length === 1 ? '1 entry' : `${$entryStore.length} entries`
 
 	onMount(() => {
+		if (isNumeric($currentRegistration.phone))
+			$currentRegistration.phone = "'0" + parseInt($currentRegistration.phone)
+
 		setFields({
 			accommodation: $currentRegistration.accommodation || 'No',
 			bankAccount: $currentRegistration.bankAccount,
 			bankAccountName: $currentRegistration.bankAccountName,
 			bankBSB: $currentRegistration.bankBSB,
-			bumpIn: $currentRegistration.bumpIn,
-			bumpOut: $currentRegistration.bumpOut,
+			bumpIn: $currentRegistration.bumpIn || 'Thursday morning 7 March',
+			bumpOut: $currentRegistration.bumpOut || 'Monday morning 18 March',
 			crane: $currentRegistration.crane || 'No',
 			displayRequirements: $currentRegistration.displayRequirements,
 			email: $currentUserEmail,

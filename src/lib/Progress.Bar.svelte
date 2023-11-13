@@ -8,7 +8,7 @@
 	let stepsState = []
 
 	onMount(() => {
-		console.log(steps)
+		// console.log(steps)
 		stepsState = steps.map((step, index) => {
 			const stepObj = {}
 			stepObj.description = step
@@ -66,7 +66,7 @@
 <!-- container -->
 <div class="flex items-center justify-between p-4">
 	{#each displaySteps as step, index}
-		<div class="flex  items-center {index != steps.length - 1 ? 'w-full' : ''}">
+		<div class="flex items-center {index != steps.length - 1 ? 'w-full' : ''}">
 			<div class="relative flex flex-col items-center">
 				<!-- number of steps in a circle -->
 				<div
@@ -82,7 +82,7 @@
 				</div>
 				<!-- Display Description under the circle -->
 				<div
-					class="font- absolute top-0	mt-14 w-32 text-center text-xs font-semibold uppercase
+					class="font- absolute top-0 mt-14 w-32 text-center text-xs font-semibold uppercase
 					{step.highlighted ? 'text-gray-900' : 'text-gray-400'}"
 				>
 					{step.description}
@@ -90,7 +90,7 @@
 			</div>
 			<!-- Line between circles-->
 			<div
-				class=" flex-auto border-t-4  transition duration-500 ease-in-out
+				class=" flex-auto border-t-4 transition duration-500 ease-in-out
 			{index < currentActive ? 'border-primary-400' : 'border-gray-300'}"
 			/>
 		</div>

@@ -35,6 +35,7 @@
 	$: costOfRegistration = 20 + $entryStore.length * 20
 	$: costOfRegistrationInCents = parseInt(costOfRegistration * 100)
 	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
+	$: registrationPaid = $currentRegistration.confirmation === 'Complete' ? ' (Paid)' : ''
 
 	let card
 
@@ -89,7 +90,6 @@
 	}
 
 	let sendCompleteToServer = async (data) => {
-		fetchingData = true
 		errorMessage = ''
 		// console.log('sending ', actionType)
 		// console.log(data)
@@ -97,14 +97,7 @@
 			method: 'POST',
 			body: JSON.stringify({ action: 'completeRegistration', data })
 		})
-		const resMessage = await res.json()
-		fetchingData = false
-		// console.log('receiving	', actionType)
-		// console.log(resMessage)
-		if (resMessage.result === 'error') {
-			errorMessage = resMessage.data
-		}
-		return resMessage
+		return await res.json()
 	}
 
 	async function readyToPay() {
@@ -259,7 +252,7 @@
 				<TextList item="Email" itemValue={$currentRegistration?.email} />
 			</div>
 			<p class="mt-6 text-xl text-red-400">
-				Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}
+				Your registration of {numberOfEntries} has a total fee of ${costOfRegistration}{registrationPaid}
 			</p>
 		</div>
 		{#if errorMessage}
@@ -299,6 +292,7 @@
 				>
 				<button
 					on:click={() => finishRegistration()}
+					disabled={fetchingData}
 					class="mt-2 inline-block rounded-lg bg-primary-400 px-7 py-2 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-500 hover:shadow-lg focus:bg-primary-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg"
 					>Registration is now Complete</button
 				>

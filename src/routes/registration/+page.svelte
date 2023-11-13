@@ -30,6 +30,10 @@
 			return 1
 		}
 
+		if (next > 1 && $currentRegistration.bumpIn === '') {
+			return 2
+		}
+
 		if ($currentRegistration.complete === 'Y') {
 			return 3
 		}

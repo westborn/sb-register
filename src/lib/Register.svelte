@@ -22,6 +22,8 @@
 	const dispatch = createEventDispatcher()
 
 	import { currentUserEmail, currentRegistration, entryStore, stepsAllowed } from '$lib/stores.js'
+	import { isNumeric } from '$lib/Utilities.js'
+
 	import GoBack from '$lib/GoBack.svelte'
 
 	import RegisterForm from '$lib/RegisterForm.svelte'
@@ -75,16 +77,16 @@
 	let sendToServer = async (data) => {
 		fetchingData = true
 		errorMessage = ''
-		console.log('sending ', actionRequest)
-		console.log(data)
+		// console.log('sending ', actionRequest)
+		// console.log(data)
 		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
 			body: JSON.stringify({ action: actionRequest, data })
 		})
 		const resMessage = await res.json()
 		fetchingData = false
-		console.log('receiving	', actionRequest)
-		console.log(resMessage)
+		// console.log('receiving	', actionRequest)
+		// console.log(resMessage)
 		if (resMessage.result === 'error') {
 			errorMessage = resMessage.data
 		}
@@ -99,14 +101,6 @@
 
 		errorMessage = ''
 		return true
-	}
-
-	function isNumeric(str) {
-		if (typeof str != 'string') return false // we only process strings!
-		return (
-			!isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-			!isNaN(parseFloat(str))
-		) // ...and ensure strings of whitespace fail
 	}
 
 	let addRegistration = async (data) => {
