@@ -10,10 +10,10 @@ const entryStore = (() => {
 	const { subscribe, set, update } = writable(state)
 	const methods = {
 		createEntry(data) {
-			console.log('data: ', data)
+			// console.log('data: ', data)
 			update((state) => {
 				state = state.concat(data)
-				console.log('added to data: ', state)
+				// console.log('added to data: ', state)
 				return state
 			})
 		},
@@ -22,11 +22,11 @@ const entryStore = (() => {
 				(state) =>
 					(state = state.map((entry) => (entry.id !== data.id ? { ...entry } : { ...data })))
 			)
-			console.log('updated in store: ', state)
+			// console.log('updated in store: ', state)
 			return state
 		},
 		deleteEntry(id) {
-			console.log(id)
+			// console.log(id)
 			update((state) => state.filter((item) => item.id !== id))
 		}
 	}

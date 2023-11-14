@@ -8,6 +8,7 @@
 	let errorMessage = ''
 
 	async function handleUserAction(userAction) {
+		$currentUserEmail = $currentUserEmail.toLowerCase()
 		if (!validateEmail($currentUserEmail)) {
 			errorMessage = 'Please enter a valid email address'
 			return
@@ -26,13 +27,13 @@
 		const response = await res.json()
 		$stepsAllowed = true
 		fetchingData = false
-		console.log('response', response)
+		// console.log('response', response)
 		if (response.result === 'error') {
 			errorMessage = response.data
 			return
 		}
 
-		console.log(userAction, response.data.registration, response.data)
+		// console.log(userAction, response.data.registration, response.data)
 		if (userAction === 'new') {
 			if (Object.entries(response.data.registration).length != 0) {
 				errorMessage = 'An entry already exists for that email address'
@@ -90,7 +91,7 @@
 			There is a 4 step process comprising:<br />
 		</p>
 		<ul class="list-outside list-disc px-4">
-			<li>Register - just your name, email and postcode to let us know you may be exhibiting</li>
+			<li>Register - your name, email and postcode to let us know you may be exhibiting</li>
 			<li>
 				Add entries - details of each entry you'd like to submit. You can add as many as you like
 				and you can edit/delete them too.
@@ -109,7 +110,7 @@
 				name="email"
 				bind:value={$currentUserEmail}
 				type="text"
-				class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none"
+				class="peer h-10 w-full rounded-md border-gray-300 placeholder-transparent focus:border-primary-50 focus:outline-none lowercase"
 				placeholder="someone@gmail.com"
 			/>
 			<label

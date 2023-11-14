@@ -43,7 +43,9 @@
 		<InputText inputFieldID="dimensions" placeholder="Size of this piece in cm (L x W x H)" />
 	</div> -->
 
-	<legend class="mt-8 mb-4 text-gray-600">Size of this piece in centimetres (L x W x H)</legend>
+	<legend class="mt-8 mb-4 text-gray-600"
+		>Size of this piece <span class="font-semibold">in centimetres</span> (L x W x H)</legend
+	>
 	<div class="grid grid-cols-3 gap-4">
 		<div class="relative">
 			<InputText inputFieldID="dimLength" placeholder="Length" />
@@ -68,7 +70,7 @@
 			for="description"
 			class="absolute left-2 -top-4 text-xs text-gray-600 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-gray-600"
 			>Description for the catalogue (25 words)<span
-				class="after:ml-0.5 after:text-sm after:text-red-500 after:content-['*'] "
+				class="after:ml-0.5 after:text-sm after:text-red-500 after:content-['*']"
 			/></label
 		>
 	</div>

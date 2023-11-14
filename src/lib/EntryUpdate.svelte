@@ -76,10 +76,10 @@
 		if (entryAction === ACTION.EDITING_ENTRY || entryAction === ACTION.DELETING_ENTRY) {
 			entry = $entryStore.find((item) => item.entryId === entryIdToEdit)
 			imageBeforeUpdate = { ...entry.images[0] }
-			console.log(imageBeforeUpdate)
+			// console.log(imageBeforeUpdate)
 		}
-		console.log(entry)
-		console.log(entryAction)
+		// console.log(entry)
+		// console.log(entryAction)
 
 		const splitDimensions = entry.dimensions.split(/x/)
 
@@ -125,8 +125,8 @@
 	async function sendToServer(data) {
 		fetchingData = true
 		errorMessage = ''
-		console.log('sending ', entryAction)
-		console.log(data)
+		// console.log('sending ', entryAction)
+		// console.log(data)
 
 		const res = await fetch(`/api/sheets`, {
 			method: 'POST',
@@ -135,7 +135,7 @@
 
 		const resMessage = await res.json()
 		fetchingData = false
-		console.log('receiving	', entryAction)
+		// console.log('receiving	', entryAction)
 		// console.log(resMessage)
 		if (resMessage.result === 'error') {
 			errorMessage = resMessage.data
@@ -161,7 +161,7 @@
 		if (!entryIsValid(entry)) {
 			return
 		}
-		console.log('Adding')
+		// console.log('Adding')
 		const newEntry = {
 			description: entry.description,
 			dimensions: entry.dimensions,
@@ -243,18 +243,18 @@
 	}
 
 	function handleFileUploadReplace(e) {
-		console.log('EntryUpdate')
+		// console.log('EntryUpdate')
 		if (e.detail) {
 			replacementImage = {
 				imageIsBlob: true,
 				image: e.detail.image,
 				imageFileName: e.detail.fileName
 			}
-			console.log('back from modal')
-			console.log(replacementImage.imageFileName)
+			// console.log('back from modal')
+			// console.log(replacementImage.imageFileName)
 		} else {
 			replacementImage = {}
-			console.log('EntryUpdate - No image selected')
+			// console.log('EntryUpdate - No image selected')
 		}
 	}
 </script>

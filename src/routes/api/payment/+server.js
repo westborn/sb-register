@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit'
 import { ApiError, Client } from 'square'
 import { randomUUID } from 'crypto'
-import { SECRET_SQUARE_ACCESS_TOKEN } from '$env/static/private'
+import { SECRET_SQUARE_ACCESS_TOKEN, SECRET_SQUARE_ENVIRONMENT } from '$env/static/private'
 
 BigInt.prototype.toJSON = function () {
 	return this.toString()
@@ -9,7 +9,7 @@ BigInt.prototype.toJSON = function () {
 
 const { paymentsApi } = new Client({
 	accessToken: SECRET_SQUARE_ACCESS_TOKEN,
-	environment: 'sandbox'
+	environment: SECRET_SQUARE_ENVIRONMENT
 })
 
 export async function POST({ request }) {
