@@ -24,13 +24,17 @@ function doPost(e) {
 	// API Construction
 
 	// Action: String
-	//     getDetailsByEmail
-	//     createEntry
-	//     deleteEntry
-	//     modifyEntry
-	//     createRegistration
-	//     modifyRegistration
-	//     createImage
+	//     getDetailsByEmail					(RETURNS full registration)
+	//     createEntry								(RETURNS full registration)
+	//     deleteEntry								(RETURNS full registration)
+	//     modifyEntry								(RETURNS full registration)
+	//     createRegistration					(RETURNS full registration)
+	//     modifyRegistration					(RETURNS full registration)
+	//     produceRegistrationEmail		(RETURNS empty data)
+	//     setRegistrationComplete		(RETURNS empty data)
+	//     clearRegistrationComplete	(RETURNS empty data)
+	//     completeRegistration				(RETURNS full registration)
+	//     createImage								(RETURNS image row)
 	//
 	// Data: various Objects
 	//
@@ -74,6 +78,15 @@ function doPost(e) {
 				break
 			case 'completeRegistration':
 				result = completeRegistration(request.data, ss)
+				break
+			case 'clearRegistrationComplete':
+				result = clearRegistrationComplete(request.data, ss)
+				break
+			case 'setRegistrationComplete':
+				result = setRegistrationComplete(request.data, ss)
+				break
+			case 'produceRegistrationEmail':
+				result = produceRegistrationEmail(request.data, ss)
 				break
 			case 'createImage':
 				result = createImage(request.data, ss)
@@ -209,7 +222,7 @@ function createRegistration(request, ss) {
 	if (!request.registrationId || request.registrationId.trim() === '') {
 		return sendResponse('error', 'Invalid ID for create')
 	}
-	//create unique Regsitration ID
+	//create unique Registration ID
 	request.registrationId = bumpId('registrationId')
 	try {
 		const sheet = ss.getSheetByName('Registrations')
@@ -254,16 +267,29 @@ function modifyRegistration(request, ss) {
 
 function completeRegistration(request, ss) {
 	console.log('completeRegistration', request)
+	const { status, data } = updateRegistrationConfirmation(request, ss, 'Complete')
+	if (status === 'error') {
+		return sendResponse(status, data)
+	}
+	try {
+		// registrationEmail and sendToEmail both set to the artists email address
+		sendRegistrationConfirmationEmail(ss, request.email, request.email)
+		const response = getFullRegistration(request.email, ss)
+		return sendResponse('ok', response.data)
+	} catch (err) {
+		return sendErrorResponse(err)
+	}
+}
 
+function updateRegistrationConfirmation(request, ss, confirmationText) {
 	if (!request.registrationId || request.registrationId.trim() === '') {
-		return sendResponse('error', 'Invalid ID for complete')
+		return { status: 'error', data: 'Invalid ID for confirmation' }
 	}
 	try {
 		const sheet = ss.getSheetByName('Registrations')
 		const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
 		const row = headers.map((key) => request[String(key)] || '')
 		row.splice(1, 1, new Date())
-		console.log('completeRegistration')
 		console.log(row)
 		const rowToModify = wbLib.getRowFromColumnSearch(
 			sheet.getDataRange().getValues(),
@@ -272,11 +298,29 @@ function completeRegistration(request, ss) {
 		)
 		if (rowToModify) {
 			const columnNumber = headers.indexOf('confirmation') + 1
-			sheet.getRange(rowToModify, columnNumber, 1, 1).setValue('Complete')
+			sheet.getRange(rowToModify, columnNumber, 1, 1).setValue(confirmationText)
 		}
-		sendRegistrationConfirmationEmail(ss, request.email)
-		const response = getFullRegistration(request.email, ss)
-		return sendResponse('ok', response.data)
+		return { status: 'ok', data: '' }
+	} catch (err) {
+		console.log('updateRegistrationConfirmation', { err })
+		return { status: 'error', data: `${err.name} - ${err.message} - ${err.stack}` }
+	}
+}
+
+function setRegistrationComplete(request, ss) {
+	const { status, data } = updateRegistrationConfirmation(request, ss, 'Complete')
+	return sendResponse(status, data)
+}
+
+function clearRegistrationComplete(request, ss) {
+	const { status, data } = updateRegistrationConfirmation(request, ss, '')
+	return sendResponse(status, data)
+}
+
+function produceRegistrationEmail(request, ss) {
+	try {
+		sendRegistrationConfirmationEmail(ss, request.registrationEmail, request.sendToEmail)
+		return sendResponse('ok', '')
 	} catch (err) {
 		return sendErrorResponse(err)
 	}
@@ -298,10 +342,8 @@ function createEntry(data, ss) {
 		console.log(err)
 		return null
 	}
-
 	//we've added the entry - now add the image
 	// entryId, originalFileName, email, blobDataURL, imageFileName: artistSurname_title_
-
 	newImage.entryId = newEntry.entryId
 	newImage.imageId = bumpId('imageId')
 	const res = createImage(newImage, ss)
@@ -312,7 +354,6 @@ function createEntry(data, ss) {
 
 function deleteEntry(request, ss) {
 	console.log('deleteEntry', request)
-
 	if (!request.entryId || request.entryId.trim() === '') {
 		return sendResponse('error', 'Invalid ID for delete')
 	}
@@ -386,12 +427,14 @@ function modifyEntry(request, ss) {
 
 function sendRegistrationConfirmationEmail(
 	ss = SpreadsheetApp.openById(CONFIG.ARTIST_REG_SHEET_ID),
-	email = 'george@westborn.com.au'
+	registrationEmail,
+	sendToEmail
 ) {
 	const {
 		data: { registration: registrationData },
 		data: { entries: entriesData }
-	} = getFullRegistration(email, ss)
+	} = getFullRegistration(registrationEmail, ss)
+
 	const registrationHTML = makeRegistrationHTML(registrationData)
 	const entriesHTML = makeEntriesHTML(entriesData)
 	const costOfRegistration = 20 + entriesData.length * 20
@@ -405,15 +448,10 @@ function sendRegistrationConfirmationEmail(
 
 	const htmlBody = headerHTML + registrationHTML + '<hr>' + entriesHTML
 
-	GmailApp.sendEmail(
-		registrationData.email,
-		'Registration confirmation for Sculpture Bermagui',
-		'body text',
-		{
-			htmlBody,
-			replyTo: 'curator@sculpturebermagui.org.au'
-		}
-	)
+	GmailApp.sendEmail(sendToEmail, 'Registration confirmation for Sculpture Bermagui', 'body text', {
+		htmlBody,
+		replyTo: 'curator@sculpturebermagui.org.au'
+	})
 }
 
 function makeRegistrationHTML(registrationData) {

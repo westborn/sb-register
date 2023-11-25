@@ -35,7 +35,7 @@
 	$: costOfRegistration = 20 + $entryStore.length * 20
 	$: costOfRegistrationInCents = parseInt(costOfRegistration * 100)
 	$: numberOfEntries = $entryStore.length === 1 ? `1 entry` : `${$entryStore.length} entries`
-	$: registrationPaid = $currentRegistration.confirmation === 'Complete' ? ' (Paid)' : ''
+	$: registrationPaid = $currentRegistration?.confirmation === 'Complete' ? ' (Paid)' : ''
 
 	let card
 
