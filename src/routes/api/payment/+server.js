@@ -1,7 +1,8 @@
 import { json } from '@sveltejs/kit'
 import { ApiError, Client } from 'square'
 import { randomUUID } from 'crypto'
-import { SECRET_SQUARE_ACCESS_TOKEN, SECRET_SQUARE_ENVIRONMENT } from '$env/static/private'
+import { SECRET_SQUARE_ACCESS_TOKEN } from '$env/static/private'
+import { PUBLIC_SQUARE_ENVIRONMENT } from '$env/static/public'
 
 BigInt.prototype.toJSON = function () {
 	return this.toString()
@@ -9,7 +10,7 @@ BigInt.prototype.toJSON = function () {
 
 const { paymentsApi } = new Client({
 	accessToken: SECRET_SQUARE_ACCESS_TOKEN,
-	environment: SECRET_SQUARE_ENVIRONMENT
+	environment: PUBLIC_SQUARE_ENVIRONMENT
 })
 
 export async function POST({ request }) {
@@ -37,7 +38,8 @@ export async function POST({ request }) {
 		// 	console.log(err.errors[0].detail)
 		// }
 		console.log('error after POST to api/payment')
-		console.log(err.statusCode, JSON.stringify(err?.result, null, 4))
+		console.log(`err is: ${err}`)
+		console.log(err.status, JSON.stringify(err?.result, null, 4))
 		const data = JSON.stringify(err.errors, null, 4)
 		const myOptions = { status: 400, statusText: 'It was NOT good!' }
 		const myResponse = new Response(data, myOptions)

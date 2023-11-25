@@ -1,6 +1,25 @@
 <script>
 	import '../app.css'
+	import { onMount } from 'svelte'
+	import { dev } from '$app/environment'
+	import { PUBLIC_SQUARE_ENVIRONMENT } from '$env/static/public'
+
 	import Nav from '$lib/Nav.svelte'
+
+	onMount(async () => {
+		const src =
+			PUBLIC_SQUARE_ENVIRONMENT === 'sandbox'
+				? 'https://sandbox.web.squarecdn.com/v1/square.js'
+				: 'https://web.squarecdn.com/v1/square.js'
+
+		console.log(`env dev:${dev} meta.env.MODE:${import.meta.env.MODE}`)
+
+		const scriptEl = document.createElement('script')
+		scriptEl.async = false
+		scriptEl.type = 'text/javascript'
+		scriptEl.src = src
+		document.head.appendChild(scriptEl)
+	})
 </script>
 
 <svelte:head>
