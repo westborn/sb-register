@@ -1,17 +1,21 @@
-this.CONFIG = {
+const CONFIG = {
 	ARTIST_REG_SHEET_ID:
 		Session.getEffectiveUser().getEmail() === 'george@sculpturebermagui.org.au'
 			? '1faNJ7Q2x_a4WO0O919487dDrg_0Ky6Y4xiab8Io0_N0'
 			: '1UTEu2_KD7lyNUGIeTqp_5W-fNQuYXAnvTLsx2VvLiyU'
 }
 
-// set production or test spreadsheet ID
-
+/**
+ * Display script properties.
+ */
 function showProperties() {
 	console.log(PropertiesService.getScriptProperties().getProperties())
 	console.log(CONFIG.ARTIST_REG_SHEET_ID)
 }
 
+/**
+ * Set script properties for various IDs.
+ */
 function setIdProperties() {
 	const prop = PropertiesService.getScriptProperties()
 	wbLib.setProp('entryId', 'Entry24-000', prop)
@@ -20,33 +24,36 @@ function setIdProperties() {
 	showProperties()
 }
 
+/**
+ * Handle incoming HTTP requests.
+ * Action: String
+ *	getDetailsByEmail						(RETURNS full registration)
+ *	listRegistrations						(RETURNS email list of all registrations)
+ *	createEntry									(RETURNS full registration)
+ *	deleteEntry									(RETURNS full registration)
+ *	modifyEntry									(RETURNS full registration)
+ *	createRegistration					(RETURNS full registration)
+ *	modifyRegistration					(RETURNS full registration)
+ *	produceRegistrationEmail		(RETURNS full registration)
+ *	setRegistrationComplete			(RETURNS full registration)
+ *	clearRegistrationComplete		(RETURNS full registration)
+ *	completeRegistration				(RETURNS full registration)
+ *	createImage									(RETURNS image row)
+ *
+ *
+ *
+ * Response (normally)
+ *	{result: status, {
+ *	  data: {
+ *	    registration: registrationArray[0],
+ *	    entries: [...entryArray]
+ *	  }
+ *	 }
+ *	}
+ * @param {Object} e - HTTP request event object.
+ * @returns {Object} - HTTP response.
+ */
 function doPost(e) {
-	// API Construction
-
-	// Action: String
-	//     getDetailsByEmail					(RETURNS full registration)
-	//     createEntry								(RETURNS full registration)
-	//     deleteEntry								(RETURNS full registration)
-	//     modifyEntry								(RETURNS full registration)
-	//     createRegistration					(RETURNS full registration)
-	//     modifyRegistration					(RETURNS full registration)
-	//     produceRegistrationEmail		(RETURNS empty data)
-	//     setRegistrationComplete		(RETURNS empty data)
-	//     clearRegistrationComplete	(RETURNS empty data)
-	//     completeRegistration				(RETURNS full registration)
-	//     createImage								(RETURNS image row)
-	//
-	// Data: various Objects
-	//
-	// Response
-	//   {result: status, {
-	//     data: {
-	//       registration: registrationArray[0],
-	//       entries: [...entryArray]
-	//     }
-	//    }
-	//   }
-
 	console.log(
 		`doPost Running as - ${Session.getEffectiveUser().getEmail()} and pointing to ${
 			CONFIG.ARTIST_REG_SHEET_ID
@@ -56,51 +63,45 @@ function doPost(e) {
 	try {
 		const ss = SpreadsheetApp.openById(CONFIG.ARTIST_REG_SHEET_ID)
 		const request = JSON.parse(e.postData.contents)
-		var result
-		switch (request.action) {
-			case 'getDetailsByEmail':
-				result = getInformationForEmailAddress(request.data.email, ss)
-				break
-			case 'createEntry':
-				result = createEntry(request.data, ss)
-				break
-			case 'deleteEntry':
-				result = deleteEntry(request.data, ss)
-				break
-			case 'modifyEntry':
-				result = modifyEntry(request.data, ss)
-				break
-			case 'createRegistration':
-				result = createRegistration(request.data, ss)
-				break
-			case 'modifyRegistration':
-				result = modifyRegistration(request.data, ss)
-				break
-			case 'completeRegistration':
-				result = completeRegistration(request.data, ss)
-				break
-			case 'clearRegistrationComplete':
-				result = clearRegistrationComplete(request.data, ss)
-				break
-			case 'setRegistrationComplete':
-				result = setRegistrationComplete(request.data, ss)
-				break
-			case 'produceRegistrationEmail':
-				result = produceRegistrationEmail(request.data, ss)
-				break
-			case 'createImage':
-				result = createImage(request.data, ss)
-				break
-			default:
-				console.log(request.data)
-				result = sendResponse('error', 'Unknown Function')
-				break
-		}
+		const result = processRequest(request, ss)
+		return result
 	} catch (err) {
 		console.log(err)
-		result = sendResponse('error', err)
+		return sendResponse('error', err)
 	}
-	return result
+}
+
+/**
+ * Process the request based on the provided action.
+ *
+ * @param {Object} request - Request object.
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss - Spreadsheet instance.
+ * @returns {Object} - Response object.
+ */
+function processRequest(request, ss) {
+	const actions = {
+		getDetailsByEmail: getDetailsByEmail,
+		listRegistrations: listRegistrations,
+		createEntry: createEntry,
+		deleteEntry: deleteEntry,
+		modifyEntry: modifyEntry,
+		createRegistration: createRegistration,
+		modifyRegistration: modifyRegistration,
+		completeRegistration: completeRegistration,
+		clearRegistrationComplete: clearRegistrationComplete,
+		setRegistrationComplete: setRegistrationComplete,
+		produceRegistrationEmail: produceRegistrationEmail,
+		createImage: createImage
+	}
+
+	console.log(`Processing action: ${request.action}`)
+
+	if (actions[request.action]) {
+		return actions[request.action](request.data, ss)
+	} else {
+		console.log(request.data)
+		return sendResponse('error', 'Unknown Function')
+	}
 }
 
 function createImage(imageObject, ss) {
@@ -112,95 +113,77 @@ function createImage(imageObject, ss) {
 		originalFileName: imageObject.originalFileName
 	}
 
-	// TODO Validate image
 	try {
 		const imagesFolderName = 'Entry Images'
-		// establish the image folder id
 		const myFolder = wbLib.getMyFolder(ss)
 		const imagesFolder = wbLib.checkIfFolderExistElseCreate(myFolder, imagesFolderName)
-		// make a named blob from the dataURL from the user
+
 		const { blob, mimeType } = dataURLtoBlob(imageObject.blobDataURL)
 		blob.setName(newImage.imageFileName)
-		// determine if an image file currently exists
+
 		const fileIterator = imagesFolder.getFilesByName(newImage.imageFileName)
 		const fileId = fileIterator.hasNext() ? fileIterator.next().getId() : ''
-		console.log('fileId', fileId)
-		// either create a file or update the existing one
+
 		const fileClass =
 			fileId === ''
 				? imagesFolder.createFile(blob)
 				: DriveApp.getFileById(
 						Drive.Files.update({ title: newImage.imageFileName }, fileId, blob).id
 				  )
-		// get the URL to the image file
+
 		newImage.imageURL = `https://drive.google.com/open?id=${fileClass.getId()}`
 
 		const sheet = ss.getSheetByName('Images')
 		const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
 
-		// // update the entry row
-		// const rowToChange = wbLib.getRowFromColumnSearch(sheet.getDataRange().getValues(), "imageId", imageId)
-		// if (rowToChange) {
-		//   // update columns - imageURL, originalFileName
-		//   imageURLColumn = headers.indexOf('imageURL') + 1
-		//   sheet.getRange(rowToChange, imageURLColumn).setValues(newImage.imageURL)
+		const row = headers.map((key) => newImage[key] || '') // Using the key directly
 
-		//   originalFileNameColumn = headers.indexOf('originalFileName') + 1
-		//   sheet.getRange(rowToChange, imageURLColumn).setValues(imageObject.originalFileName)
-		// }
-
-		const row = headers.map((key) => newImage[String(key)] || '')
 		sheet.appendRow(row)
 	} catch (err) {
 		console.log(err)
 		return null
 	}
+
 	return newImage
 }
 
 function modifyImage(imageObject, ss) {
-	const newImage = {
-		imageId: imageObject.imageId,
-		entryId: imageObject.entryId,
-		imageURL: imageObject.imageURL,
-		imageFileName: imageObject.imageFileName,
-		originalFileName: imageObject.originalFileName
-	}
-
-	// TODO Validate image
 	try {
 		const imagesFolderName = 'Entry Images'
-		// establish the image folder id
 		const myFolder = wbLib.getMyFolder(ss)
 		const imagesFolder = wbLib.checkIfFolderExistElseCreate(myFolder, imagesFolderName)
-		// make a named blob from the dataURL from the user
+
 		const { blob, mimeType } = dataURLtoBlob(imageObject.blobDataURL)
-		blob.setName(newImage.imageFileName)
-		// determine if an image file currently exists
-		const fileIterator = imagesFolder.getFilesByName(newImage.imageFileName)
+		blob.setName(imageObject.imageFileName)
+
+		const fileIterator = imagesFolder.getFilesByName(imageObject.imageFileName)
 		const fileId = fileIterator.hasNext() ? fileIterator.next().getId() : ''
-		console.log('fileId', fileId)
-		// either create a file or update the existing one
+
 		const fileClass =
 			fileId === ''
 				? imagesFolder.createFile(blob)
 				: DriveApp.getFileById(
-						Drive.Files.update({ title: newImage.imageFileName }, fileId, blob).id
+						Drive.Files.update({ title: imageObject.imageFileName }, fileId, blob).id
 				  )
-		// get the URL to the image file
-		newImage.imageURL = `https://drive.google.com/open?id=${fileClass.getId()}`
+
+		const newImage = {
+			imageId: imageObject.imageId,
+			entryId: imageObject.entryId,
+			imageURL: `https://drive.google.com/open?id=${fileClass.getId()}`,
+			imageFileName: imageObject.imageFileName,
+			originalFileName: imageObject.originalFileName
+		}
 
 		const sheet = ss.getSheetByName('Images')
 		const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
 
-		// update the entry row
 		const rowToChange = wbLib.getRowFromColumnSearch(
 			sheet.getDataRange().getValues(),
 			'imageId',
 			imageObject.imageId
 		)
+
 		if (rowToChange) {
-			// update columns - imageURL, originalFileName
 			const imageURLColumn = headers.indexOf('imageURL') + 1
 			sheet.getRange(rowToChange, imageURLColumn, 1, 1).setValue(newImage.imageURL)
 
@@ -209,13 +192,17 @@ function modifyImage(imageObject, ss) {
 				.getRange(rowToChange, originalFileNameColumn, 1, 1)
 				.setValue(imageObject.originalFileName)
 		}
+
+		return newImage
 	} catch (err) {
 		console.log(err)
 		return null
 	}
-	return newImage
 }
 
+/* // Validates registration data.
+// Generates a unique registration ID.
+// Appends the registration data to the "Registrations" sheet. */
 function createRegistration(request, ss) {
 	console.log('createRegistration', request)
 	// TODO Validate entry
@@ -237,6 +224,9 @@ function createRegistration(request, ss) {
 	}
 }
 
+/* Validates modified registration data.
+Updates the existing registration on the "Registrations" sheet.
+Sends a confirmation email. */
 function modifyRegistration(request, ss) {
 	console.log('modifyRegistration', request)
 
@@ -265,6 +255,8 @@ function modifyRegistration(request, ss) {
 	}
 }
 
+/* Calls updateRegistrationConfirmation with 'Complete' as confirmation text.
+Sends a registration confirmation email. */
 function completeRegistration(request, ss) {
 	console.log('completeRegistration', request)
 	const { status, data } = updateRegistrationConfirmation(request, ss, 'Complete')
@@ -281,6 +273,9 @@ function completeRegistration(request, ss) {
 	}
 }
 
+/* Validates registration ID.
+Updates the confirmation status for the specified registration.
+Used by completeRegistration, setRegistrationComplete, and clearRegistrationComplete. */
 function updateRegistrationConfirmation(request, ss, confirmationText) {
 	if (!request.registrationId || request.registrationId.trim() === '') {
 		return { status: 'error', data: 'Invalid ID for confirmation' }
@@ -307,25 +302,39 @@ function updateRegistrationConfirmation(request, ss, confirmationText) {
 	}
 }
 
+/* Calls updateRegistrationConfirmation with 'Complete' or an empty string as confirmation text.
+Useful for marking a registration as complete or clearing the completion status. */
 function setRegistrationComplete(request, ss) {
 	const { status, data } = updateRegistrationConfirmation(request, ss, 'Complete')
-	return sendResponse(status, data)
+	if (status === 'error') {
+		return sendResponse(status, data)
+	}
+	const response = getFullRegistration(request.email, ss)
+	return sendResponse('ok', response.data)
 }
-
 function clearRegistrationComplete(request, ss) {
 	const { status, data } = updateRegistrationConfirmation(request, ss, '')
-	return sendResponse(status, data)
+	if (status === 'error') {
+		return sendResponse(status, data)
+	}
+	const response = getFullRegistration(request.email, ss)
+	return sendResponse('ok', response.data)
 }
 
+/* Sends a registration confirmation email without modifying the confirmation status. */
 function produceRegistrationEmail(request, ss) {
 	try {
 		sendRegistrationConfirmationEmail(ss, request.registrationEmail, request.sendToEmail)
-		return sendResponse('ok', '')
+		const response = getFullRegistration(request.email, ss)
+		return sendResponse('ok', response.data)
 	} catch (err) {
 		return sendErrorResponse(err)
 	}
 }
 
+/* Validates entry data.
+Appends the entry data to the "Entries" sheet.
+Calls createImage to associate an image with the entry. */
 function createEntry(data, ss) {
 	// TODO Validate entry
 
@@ -352,6 +361,7 @@ function createEntry(data, ss) {
 	return sendResponse('ok', response.data)
 }
 
+/* Deletes an entry and its associated image based on the entry ID. */
 function deleteEntry(request, ss) {
 	console.log('deleteEntry', request)
 	if (!request.entryId || request.entryId.trim() === '') {
@@ -387,6 +397,8 @@ function deleteEntry(request, ss) {
 	}
 }
 
+/* Modifies an existing entry on the "Entries" sheet.
+Calls modifyImage if the entry has an associated image. */
 function modifyEntry(request, ss) {
 	console.log('modifyEntry', request)
 
@@ -425,6 +437,8 @@ function modifyEntry(request, ss) {
 	}
 }
 
+/* Sends a detailed registration confirmation email.
+Uses getFullRegistration and makeRegistrationHTML/makeEntriesHTML to construct email content. */
 function sendRegistrationConfirmationEmail(
 	ss = SpreadsheetApp.openById(CONFIG.ARTIST_REG_SHEET_ID),
 	registrationEmail,
@@ -453,7 +467,7 @@ function sendRegistrationConfirmationEmail(
 		replyTo: 'curator@sculpturebermagui.org.au'
 	})
 }
-
+/* Generates HTML for displaying registration details in an email. */
 function makeRegistrationHTML(registrationData) {
 	const regFields = [
 		['Email', 'email'],
@@ -478,6 +492,7 @@ function makeRegistrationHTML(registrationData) {
 	return registrationHTML
 }
 
+/* Generates HTML for displaying registration details in an email. */
 function makeEntriesHTML(entriesData) {
 	const entryFields = [
 		['Indoor/Outdoor', 'inOrOut'],
@@ -514,7 +529,7 @@ function makeEntriesHTML(entriesData) {
 
 	return entryHTML
 }
-
+/* Generates HTML table rows based on field-value pairs. */
 function makeTableRows(fields, data) {
 	return fields
 		.map(
@@ -532,7 +547,8 @@ function makeTableRows(fields, data) {
 		.join('')
 }
 
-function getInformationForEmailAddress(email, ss) {
+/* Retrieves registration information based on email. */
+function getDetailsByEmail({ email }, ss) {
 	if (!email || email.trim() === '') {
 		return sendResponse('error', 'No email provided or invalid email address')
 	}
@@ -541,6 +557,16 @@ function getInformationForEmailAddress(email, ss) {
 	return sendResponse('ok', response.data)
 }
 
+/* Retrieves the email address of each registration. */
+function listRegistrations(request, ss) {
+	var registrationSheet = ss.getSheetByName('Registrations')
+	const registrationData = registrationSheet.getDataRange().getValues()
+	const allRegistrations = wbLib.getJsonArrayFromData(registrationData)
+	const emailArray = allRegistrations.map((item) => item.email)
+	return sendResponse('ok', emailArray)
+}
+
+/* Retrieves full registration information (including entries) for a given email address. */
 function getFullRegistration(email, ss) {
 	var registrationArray = getRegistrationByEmail(email, ss)
 	if (typeof registrationArray !== 'undefined' && registrationArray.length !== 1) {
@@ -552,6 +578,7 @@ function getFullRegistration(email, ss) {
 	}
 }
 
+/* Retrieves registration information based on email. */
 function getRegistrationByEmail(email, ss) {
 	var registrationSheet = ss.getSheetByName('Registrations')
 	const registrationData = registrationSheet.getDataRange().getValues()
@@ -560,6 +587,7 @@ function getRegistrationByEmail(email, ss) {
 	return res
 }
 
+/* Retrieves entry information (including associated images) based on email. */
 function getEntriesByEmail(email, ss) {
 	const entrySheet = ss.getSheetByName('Entries')
 	const entryData = entrySheet.getDataRange().getValues()
