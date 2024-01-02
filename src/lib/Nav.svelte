@@ -9,8 +9,12 @@
 			href: '/exhibit'
 		},
 		{
-			text: 'Become a Sponsor',
-			href: '/sponsor'
+			text: 'Donate',
+			href: '/donate'
+		},
+		{
+			text: 'Gift Card',
+			href: '/gift-card'
 		},
 		{
 			text: '2023 Exhibition',
@@ -27,10 +31,6 @@
 		{
 			text: 'About',
 			href: '/about'
-		},
-		{
-			text: 'Contact',
-			href: '/contact'
 		}
 	]
 
