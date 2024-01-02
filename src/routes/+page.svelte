@@ -8,7 +8,7 @@
 	let errorMessage = ''
 
 	async function handleUserAction(userAction) {
-		$currentUserEmail = $currentUserEmail.toLowerCase()
+		$currentUserEmail = $currentUserEmail.toLowerCase().trim()
 		if (!validateEmail($currentUserEmail)) {
 			errorMessage = 'Please enter a valid email address'
 			return
