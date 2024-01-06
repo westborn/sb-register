@@ -119,7 +119,11 @@
 	let imageRes = null
 
 	function setImageDetails(e) {
-		imageRes = { image: e.detail.image, imageFileName: e.detail.fileName }
+		imageRes = {
+			image: e.detail.image,
+			imageFileName: e.detail.fileName,
+			imageSize: e.detail.fileSize
+		}
 	}
 
 	async function sendToServer(data) {
@@ -132,6 +136,11 @@
 			method: 'POST',
 			body: JSON.stringify({ action: entryAction, data })
 		})
+		if (!res.ok) {
+			errorMessage = `Error: ${res.status} - ${res.statusText}`
+			fetchingData = false
+			return { result: 'error', data: errorMessage }
+		}
 
 		const resMessage = await res.json()
 		fetchingData = false
@@ -152,6 +161,11 @@
 			errorMessage = 'Please fill in required fields'
 			return false
 		}
+		if (imageRes?.imageSize > 500000) {
+			errorMessage = 'Image Size > 5MB, please reduce the size of your image'
+			return false
+		}
+
 		data.dimensions = data.dimLength + 'x' + data.dimWidth + 'x' + data.dimHeight
 		errorMessage = ''
 		return true
