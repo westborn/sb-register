@@ -18,7 +18,7 @@
 			reader.addEventListener('load', function () {
 				imageContent = reader.result
 				image.setAttribute('src', imageContent)
-				dispatch('fileUpload', { fileName: file.name, image: imageContent })
+				dispatch('fileUpload', { fileName: file.name, image: imageContent, fileSize: file.size })
 			})
 			reader.readAsDataURL(file)
 			showImage = true
@@ -29,10 +29,10 @@
 </script>
 
 <section class="mt-6">
-	<div class="flex flex-col ">
+	<div class="flex flex-col">
 		<div class="">
 			<label for="formFile" class="form-label inline-block text-lg font-bold text-primary"
-				>Choose an Image for this entry</label
+				>Choose an Image for this entry (less than 5MB)</label
 			>
 			<input
 				type="file"
