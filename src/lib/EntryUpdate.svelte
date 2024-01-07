@@ -161,10 +161,10 @@
 			errorMessage = 'Please fill in required fields'
 			return false
 		}
-		// if (imageRes?.imageSize > 500000) {
-		// 	errorMessage = 'Image Size > 5MB, please reduce the size of your image'
-		// 	return false
-		// }
+		if (imageRes?.imageSize > 5000000) {
+			errorMessage = 'Image Size > 5MB, please reduce the size of your image'
+			return false
+		}
 
 		data.dimensions = data.dimLength + 'x' + data.dimWidth + 'x' + data.dimHeight
 		errorMessage = ''
