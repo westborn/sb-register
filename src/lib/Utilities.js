@@ -1,8 +1,14 @@
 function getIdFromUrl(url) {
 	return url.match(/[-\w]{25,}(?!.*[-\w]{25,})/)
 }
+
+//This may have been deprecated by Google on/about 12-Jan-2024
 export function getViewURL(url) {
 	return `https://drive.google.com/uc?export=view&id=${getIdFromUrl(url)}`
+}
+//This seems to now work - but who knows for how long?
+export function getThumbnailURL(url) {
+	return `https://drive.google.com/thumbnail?id=${getIdFromUrl(url)}`
 }
 
 // from https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript

@@ -4,7 +4,7 @@
 
 	import { slide } from 'svelte/transition'
 
-	import { getViewURL } from '$lib/Utilities.js'
+	import { getThumbnailURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	export let showButtons = false
@@ -66,7 +66,7 @@
 						{#if entryDisplayed?.images[0]?.imageURL}
 							<img
 								class="h-48 w-48 object-scale-down p-1"
-								src={getViewURL(entryDisplayed?.images[0]?.imageURL)}
+								src={getThumbnailURL(entryDisplayed?.images[0]?.imageURL)}
 								alt="Preview"
 							/>
 						{:else}
