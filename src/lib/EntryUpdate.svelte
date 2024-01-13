@@ -40,7 +40,7 @@
 	import { createForm } from 'felte'
 
 	import { ACTION } from '$lib/CONSTANTS.js'
-	import { getViewURL } from '$lib/Utilities.js'
+	import { getThumbnailURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	import EntryFields from '$lib/EntryFields.svelte'
@@ -293,7 +293,7 @@
 				{:else if imageBeforeUpdate?.imageURL}
 					<img
 						class="h-48 w-48 object-scale-down p-1"
-						src={getViewURL(imageBeforeUpdate?.imageURL)}
+						src={getThumbnailURL(imageBeforeUpdate?.imageURL)}
 						alt="Preview"
 					/>
 				{:else}
@@ -315,7 +315,7 @@
 				{#if imageBeforeUpdate?.imageURL}
 					<img
 						class="h-48 w-48 object-scale-down p-1"
-						src={getViewURL(imageBeforeUpdate?.imageURL)}
+						src={getThumbnailURL(imageBeforeUpdate?.imageURL)}
 						alt="Preview"
 					/>
 				{:else}
