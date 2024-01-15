@@ -7,6 +7,17 @@
 	let fetchingData = false
 	let errorMessage = ''
 
+	function openStatus() {
+		switch (PUBLIC_REGISTRATIONS_OPEN) {
+			case 'YES':
+				return 'open'
+			case 'UPDATE':
+				return 'update'
+			default:
+				return 'closed'
+		}
+	}
+
 	async function handleUserAction(userAction) {
 		$currentUserEmail = $currentUserEmail.toLowerCase().trim()
 		if (!validateEmail($currentUserEmail)) {
@@ -34,7 +45,7 @@
 		}
 
 		// console.log(userAction, response.data.registration, response.data)
-		if (userAction === 'new') {
+		if (userAction === 'new' && openStatus() === 'open') {
 			if (Object.entries(response.data.registration).length != 0) {
 				errorMessage = 'An entry already exists for that email address'
 				return
@@ -75,19 +86,16 @@
 		'text-sm rounded-md bg-primary-300 px-5 py-1 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-400 hover:shadow-lg focus:bg-primary-400 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-200 active:shadow-lg'
 </script>
 
-{#if PUBLIC_REGISTRATIONS_OPEN === 'YES'}
-	<div class="container mx-auto max-w-prose px-3">
-		<h4 class="text-xl font-bold text-primary">Registration Process</h4>
-	</div>
+<div class="container mx-auto max-w-prose px-3">
+	<h4 class="text-xl font-bold text-primary">Registration Process</h4>
 
-	<!-- content here -->
-
-	<section class="container mx-auto max-w-prose px-3">
+	{#if openStatus() === 'open'}
+		<p class="text-base mt-3">
+			Registrations for the 2024 exhibition (March 9th - 17th) close on the 15th January 2024
+		</p>
 		<p class="mt-3">
 			Hi Artists<br /><br />
 
-			The process of registration for the 2024 exhibition (March 9th - 17th) has changed a little
-			from last year. We trust these changes make the process a little easier for you.<br /><br />
 			There is a 4 step process comprising:<br />
 		</p>
 		<ul class="list-outside list-disc px-4">
@@ -102,7 +110,22 @@
 				registration fee.
 			</li>
 		</ul>
-	</section>
+	{/if}
+
+	{#if openStatus() === 'update'}
+		<p class="text-base mt-3">
+			New registrations for the 2024 exhibition (March 9th - 17th) are now closed, however, if you
+			have already registered and need to complete your registration please enter your email address
+			below and click 'Continue Registering'
+		</p>
+	{/if}
+
+	{#if openStatus() === 'closed'}
+		<p class="mt-3">Registrations for the 2024 exhibition (March 9th - 17th) are now closed.</p>
+	{/if}
+</div>
+
+{#if openStatus() === 'open' || openStatus() === 'update'}
 	<section class="container mx-auto max-w-prose px-3">
 		<div class="relative mt-10 w-full">
 			<input
@@ -126,17 +149,21 @@
 			<p class="mt-6">&nbsp</p>
 		{/if}
 		<div class="mt-6 flex justify-between">
-			<button type="button" on:click={() => handleUserAction('new')} class={btnClasses}
-				>New Registration
-			</button>
+			{#if openStatus() === 'open'}
+				<button type="button" on:click={() => handleUserAction('new')} class={btnClasses}
+					>New Registration
+				</button>
+			{/if}
 
 			<button type="button" on:click={() => handleUserAction('view')} class={btnClasses}
 				>View Registration
 			</button>
 
-			<button type="button" on:click={() => handleUserAction('registration')} class={btnClasses}
-				>Continue Registering</button
-			>
+			{#if openStatus() !== 'closed'}
+				<button type="button" on:click={() => handleUserAction('registration')} class={btnClasses}
+					>Continue Registering</button
+				>
+			{/if}
 		</div>
 
 		{#if fetchingData}
@@ -146,13 +173,6 @@
 			/>
 		{/if}
 	</section>
-{:else}
-	<div class="container mx-auto max-w-prose px-3">
-		<h4 class="text-xl font-bold text-primary">
-			Registrations for the 2024 event<br />
-			are not open until 14th November 2023
-		</h4>
-	</div>
 {/if}
 
 <!-- else if content here -->
