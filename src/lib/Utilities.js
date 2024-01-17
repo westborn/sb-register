@@ -11,6 +11,11 @@ export function getThumbnailURL(url) {
 	return `https://drive.google.com/thumbnail?id=${getIdFromUrl(url)}`
 }
 
+//This wasa recommended by google - using an iframe
+export function getIframeURL(url) {
+	return `https://drive.google.com/file/d/${getIdFromUrl(url)}/preview`
+}
+
 // from https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
 export function validateEmail(inputText) {
 	var mailformat =

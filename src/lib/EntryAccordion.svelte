@@ -4,7 +4,7 @@
 
 	import { slide } from 'svelte/transition'
 
-	import { getThumbnailURL } from '$lib/Utilities.js'
+	import { getIframeURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	export let showButtons = false
@@ -64,11 +64,16 @@
 						class="mx-auto mt-10 flex h-48 w-48 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
 					>
 						{#if entryDisplayed?.images[0]?.imageURL}
-							<img
-								class="h-48 w-48 object-scale-down p-1"
-								src={getThumbnailURL(entryDisplayed?.images[0]?.imageURL)}
-								alt="Preview"
-							/>
+							<iframe
+								class="aspect-square object-scale-down"
+								width="192"
+								height="192"
+								sandbox="allow-same-origin allow-scripts "
+								scrolling="no"
+								title="preview"
+								src={getIframeURL(entryDisplayed.images[0].imageURL)}
+							>
+							</iframe>
 						{:else}
 							<span>Image Preview</span>
 						{/if}
