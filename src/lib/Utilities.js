@@ -12,6 +12,7 @@ export function getThumbnailURL(url) {
 }
 
 //This wasa recommended by google - using an iframe
+// It doesn't work due to CORS issues!!
 export function getIframeURL(url) {
 	return `https://drive.google.com/file/d/${getIdFromUrl(url)}/preview`
 }
