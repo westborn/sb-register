@@ -40,7 +40,7 @@
 	import { createForm } from 'felte'
 
 	import { ACTION } from '$lib/CONSTANTS.js'
-	import { getIframeURL } from '$lib/Utilities.js'
+	import { getThumbnailURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	import EntryFields from '$lib/EntryFields.svelte'
@@ -291,16 +291,11 @@
 				{#if replacementImage?.imageIsBlob}
 					<img alt="Preview" class="h-48 w-48 object-scale-down p-1" src={replacementImage.image} />
 				{:else if imageBeforeUpdate?.imageURL}
-					<iframe
-						class="aspect-square object-scale-down"
-						width="192"
-						height="192"
-						sandbox="allow-same-origin allow-scripts "
-						scrolling="no"
-						title="preview"
-						src={getIframeURL(imageBeforeUpdate?.imageURL)}
-					>
-					</iframe>
+					<img
+						class="h-48 w-48 object-scale-down p-1"
+						src={getThumbnailURL(imageBeforeUpdate?.imageURL)}
+						alt="Preview"
+					/>
 				{:else}
 					<span>Image Preview</span>
 				{/if}
@@ -318,16 +313,11 @@
 				class="mx-auto mt-10 flex h-48 w-48 flex-col items-center justify-center border-2 border-solid border-slate-200 text-slate-400"
 			>
 				{#if imageBeforeUpdate?.imageURL}
-					<iframe
-						class="aspect-square object-scale-down"
-						width="192"
-						height="192"
-						sandbox="allow-same-origin allow-scripts "
-						scrolling="no"
-						title="preview"
-						src={getIframeURL(imageBeforeUpdate?.imageURL)}
-					>
-					</iframe>
+					<img
+						class="h-48 w-48 object-scale-down p-1"
+						src={getThumbnailURL(imageBeforeUpdate?.imageURL)}
+						alt="Preview"
+					/>
 				{:else}
 					<span>Image Preview</span>
 				{/if}
