@@ -17,6 +17,12 @@ export function getIframeURL(url) {
 	return `https://drive.google.com/file/d/${getIdFromUrl(url)}/preview`
 }
 
+//This wasa recommended by google - using an iframe
+// It doesn't work due to CORS issues!!
+export function getLienucURL(url) {
+	return `https://drive.lienuc.com/uc?id=${getIdFromUrl(url)}`
+}
+
 // from https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
 export function validateEmail(inputText) {
 	var mailformat =

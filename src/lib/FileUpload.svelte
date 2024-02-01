@@ -18,6 +18,7 @@
 			reader.addEventListener('load', function () {
 				imageContent = reader.result
 				image.setAttribute('src', imageContent)
+				console.log('here3' + file.name)
 				dispatch('fileUpload', { fileName: file.name, image: imageContent, fileSize: file.size })
 			})
 			reader.readAsDataURL(file)
