@@ -119,7 +119,6 @@
 	let imageRes = null
 
 	function setImageDetails(e) {
-		console.log('here5 ' + e.detail.fileName)
 		imageRes = {
 			image: e.detail.image,
 			fileName: e.detail.fileName,
@@ -235,8 +234,6 @@
 		// add an 'image' property to the entry
 		// send entry and image to modify
 		if (replacementImage?.imageIsBlob) {
-			console.log('here' + JSON.stringify(replacementImage, null, 2))
-
 			entry.image = {
 				blobDataURL: replacementImage.image,
 				email: $currentUserEmail,
@@ -261,15 +258,11 @@
 	function handleFileUploadReplace(e) {
 		// console.log('EntryUpdate')
 		if (e.detail) {
-			console.log('here2' + JSON.stringify(e.detail, null, 2))
-
 			replacementImage = {
 				imageIsBlob: true,
 				image: e.detail.image,
 				fileName: e.detail.fileName
 			}
-			console.log('back from modal')
-			console.log(replacementImage.fileName)
 		} else {
 			replacementImage = {}
 			// console.log('EntryUpdate - No image selected')
