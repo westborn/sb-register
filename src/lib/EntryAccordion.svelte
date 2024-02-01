@@ -4,8 +4,8 @@
 
 	import { slide } from 'svelte/transition'
 
-	import { getThumbnailURL } from '$lib/Utilities.js'
-	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
+	import { getLienucURL } from '$lib/Utilities.js'
+	import { entryStore } from '$lib/stores.js'
 
 	export let showButtons = false
 
@@ -66,7 +66,8 @@
 						{#if entryDisplayed?.images[0]?.imageURL}
 							<img
 								class="h-48 w-48 object-scale-down p-1"
-								src={getThumbnailURL(entryDisplayed?.images[0]?.imageURL)}
+								crossorigin="anonymous"
+								src={getLienucURL(entryDisplayed?.images[0]?.imageURL)}
 								alt="Preview"
 							/>
 						{:else}

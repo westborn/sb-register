@@ -40,7 +40,7 @@
 	import { createForm } from 'felte'
 
 	import { ACTION } from '$lib/CONSTANTS.js'
-	import { getThumbnailURL } from '$lib/Utilities.js'
+	import { getLienucURL } from '$lib/Utilities.js'
 	import { currentUserEmail, currentRegistration, entryStore } from '$lib/stores.js'
 
 	import EntryFields from '$lib/EntryFields.svelte'
@@ -119,10 +119,11 @@
 	let imageRes = null
 
 	function setImageDetails(e) {
+		console.log('here5 ' + e.detail.fileName)
 		imageRes = {
 			image: e.detail.image,
-			imageFileName: e.detail.fileName,
-			imageSize: e.detail.fileSize
+			fileName: e.detail.fileName,
+			fileSize: e.detail.fileSize
 		}
 	}
 
@@ -195,7 +196,7 @@
 			entryId: 'NotSet',
 			imageFileName: `${$currentRegistration.lastName}_${newEntry.title}_`, //: artistSurname_title_id
 			imageId: 'NewImage',
-			originalFileName: imageRes.imageFileName
+			originalFileName: imageRes.fileName
 		}
 
 		const response = await sendToServer({ newEntry, newImage })
@@ -234,6 +235,8 @@
 		// add an 'image' property to the entry
 		// send entry and image to modify
 		if (replacementImage?.imageIsBlob) {
+			console.log('here' + JSON.stringify(replacementImage, null, 2))
+
 			entry.image = {
 				blobDataURL: replacementImage.image,
 				email: $currentUserEmail,
@@ -241,10 +244,9 @@
 				imageFileName: `${$currentRegistration.lastName}_${entry.title}_${imageBeforeUpdate.imageId}`,
 				imageURL: imageBeforeUpdate.imageURL,
 				imageId: imageBeforeUpdate.imageId,
-				originalFileName: replacementImage.imageFileName
+				originalFileName: replacementImage.fileName
 			}
 		}
-
 		const response = await sendToServer(entry)
 		if (response.result === 'error') {
 			errorMessage = response.data
@@ -259,13 +261,15 @@
 	function handleFileUploadReplace(e) {
 		// console.log('EntryUpdate')
 		if (e.detail) {
+			console.log('here2' + JSON.stringify(e.detail, null, 2))
+
 			replacementImage = {
 				imageIsBlob: true,
 				image: e.detail.image,
-				imageFileName: e.detail.fileName
+				fileName: e.detail.fileName
 			}
-			// console.log('back from modal')
-			// console.log(replacementImage.imageFileName)
+			console.log('back from modal')
+			console.log(replacementImage.fileName)
 		} else {
 			replacementImage = {}
 			// console.log('EntryUpdate - No image selected')
@@ -293,7 +297,8 @@
 				{:else if imageBeforeUpdate?.imageURL}
 					<img
 						class="h-48 w-48 object-scale-down p-1"
-						src={getThumbnailURL(imageBeforeUpdate?.imageURL)}
+						crossorigin="anonymous"
+						src={getLienucURL(imageBeforeUpdate?.imageURL)}
 						alt="Preview"
 					/>
 				{:else}
@@ -315,7 +320,8 @@
 				{#if imageBeforeUpdate?.imageURL}
 					<img
 						class="h-48 w-48 object-scale-down p-1"
-						src={getThumbnailURL(imageBeforeUpdate?.imageURL)}
+						crossorigin="anonymous"
+						src={getLienucURL(imageBeforeUpdate?.imageURL)}
 						alt="Preview"
 					/>
 				{:else}

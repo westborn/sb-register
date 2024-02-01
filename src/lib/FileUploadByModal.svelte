@@ -9,19 +9,24 @@
 	let imageRes = null
 
 	function setImageDetails(e) {
+		console.log(`setImageDetails - ${e.detail?.fileName}`)
 		if (e.detail) {
-			imageRes = { image: e.detail.image, imageFileName: e.detail.fileName }
+			imageRes = {
+				image: e.detail.image,
+				fileName: e.detail.fileName,
+				fileSize: e.detail.fileSize
+			}
 		} else {
 			imageRes = null
 		}
 	}
 	function setSelection(res) {
-		// console.log(`setSelection ${res} - ${imageRes?.imageFileName}`)
-		if (res === 'ok' && imageRes?.imageFileName) {
+		console.log(`setSelection ${res} - ${imageRes?.fileName}`)
+		if (res === 'ok' && imageRes?.fileName) {
 			dispatch('fileUploadReplace', {
-				fileName: imageRes.name,
+				fileName: imageRes.fileName,
 				image: imageRes.image,
-				fileSize: imageRes.size
+				fileSize: imageRes.fileSize
 			})
 		} else {
 			// console.log('setSelection why?')
